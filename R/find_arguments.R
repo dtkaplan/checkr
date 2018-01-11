@@ -24,7 +24,7 @@
 #' code <- for_checkr(quote(lm(mpg ~ hp, data = mtcars)))
 #' formula_arg(code)
 #' data_arg(code,
-#'   failif( ! "hp" %in% names(V),
+#'   insist("hp" %in% names(V),
 #'           "The data should have a column named 'hp'."))
 #' matrix_arg(code)
 #' named_arg(code, "data", failif(EX == `mtcars`, "I didn't want mtcars."))

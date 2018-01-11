@@ -24,9 +24,9 @@ print_function_contents <- function(fun, just_the_body = TRUE, from_file = NULL)
     line_nums <- formatC(line_nums, width = max(nchar(line_nums)))
     cat(paste(line_nums, body_text, collapse = "\n"))
   } else {
-    line_nums <- paste0("[", as.character(1:length(body_text[-1])), "]")
+    line_nums <- paste0("[", as.character(1:length(body_text[-c(1, length(body_text))])), "]")
     line_nums <- formatC(line_nums, width = max(nchar(line_nums)))
     precursor <- paste(fun_name, "<- function(", paste(names(formals(fun)), collapse = ", "), ") {")
-    cat(paste(precursor, paste(line_nums, body_text[-1], collapse = "\n"), sep = "\n"))
+    cat(paste(precursor, paste(line_nums, body_text[-c(1, length(body_text))], collapse = "\n"), sep = "\n"), "\n}")
   }
 }

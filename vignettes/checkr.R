@@ -1,10 +1,52 @@
 ## ----setup, include = FALSE----------------------------------------------
 library(checkr)
 library(ggplot2)
+#library(mosaic)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+## ------------------------------------------------------------------------
+s1 <- "lm(mpg ~ hp, data = mtcars)" # Right!
+s1wrong <- "lm(mpg ~ hp, data = head(mtcars))"
+s2 <- "mod <- lm(mpg ~ hp, data = mtcars); summary(mod)" # Right!
+s2wrong <- "mod <- lm(hp ~ mpg, data = mtcars); summary(mod)"
+s3wrong <- "for_me <- mtcars; mosaic::rsquared(lm(data = for_me, mpg ~ 1))"
+
+## ----echo = FALSE--------------------------------------------------------
+check_exer_1 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE) # pre-processing
+  lm_line <- line_calling(code, lm, message = "Use lm() to construct the model.")
+  lm_call <- arg_calling(lm_line, lm)
+  t1 <- data_arg(lm_call, 
+                 insist(identical(V, mtcars), 
+                        "Your data argument {{EX}} was not `mtcars`."),
+                 message = "You didn't supply a `data = ` argument to `lm()`.")
+  if (failed(t1)) return(t1)
+  f <- formula_arg(lm_call,
+                  message = "You didn't give a formula specifying the structure of the model.")
+  t2 <- check(f, insist(two_sided(f), "There's no response variable in your formula."))
+  t2 <- check(t2, insist(rlang::f_lhs(EX) == as.name("mpg"), 
+                   paste("You need to have the miles-per-gallon variable",
+                         "on the left side of the model formula.",
+                         "You've got {{rlang::f_lhs(V)}} instead.")))
+  if (failed(t2)) return(t2)
+  check(lm_call, 
+        insist(summary(V)$r.squared > 0.3, 
+        "Your R-squared is {{summary(V)$r.squared}}. That's too small."),
+        passif(TRUE, "Great job!"))
+}
+
+## ----echo = FALSE, comment = ""------------------------------------------
+print_function_contents(check_exer_1, just_the_body = FALSE)
+
+## ------------------------------------------------------------------------
+check_exer_1(s1)
+check_exer_1(s1wrong)
+check_exer_1(s2)
+check_exer_1(s2wrong)
+check_exer_1(s3wrong)
 
 ## ------------------------------------------------------------------------
 USER_CODE <- quote(y <- 15 * sin(53 * pi / 180))

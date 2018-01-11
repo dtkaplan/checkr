@@ -21,6 +21,17 @@
 arg_calling <- function(ex, ..., n=1L, message = "call to function") {
   qfuns <- quos(...)
   qfuns <- lapply(qfuns, FUN = quo_expr)
+  # see whether the call itself is to the function
+  this_fun <- get_function(ex$code[[1]])
+  if (is.null(this_fun)) {
+    ex$action <- "fail"
+    ex$message <- "No function found."
+    return(ex)
+  } else if (c(this_fun) %in% c(qfuns)) {
+    if (n == 1) return(ex)
+    else n <- n - 1 # found 1 call, now continue on
+  }
+
   test <- function(arg) {
     argument_calls(arg, qfuns)
   }

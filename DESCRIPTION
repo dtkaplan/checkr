@@ -8,6 +8,7 @@ Description: Helps check code submissions for learnr tutorials.
 License: MIT + file LICENSE
 Depends: rlang, magrittr
 Imports: redpen, stringr, ggplot2, evaluate
+Suggests: mosaic
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1

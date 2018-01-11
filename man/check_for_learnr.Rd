@@ -29,7 +29,7 @@ must be set at compile time, it's not for users.}
 \description{
 This is the interface from learnr to checkr. You don't call this function directly: that will be
 done by learnr. Instead, you have to tell learnr to use this function. Do this with a directive
-in the setup chunk of the learnr document: \code{tutorial_options(exercise.checker = checkr2::check_for_learnr)}
+in the setup chunk of the learnr document: \code{tutorial_options(exercise.checker = checkr::check_for_learnr)}
 }
 \examples{
 # as it would be called from the learnr system ...

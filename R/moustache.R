@@ -4,8 +4,8 @@
 #' referring to objects found in the bindings environment.
 #' @param bindings an environment or list in which the objects moustached in `string` are defined.
 #' @examples
-#' checkr2:::moustache("hello")
-#' checkr2:::moustache("Three plus five is {{3+5}}.")
+#' checkr:::moustache("hello")
+#' checkr:::moustache("Three plus five is {{3+5}}.")
 moustache <- function(string, bindings = rlang::env_parent()) {
   # pull out all the instances of {{expr}} from the string
   the_moustache <- '\\{\\{.*?\\}\\}' # not greedy

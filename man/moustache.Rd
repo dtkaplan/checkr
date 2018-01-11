@@ -16,6 +16,6 @@ referring to objects found in the bindings environment.}
 evaluate expressions in a string using a particular environment
 }
 \examples{
-checkr2:::moustache("hello")
-checkr2:::moustache("Three plus five is {{3+5}}.")
+checkr:::moustache("hello")
+checkr:::moustache("Three plus five is {{3+5}}.")
 }

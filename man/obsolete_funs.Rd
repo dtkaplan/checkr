@@ -40,7 +40,7 @@ check_argument(...)
 check_function_calls(...)
 }
 \arguments{
-\item{...}{}
+\item{...}{whatever arguments the original functions took}
 }
 \description{
 These functions were in version 0.1 of checkr, but as of

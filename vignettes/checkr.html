@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Daniel Kaplan" />
+
+<meta name="date" content="2018-01-11" />
+
+<title>Using checkr</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using <code>checkr</code></h1>
+<h4 class="author"><em>Daniel Kaplan</em></h4>
+<h4 class="date"><em>2018-01-11</em></h4>
+
+
+
+<p>Students are often asked to submit work. One of the roles of an instructor is to “grade” the students’ work. Grades are both a motivator for students to do the work and, ideally, a way to provide feedback to help students learn the material. This ideal is often lost in the rush and tedium of grading itself. The feedback is generally Right-or-Wrong or a point score corresponding to small red check marks and x’s placed on the students’ papers by the instructor.</p>
+<p>The <code>checkr</code> package is an attempt to improve the quality of feedback, reduce the tedium of grading, and enable instructors to collect data to help make more effective the feedback students receive.</p>
+<p>BLAH BLAH BLAH … Domain is R commands.</p>
+<p>Writing checkr statements is work, but it is a different kind of work than grading papers.</p>
+<p>Feedback should be immediate.</p>
+<div id="why-right-is-wrong." class="section level2">
+<h2>Why right is wrong.</h2>
+<p>It’s not just the output. It’s the way they went about producing the output.</p>
+<p>HOW DIFFICULT IT IS TO GRADE ESSAYS</p>
+<p>One of the most powerful heuristics is Right-or-Wrong. The <code>checkr</code> package provides facilities to give some feedback on their work.</p>
+<p>“Summative feedback,” in the jargon of education, means telling whether the student was right or wrong; whether the submitted work satisfied the requirements. In computer programming, summative feedback can be based on whether a correct result was computed, whether a function works as required, and so on. <code>Checkr</code> provides simple mechanisms for comparing the quantities computed by the student submission to known values.</p>
+<p>“Formative feedback” attempts to help the student develop a better submission. This is a more subtle situation, since good feedback must involve understanding of how student’s think about the problem, typical patterns in student answers, and the variety of ways that the problem can be approached. <code>Checkr</code> provides facilities for looking within the student’s code for functions and their arguments, for checking intermediate results, and to look for specific mistake patterns.</p>
+<p>The <code>checkr</code> package provides such an evaluation system that provides both summative and formative feedback and, at the instructor’s discretion, logs student submissions for assigning credit and to support looking for common patterns of misconception in student answers.</p>
+<p><code>Checkr</code> can be used in a stand-alone mode or as embedded in a <code>learnr</code> tutorial.</p>
+</div>
+<div id="a-catalog-of-functions" class="section level2">
+<h2>A catalog of functions</h2>
+<p>Process the submitted code to prepare for testing:</p>
+<ul>
+<li><code>for_checkr(USER_CODE)</code> will take the code directly from <code>learnr</code>. Or, for development purposes, you can set <code>USER_CODE</code> yourself to be either a character string containing the code or a quoted line or set of lines. (The set of lines for <code>quote()</code> must be in curly braces.)</li>
+<li><code>expand_chain(CODE)</code> once you’ve identified a line of interest that happens to be a chain, you may want to do checks within that line. <code>expand_chain(CODE)</code> turns the sequence of statements in a chain into individual statements, and provides a binding in each statement for the value of <code>.</code> that will be the input to that statement.</li>
+<li><code>expend_all_chains(CODE)</code> takes a set of statements and expands all the chains in it, so that it can be treated as an ordinary sequence of statements.</li>
+</ul>
+<p>Locate a line …</p>
+<ul>
+<li><code>line_where()</code> - binds V, EX, Z, F. Special case of line_binding. No passif() or failif(), just logical tests written in terms of V, EX, Z, F</li>
+<li><code>line_calling()</code> - looks for a call to a function anywhere in the line. Compare: <code>line_where()</code> provides F, which is just the highest-level call.</li>
+<li><code>line_binding()</code> - custom bindings to patterns. (This was originally called <code>if_matches()</code>.) Can use <code>failif()</code>, etc.</li>
+</ul>
+<p>Within a line or expression…</p>
+<ul>
+<li><code>call_to()</code> Pulls out the expression in a line that is a call to a specified function.</li>
+<li><code>test_binding()</code> Allows custom binding to an expression. (Just an alias for <code>line_binding()</code>)</li>
+</ul>
+<p>Arguments. Each returns the argument as an expression, applying any tests</p>
+<ul>
+<li><code>arg_calling()</code> return an argument that calls a specified function</li>
+<li><code>named_arg()</code> return an argument that has a specified name.</li>
+<li><code>formula_arg()</code> return an argument that is a formula. Similar for <code>data_arg()</code>, <code>matrix_arg()</code>, <code>vector_arg()</code>, <code>list_arg()</code>, <code>table_arg()</code>, <code>first_arg()</code></li>
+<li><code>arg_number()</code> return the argument in position n</li>
+</ul>
+<p>Tests that trigger a desired outcome</p>
+<ul>
+<li><code>passif()</code>, <code>failif()</code>, <code>okif()</code></li>
+</ul>
+<p>Within tests …</p>
+<ul>
+<li><code>%same_as%</code></li>
+<li><code>%not_same_as%</code></li>
+</ul>
+</div>
+<div id="a-first-example" class="section level2">
+<h2>A first example</h2>
+<p>Consider this problem from trigonometry:</p>
+<blockquote>
+<p><img src="data:image/png;base64,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" /><br />
+Write an R statement to compute the numerical value of x.</p>
+</blockquote>
+<p>A mathematically correct answer is <span class="math inline">\(15 \sin(53^\circ)\)</span>. The corresponding R command is <code>15 * sin(53 * pi / 180)</code>, where the conversion to radians of 53<span class="math inline">\(^\circ\)</span> is accomplished by multiplying by <span class="math inline">\(\pi/180\)</span>.</p>
+<p>In evaluating a student’s submission for this problem, there are a number of things that the instructor might look for:</p>
+<ol style="list-style-type: decimal">
+<li>Is the numerical value of the result correct? Here, that would be about 11.98.</li>
+</ol>
+<p>Of course, if the value computed by the student’s submission is not correct, then we know the submission itself is not right. But we don’t know <em>why</em> it’s not right. Knowing why it’s not right is important if we want to provide formative feedback to the student. In providing such formative feedback it would also be good to know:</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Is the <span class="math inline">\(\sin\)</span> function being used?</li>
+<li>Is 53 the argument to <span class="math inline">\(\sin\)</span>? If not, we can remind the student to convert the angle to radians.</li>
+<li>Is multiplication by a conversion factor being used, and is the conversion factor correct?</li>
+</ol>
+<p>Answering questions (2) through (4) requires that the student’s submission be taken apart: what’s the function and what’s the argument to the function. <code>Checkr</code> provides a handful of functions that do this in different ways.</p>
+<div id="submitting-what" class="section level3">
+<h3>Submitting what?</h3>
+<p>In a tutorial system like <code>learnr</code>, the system itself does the work of collecting the student’s submission and handing it off to the checking statements. <code>Checkr</code> is written so that it can be used both within a system like <code>learnr</code> and also in a stand-alone way. One advantage of this is that you can develop and test your checking statements systematically before deploying them in a tutorial.</p>
+<p>The document you are reading is a vignette, not a tutorial. To play the role of the tutorial system, in this tutorial we’ll write student submissions as “quoted” commands. (We’ll say more about <code>quote()</code> later on. It’s an ordinary base R command, albeit one that few R users encounter.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USER_CODE &lt;-<span class="st"> </span><span class="kw">quote</span>(y &lt;-<span class="st"> </span><span class="dv">15</span> <span class="op">*</span><span class="st"> </span><span class="kw">sin</span>(<span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>))</code></pre></div>
+<p>The first task for <code>checkr</code> is to parse the submission. The <code>for_checkr()</code> function does this along with some additional processing for when there are multiple commands in the submission.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)</code></pre></div>
+<p>From now on, the character-string submission itself is not needed; all the necessary information is in <code>CODE</code>.</p>
+</div>
+<div id="looking-for-a-valid-line" class="section level3">
+<h3>Looking for a valid line</h3>
+<p>The student’s submission might include blank lines, or some scratch work, or some setup that calculates some component of the answer. A good way to handle such diverse possibilities is to use the <code>at()</code> function to probe the submission for a line that contains the desired result.</p>
+<p>To start very simply, let’s look for a line that generates the expected numerical result:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">line_where</span>(CODE, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
+<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
+<p>The <code>line_where</code> function scans through all the lines in <code>CODE</code>. (There’s just one line in this example.) For each line, <code>line_where()</code> creates some pronouns:</p>
+<ul>
+<li><code>V</code> - the value of the line</li>
+<li><code>F</code> - the top-level function used in the line</li>
+<li><code>EX</code> - the expression itself, as code.</li>
+<li><code>Z</code> - the name to which the result was assigned, if any.</li>
+</ul>
+<p>If the line contains an assignment, <code>F</code> and <code>EX</code> both refer to the right-hand side of the assignment.</p>
+<p>For each line in <code>CODE</code>, <code>line_where()</code> runs tests written in terms of the pronouns. These are ordinary R statements that can include any function, but they must return a logical as the result. There can be multiple test statements (each as its own argument to <code>line_where()</code>, and so separated by commas as usual in R). The individual test statements can be as complicated as necessary.</p>
+<p>If there is any line for which <em>all</em> the tests pass, <code>line_where()</code> returns that line in a format that can be used for further testing, if desired. If there is no such line in <code>CODE</code>, <code>line_where()</code> will return a failure result.</p>
+<p>The <code>type = is.numeric</code> argument to <code>at()</code> is a way of saying, “I’m only going to run the tests if <code>V</code> is numerical.” This provides some armor against the possibility that the submission produces something other than a number.</p>
+</div>
+<div id="connecting-with-learnr" class="section level3">
+<h3>Connecting with <code>learnr</code></h3>
+<p>It might be that all you want is to check that <em>some</em> line produces the result you’re looking for. For this simple situation, you might implement the tutorial code checking in <code>learnr</code> by adding a <code>-check</code> block for the exercise with these contents:</p>
+<p>NEED TO CHECK THIS IN LEARNR</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+<span class="kw">line_where</span>(CODE, <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)</code></pre></div>
+<p>This is a very simplistic sort of feedback: right or wrong.</p>
+</div>
+<div id="providing-constructive-feedback" class="section level3">
+<h3>Providing constructive feedback</h3>
+<p>Depending on your purpose, you may want to examine the submitted code for the kinds of errors you expect to be common and provide messages to guide the student around such errors. The following statements, for instance, check whether the user calls a trig function, uses multiplication, and gets the right value, all in the same line.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+<span class="co"># CODE &lt;- for_checkr(quote(11.98))</span>
+<span class="co"># CODE &lt;- for_checkr(quote(sin(53)))</span>
+<span class="co"># CODE &lt;- for_checkr(quote(15 * cos(53)))</span>
+t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
+t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>),
+              <span class="dt">message =</span> <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>)
+<span class="kw">line_where</span>(t1, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
+<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
+<p>Note that the input to each <code>line_</code> function is the output of a previous function. The checking will stop on the first failure, so each line is run conditional on the previous lines passing. The commented out <code>CODE</code> fragments would trigger failures with different messages.</p>
+<p>Later, we’ll see how to have multiple chains exploring different possibilities.</p>
+<p>You could do further checking, if desired. For instance, before checking the final value, perhaps make sure that the sine function specifically is being called, or if the value produced by the sine function is consistent with 53 degrees. How much checking to do is a matter of the desired pedagogical style.</p>
+</div>
+<div id="anticipating-student-errors" class="section level3">
+<h3>Anticipating student errors</h3>
+<p>When developing checking code, you likely have in mind some typical mistakes that a student might make. For instance, in trigonometry, it’s common to confuse the cosine with the sine. You might want to include checking statements that look specifically for a particular mistake and give a tailored feedback message.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(<span class="kw">quote</span>(<span class="dv">15</span> <span class="op">*</span><span class="st"> </span><span class="kw">cos</span>(<span class="dv">53</span>)))
+t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
+t1 &lt;-<span class="st"> </span><span class="kw">misconception</span>(t1, <span class="kw">line_calling</span>(t1, cos), <span class="dt">message =</span> <span class="st">&quot;Are you sure cosine is the right choice?&quot;</span>)
+t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>),
+              <span class="dt">message =</span> <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>)
+<span class="kw">line_where</span>(t1, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Are you sure cosine is the right choice?</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; 15 * cos(53)</span>
+<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
+</div>
+<div id="testing-chains" class="section level3">
+<h3>Testing chains</h3>
+<ul>
+<li>If you insist that a particular statement be a chain, you can extract that statement with <code>line_chaining()</code>. Then use <code>expand_chain()</code> to turn that into a sequence of ordinary statements that can be checked in the ordinary way.</li>
+<li>By default, use <code>expand_all_chains()</code> to turn the code into a single sequence that expands all the chains.</li>
+</ul>
+<p>So, if you’re anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using <code>expand_all_chains()</code> directly on the <code>CODE</code>.</p>
+</div>
+<div id="writing-functions-for-checking" class="section level3">
+<h3>Writing functions for checking</h3>
+<p>The functions provided by <code>checkr</code> can be composed into higher-level functions in the ordinary way. We’ll call these <em><code>checkr</code> functions</em>. Keep in mind: that both the input to and output from a <code>checkr</code> function should be an object of type <code>checkr_result</code>. (There can be other inputs as well, for instance, a specified value.)</p>
+<p>To illustrate, consider <code>trig_radian_check()</code>, a function to check whether the argument to trigonometric functions is in radians. It takes as arguments a <code>checkr_result</code> that (presumably) contains a call to a trigonometric function and the value, in radians, that is expected.</p>
+<p>Consider this checking statement:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(ang)), 
+           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
+           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
+           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
+           <span class="kw">failif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>))</code></pre></div>
+<p>The result, of course, depends on the submission.</p>
+<ul>
+<li>If the submission is <code>15 * sin(53 * pi / 180)</code>, we don’t want the submission to fail. For that submission, the result of the above <code>if_matches()</code> will be</li>
+</ul>
+<p>The submission fails to match the pattern <code>.(fn)(..(ang))</code> because that pattern doesn’t incorporate the “multiply by 15” in the submission.</p>
+<ul>
+<li><p>If the submission is <code>sin(53 * pi / 180)</code>, we do want the submission to fail. But it’s helpful if the failure message points out what the problem is, namely the failure to multiply by 15. For this submission, the result of the check statement will be</p></li>
+<li><p>If the submission is <code>cos(53 * pi / 180)</code>, the failure should indicate that cosine is the wrong trig function.</p></li>
+<li><p>If the submission is <code>sin(53)</code>, the failure should be about using degrees as the argument:</p></li>
+</ul>
+<p>A more complete answer would look for multiplication by 15. This involves a pattern something like: <code>15 * .(fn)(..(arg))</code>. But, since we think a common student error will be to leave out the <code>15 *</code>, we’ll want to check as well for a match to plain <code>.(fn)(..(arg))</code>. When there are multiple, structurally different patterns, use multiple <code>if_matches()</code> statements, like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(arg)), 
+           <span class="kw">failif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>))
+<span class="kw">if_matches</span>(submission, <span class="dv">15</span> <span class="op">*</span><span class="st"> </span>.(fn)(<span class="kw">..</span>(arg)), 
+           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
+           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
+           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
+           <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Good job!&quot;</span>))</code></pre></div>
+<p>Remember, it’s up to the problem author to anticipate the kinds of wrong answers students will give and how to respond to them. Suppose, for instance, that after some experience with the problem, the instructor notes that many students are writing <code>225 * sin(53 * pi / 180)</code>, that is, multiplying by the square length of the hypothenuse. It would be nice to give specific feedback about this mistake. For instance,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(arg)), 
+           <span class="kw">failif</span>(<span class="ot">TRUE</span>), <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>)
+<span class="kw">if_matches</span>(submission, .(hyp) <span class="op">*</span><span class="st"> </span>.(fn)(<span class="kw">..</span>(ang)), 
+           <span class="kw">failif</span>(hyp <span class="op">==</span><span class="st"> </span><span class="dv">225</span>, <span class="st">&quot;Use the length, not the square length!&quot;</span>),
+           <span class="kw">insist</span>(hyp <span class="op">==</span><span class="st"> </span><span class="dv">15</span>, <span class="st">&quot;What length are you using?&quot;</span>),
+           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
+           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
+           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
+           <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Good job!&quot;</span>))</code></pre></div>
+<p>The checking can be made more elaborate. For instance, suppose we want to warn about using <code>+</code> instead of <code>*</code> in the statement. This pattern will capture the function used in the place where we want multiplication: <code>.(mult_fn)(.(hyp), .(fn)(..(ang)))</code>. With this pattern, we might include a test like <code>failif(mult_fn != quote(`*`), &quot;{{mult_fn}} is the wrong function.&quot;)</code></p>
+</div>
+<div id="taken-out" class="section level3">
+<h3>Taken out</h3>
+<p>One possibility would be “regular expressions” of the sort supported by <code>grep()</code>, <code>gsub()</code>, and so on. However, regular expressions do not know about the required syntax of R statements. For instance, “function arguments are enclosed in parentheses and multiple arguments are separated by commas.”</p>
+<p>The <code>redpen</code> package provides a pattern language that knows about R syntax. This allows us to specify patterns in a way that resembles R commands themselves. In particular, every pattern statement in <code>redpen</code> must be a syntactically correct R expression. As a trivial example, the pattern <code>15 * sin(53 * pi / 180)</code> describes an exact match to a specific correct answer.</p>
+<p>But there are other possible correct answers, e.g.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission_<span class="dv">2</span> &lt;-<span class="st"> &quot;theta &lt;- 53 * pi/180; r &lt;- 15; r*sin(theta)&quot;</span>
+submission_<span class="dv">3</span> &lt;-<span class="st"> &quot;ang &lt;- pi * (53 / 180); sin(ang) * 15&quot;</span></code></pre></div>
+<p>Since it will be difficult to list every possible statement that produces a correct answer, it’s important that the pattern language automatically handle trivial permutations of the correct command, unnecessary grouping parentheses, unconventional whitespace, etc.</p>
+<p>To start, here’s a pattern that stands for “the sine of something”: <code>sin(.)</code>. The <code>.</code> inside the parentheses means “any single argument.”</p>
+<p>To elaborate a bit, the pattern <code>sin(..(ang))</code> means “the sine of something, where the value of that something will be stored under the name <code>ang</code>.” And going further, the pattern <code>.(fn)(..(ang))</code> means, “a function applied to a single argument, where the function name will be stored under <code>fn</code> and the value of the argument stored under <code>ang</code>.” Note that <code>.(fn)(..(ang))</code> will <em>not</em> match <code>15 * sin(53 * pi / 180)</code>, because the pattern doesn’t say anything about multiplication by 15.</p>
+</div>
+</div>
+<div id="fill-in-the-blanks" class="section level2">
+<h2>Fill in the blanks</h2>
+<p>A good pedagogical technique when introducing a subject is to start an exercise with part of the answer and ask students to fill in one or more blanks. This approach let’s the instructor focus on one part of a command. As an example, consider this problem:</p>
+<blockquote>
+<p>Fill in the blanks in the following code to create a <code>ggplot2</code> command that will produce the following scatter plot with the <code>mtcars</code> data.<br />
+<img src="data:image/png;base64,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" /><!-- --></p>
+<p>There are four named blanks, for instance <code>..x..</code>. You’ll have to replace all of them with the correct contents to generate the plot.</p>
+</blockquote>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(mtcars, <span class="kw">aes</span>(<span class="dt">x =</span> ..x.., <span class="dt">y =</span> ..y.., <span class="dt">color =</span> ..c..)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">..geom..</span>()</code></pre></div>
+<p>Let’s suppose the student’s submission, after filling in the blanks is</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission &lt;-<span class="st"> &quot;library(ggplot2); </span>
+<span class="st">ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +</span>
+<span class="st">  geom_point()&quot;</span></code></pre></div>
+<p>To check the submission, we need to create a pattern that will let us look up the student’s values for each of the blanks, then compare these to the correct answer. Good news: We can use the prompt itself as a pattern.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_blanks</span>(submission,
+             <span class="kw">ggplot</span>(mtcars, <span class="kw">aes</span>(<span class="dt">x =</span> ..x.., <span class="dt">y =</span> ..y.., <span class="dt">color =</span> ..c..)) <span class="op">+</span><span class="st"> </span><span class="kw">..geom..</span>(),
+             <span class="kw">passif</span>(x <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(mpg) <span class="op">&amp;&amp;</span><span class="st"> </span>y <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(hp) <span class="op">&amp;&amp;</span><span class="st"> </span>
+<span class="st">                      </span>c <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(cyl) <span class="op">&amp;&amp;</span><span class="st"> </span>geom <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(geom_point),
+                    <span class="st">&quot;Good job! {{x}}, {{y}}, {{c}}, and {{geom}}&quot;</span>),
+             <span class="kw">noteif</span>(x <span class="op">!=</span><span class="st"> </span><span class="kw">quote</span>(mpg), <span class="st">&quot;{{x}} is not the variable on the horizontal axis.&quot;</span>),
+             <span class="kw">noteif</span>(y <span class="op">!=</span><span class="st"> </span><span class="kw">quote</span>(hp), <span class="st">&quot;{{y}} is not the right variable for the vertical axis&quot;</span>),
+             <span class="kw">noteif</span>(c <span class="op">!=</span><span class="st"> </span><span class="kw">quote</span>(cyl), <span class="st">&quot;{{c}} is not the right variable to map to color.&quot;</span>),
+             <span class="kw">noteif</span>(geom <span class="op">!=</span><span class="st"> </span><span class="kw">quote</span>(geom_point), <span class="st">&quot;{{geom}} is not the correct geom to make a scatter plot.&quot;</span>),
+             <span class="kw">failif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Try again.&quot;</span>))</code></pre></div>
+<p>It may seem a bit odd to use <code>..x..</code> as a blank. But R names are allowed to begin with <code>.</code> and cannot begin with <code>_</code>.</p>
+<p>Sometimes you will want just one or two blanks and don’t want to clutter up the template with named blanks. It’s legal to use just dots for the blanks. Each blank must have a unique number of dots, and there must be eight or more dots. To refer to a blank in the tests, take away four dots to get the name of that blank. For example:</p>
+<blockquote>
+<p>Calculate the hypothenuse length C of a right triangle whose other edges are A and B.</p>
+</blockquote>
+<pre><code>```r
+C &lt;- .....(A^2 + B^2)
+```</code></pre>
+<p>The pattern in the checking statement can be the same as the prompt:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_blanks</span>(submission, C &lt;-<span class="st"> </span><span class="kw">........</span>(A<span class="op">^</span><span class="dv">2</span> <span class="op">+</span><span class="st"> </span>B<span class="op">^</span><span class="dv">2</span>),
+             <span class="kw">passif</span>(.... <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sqrt), <span class="st">&quot;Right!&quot;</span>),
+             <span class="kw">insist</span>(.... <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sqrt), <span class="st">&quot;Think again. {{....}} is not the right function to use.&quot;</span>))</code></pre></div>
+<p>Let’s try some different submissions:</p>
+<ul>
+<li><p><code>C &lt;- sqrt(A^2 + B^2)</code></p></li>
+<li><p><code>C &lt;- log(A^2 + B^2)</code></p></li>
+<li><p><code>C &lt;- ........(A^2 + B^2)</code> that is, the dots were not replaced</p></li>
+<li><p><code>C &lt;- sqrt(A + B)</code></p></li>
+</ul>
+<p>In the above we used names <code>x</code>, <code>y</code>, <code>c</code>, and <code>geom</code> to distinguish the blanks one from the other.</p>
+</div>
+<div id="checking-submissions-that-throw-an-error" class="section level2">
+<h2>Checking submissions that throw an error</h2>
+<p>Sometimes students will submit code that throws an error, either at parse time or at run time. By default, learnr displays such errors in their native, somewhat cryptic format.</p>
+<p><code>checkr</code> has some simple error-catching logic that tries to translate the native R messages into a friendlier format. To turn this on, you need to add a <code>-code-check</code> chunk to each exercise.</p>
+<ul>
+<li>[ASIDE] I would rather that code checking be turned on or off at the document level, perhaps as a choice in <code>check_for_learnr()</code>.</li>
+<li>[ASIDE] I would also rather that the evaluation of the exercise take place entirely in the checking function, rather than being run first by learnr and then handed off to the checking function.</li>
+</ul>
+<p>For an exercise named <code>prob-1</code> the code check chunk will look like:</p>
+<pre><code>` ``{r prob-1-code-check, echo = FALSE}
+1 # there must be some content
+```</code></pre>
+<p>If, when trying out your exercises, you find a parsing or run-time error that isn’t captured by <code>checkr</code>, please submit an “issue” on the GitHub site so that we can add that into the system.</p>
+</div>
+<div id="outliney-from-here-on" class="section level2">
+<h2>OUTLINEY from here on</h2>
+</div>
+<div id="values-vs-expressions" class="section level2">
+<h2>Values vs expressions</h2>
+<p><code>.(a)</code> versus <code>..(a)</code></p>
+</div>
+<div id="chains" class="section level2">
+<h2>Chains</h2>
+</div>
+<div id="patterns" class="section level2">
+<h2>Patterns</h2>
+<ul>
+<li>Name of an argument: <code>rep(.(a), `..(nm)` = .(b))</code>. Note that the wild-card for the argument name needs to be placed in back-quotes. This is because <code>..(nm)</code> is not a valid argument name, but <code>`..(nm)`</code> is.</li>
+</ul>
+</div>
+<div id="use-in-tutorials" class="section level2">
+<h2>Use in tutorials</h2>
+<p>The check function for debugging, but don’t use it in tutorial check chunks.</p>
+</div>
+<div id="details" class="section level2">
+<h2>Details</h2>
+<ul>
+<li>using <code>quote(sin)</code> when comparing to a name</li>
+<li>at least one of the statements should match all of the patterns</li>
+<li>using <code>if_matches()</code> recursively to study a sub-pattern</li>
+</ul>
+<p>What’s the meaning of <code>.(fn)(...)</code>? NEED TO SAY it’s a legal R expression, even if it isn’t one that many experienced R users would recognize. <code>...</code> is a legal statement in R, although typically used only <em>within</em> functions. And <code>.(fn)</code> is a legal statement, which would usually be read as “the function named <code>.</code> being applied to the value of <code>fn</code>.” The point here is that patterns must be legal R expressions, and <code>.(fn)(...)</code> satisfies this. But the components <code>...</code> and <code>.(fn)</code> in a pattern do not have their usual meaning. Instead, they follow the conventions of the <code>redpen</code> package.</p>
+<p>As part of a pattern, <code>...</code> means any set of arguments: it’s a wildcard which matches anything that might legally be used as arguments to a function.</p>
+<p>As part of a pattern, <code>.(fn)</code> means, “Give the name <code>fn</code> to whatever is being used in this role in the statement.” And what part is that? In ordinary syntax, parentheses are used to indicate the application of a function to arguments. So <code>sin(...)</code> in a pattern means “evaluate the function <code>sin</code> and don’t worry about what the specific argument or arguments are.” In the pattern <code>.(fn)(...)</code> the marker <code>.(fn)</code> is in the position of <code>sin</code> in <code>sin(...)</code>. Thus, <code>.(fn)(...)</code> is a pattern that says, “I’m expecting a function being applied to some arguments. Use <code>fn</code> to represent the function itself.”</p>
+<p>The pattern is the part of the system that provides the flexibility for an author to define what standards should be satisfied by the submission. Let’s elaborate on that.</p>
+<p>WARNING TO THE READER: The patterns that follow may seem bizarre when you first encounter them. Rest assured, you’ll have time to get to know them. And, even if they don’t look like it, each pattern is a syntactically correct R statement.</p>
+<p>Here are a few patterns that will be relevant to the rest of the example:</p>
+<ul>
+<li><code>..(res)</code> – the overall result of the submission, which will be available under the name <code>res</code>.</li>
+<li><code>&quot;+&quot;(.(a), .(b))</code> – the + function applied to two arguments, which we’ll call <code>a</code> and <code>b</code>, which might themselves be expressions, as in <code>(2^1) + sqrt(9)</code>, where the arguments to + are <code>(2^1)</code> and <code>sqrt(9)</code>.</li>
+<li><code>&quot;+&quot;(..(a), ..(b))</code> – similar to be above, but if the two arguments happen to be expressions, <code>a</code> and <code>b</code> should stand for the <em>values</em> of their corresponding expressions. For instance matching the pattern to the submission <code>(2^1) + sqrt(9)</code> would result in <code>a</code> being 2 and <code>b</code> being 3.</li>
+<li><code>.(fn)(.(a), .(b))</code> – a function, which we’ll call <code>fn</code>, being applied to arguments which we’ll call <code>a</code> and <code>b</code>.</li>
+<li><code>.(fn)(.)</code> – a function applied to a single argument.</li>
+<li><code>.(fn)(., ., ., ...)</code> a function applied to three or more arguments.</li>
+</ul>
+<p>The facilities for implementing and applying these sorts of patterns are provided by the remarkable <code>redpen</code> package in conjunction with <code>rlang</code>.</p>
+</div>
+<div id="multiple_if_matches" class="section level2">
+<h2>Multiple <code>if_matches</code></h2>
+<p>Introduce <code>check()</code> and multiple patterns.</p>
+</div>
+<div id="expressions-and-quote-vs-values" class="section level2">
+<h2>Expressions and <code>quote()</code> vs values</h2>
+<p>Consider this R command (which generates an error):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a
+<span class="co">#&gt; Error in eval(expr, envir, enclos): object 'a' not found</span></code></pre></div>
+<p>Why the error? Because <code>a</code> does not have a value associated with it. But there’s nothing wrong with <code>a</code> in itself; the statement would have worked if <code>a</code> had been bound to some value.</p>
+<p>WHERE IS THIS GOING? - What <code>quote()</code> is doing in the examples. (Setting up the submission as an expression rather than the value of an expression.) - Why you would need to use <code>quote()</code> in testing the expression itself. E.g. looking at the <em>name</em> of a function. - The quoting goes on automatically when a string is passed as the submission.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission &lt;-<span class="st"> &quot;x &lt;- 3; sin(x)&quot;</span>
+<span class="co"># This will work. `fn` will be a symbol, as will `quote(sin)`.</span>
+<span class="kw">if_matches</span>(submission, .(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
+<span class="co"># This won't work. `fn` will be a symbol, but `sin` is a function, not a symbol.</span>
+<span class="kw">if_matches</span>(submission, .(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span>sin, <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
+<span class="co"># Back to working again. With the double dots, `fn` will be the value that the name &quot;sin&quot; points to. In this case, that will be the function `sin()`. </span>
+<span class="kw">if_matches</span>(submission, <span class="kw">..</span>(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span>sin, <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
+<span class="co"># The funny `.Primitive(&quot;sin&quot;)` reflects that the function `sin` is something called a &quot;primitive,&quot; as opposed to the kind of thing like `function(x) x^2`. This will certainly be confusing as a message to students, so better to use comparison of the very first form, where the single-dot pattern is used and compared to `quote(sin)`.</span></code></pre></div>
+</div>
+<div id="tips-on-patterns-and-tests" class="section level2">
+<h2>Tips on patterns and tests</h2>
+<ul>
+<li>Patterns are raw R statements, for instance</li>
+<li>Assignment-to has a pattern <code>`&lt;-`(x, ...)</code>
+<ul>
+<li>If you want to allow assignment to any of several names, try <code>`&lt;-`(.(nm), ...)</code> as the pattern and <code>nm == quote(x) || nm == quote(X)</code> as the test:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(<span class="kw">quote</span>(x &lt;-<span class="st"> </span><span class="dv">3</span> <span class="op">+</span><span class="st"> </span><span class="dv">2</span>), <span class="st">`</span><span class="dt">&lt;-</span><span class="st">`</span>(.(nm), <span class="kw">..</span>(val)), 
+           <span class="kw">passif</span>(nm <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(X) <span class="op">||</span><span class="st"> </span>nm <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(x), <span class="st">&quot;{{nm}} was assigned the value {{val}}&quot;</span>))</code></pre></div>
+<ul>
+<li>Notice that the pattern has a single dot (<code>.(nm)</code>) for the assigned-to part of pattern. Similarly, the value to which it’s being compared is in <code>quote()</code>, as appropriate for matching a language-name object.</li>
+</ul></li>
+<li>Distinguish between <code>.(a)</code> and <code>..(a)</code>. Suppose you want to check which trigonometric function has been used in a command like <code>quote(cos(x))</code>. An appropriate pattern would be <code>.(fn)(...)</code>, like this:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission &lt;-<span class="st"> </span><span class="kw">quote</span>({x &lt;-<span class="st"> </span>pi; <span class="kw">cos</span>(x)})
+pattern &lt;-<span class="st"> </span><span class="kw">quote</span>(.(fn)(.(var))) <span class="co"># will have to unquote</span>
+<span class="kw">if_matches</span>(submission, <span class="op">!!</span>pattern, <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Found match&quot;</span>))
+<span class="kw">if_matches</span>(submission, .(fn)(.(var)),
+           <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(cos) <span class="op">&amp;&amp;</span><span class="st"> </span>var <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(x), <span class="st">&quot;Right. The function is {{fn}} on variable {{var}}.&quot;</span>))</code></pre></div>
+</div>
+<div id="some-kinds-of-questions" class="section level2">
+<h2>Some kinds of questions</h2>
+<p><a href="http://third-bit.com/2017/10/16/exercise-types.html" class="uri">http://third-bit.com/2017/10/16/exercise-types.html</a></p>
+</div>
+<div id="taken-out-1" class="section level2">
+<h2>Taken out</h2>
+<p>To help meet the demand for R-related training, various <em>interactive tutorial systems</em> have been developed. These include <a href="http://swirlstats.com/">Swirl</a>, <a href="http://DataCamp.com">DataComp.com</a>, and the Shiny-based system introduced by RStudio: <a href="http://github.com/rstudio/learnr"><code>learnr</code></a>. In each of these systems, a problem is posed to the student, who has an opportunity to construct R commands as a solution. The R commands are then passed to an evaluation system.</p>
+<p>Readers may also want to check out the system for <em><a href="https://www.datacamp.com/community/blog/submission-correctness-testing-in-datacamp-datacamp-part-i#gs.vuTG8Xw">submission correctness tests</a></em> provided by DataCamp.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

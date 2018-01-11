@@ -7,7 +7,6 @@
 #' @return the matching expression as a quosure that can be evaluated
 #' with eval_tidy().
 #'
-#' @importFrom utils capture.output head tail
 #'
 #' @details If the expression isn't a call, it still has a value. These functions
 #' return that value if it's a match to the type sought. If ex directly from
@@ -99,13 +98,13 @@ generic_arg <- function(tidy_expr, type_description, type_test,
 
   if (message == "") {
     # Pre-form the failure message
-    fail <- paste(rlang::expr_text(rlang::quo_expr(code)),
+    fail <- paste(expr_text(quo_expr(code)),
                   "doesn't contain an argument that is",
                   type_description)
   }
   bad_return <- new_checkr_result(action = "fail", message = message, code = tidy_expr$code)
 
-  if ( ! rlang::is_lang(code)) {
+  if ( ! is_lang(code)) {
     # if it's the right kind of object, just return that
     if (type_test(code)) {
       # create a dummy expression whose value is the value of this thing
@@ -119,14 +118,14 @@ generic_arg <- function(tidy_expr, type_description, type_test,
 
   # But usually will be a tidy expression containing a call
   this_env <- environment(code)
-  the_args <- rlang::lang_args(code)
+  the_args <- lang_args(code)
   found_target <- FALSE
   target <- NULL
   found_count <- 0
 
   for (k in 1:length(the_args)) {
     val <- if (use_value && (is.name(the_args[[k]]) || is.call(the_args[[k]]))) {
-      rlang::eval_tidy(the_args[[k]], data = this_env)
+      eval_tidy(the_args[[k]], data = this_env)
     } else {
       the_args[[k]]
     }
@@ -141,7 +140,7 @@ generic_arg <- function(tidy_expr, type_description, type_test,
     }
   }
   if (found_target) {
-    code = list(rlang::new_quosure(target, env = this_env))
+    code = list(new_quosure(target, env = this_env))
     if (nchar(pass)) new_checkr_result("pass", message = pass, code = code)
     else new_checkr_result("ok", code = code)
   } else {
@@ -155,16 +154,16 @@ arg_number <- function(ex, n = 1L, ..., message = "") {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex)
   code <- simplify_ex(ex$code[[1]])
-  argv <- rlang::lang_args(code)
+  argv <- lang_args(code)
   res <-
     if (length(argv) < n) {
       new_checkr_result(action = "fail",
-                        message = paste(rlang::expr_text(rlang::quo_expr(code)),
+                        message = paste(expr_text(quo_expr(code)),
                                         "does not have", n, "arguments"),
                         code = ex$code)
 
     } else {
-      code <- list(rlang::new_quosure(argv[[n]], env = environment(code)))
+      code <- list(new_quosure(argv[[n]], env = environment(code)))
       new_checkr_result("ok", code = code)
     }
   line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
@@ -184,8 +183,8 @@ named_arg <- function(ex, nm, ..., message = "") {
   if (failed(ex)) return(ex)
   code <- simplify_ex(ex$code[[1]])
 
-  arg_names <- rlang::lang_args_names(code)
-  argv <- rlang::lang_args(code)
+  arg_names <- lang_args_names(code)
+  argv <- lang_args(code)
   the_arg <- grep(nm[1], arg_names)
   res <-
     if (length(the_arg) == 0) {
@@ -194,7 +193,7 @@ named_arg <- function(ex, nm, ..., message = "") {
                         code = ex$code)
     } else {
       # we found a match, return it along with the environment
-      code <- list(rlang::new_quosure(argv[[the_arg]], env = environment(code)))
+      code <- list(new_quosure(argv[[the_arg]], env = environment(code)))
       new_checkr_result("ok", code = code)
     }
   line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))

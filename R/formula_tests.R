@@ -36,12 +36,12 @@ two_sided <- function(F) {
 #' @rdname formula_tests
 #' @export
 lhs_equals <- function(F, ...) {
-  side_equal_helper(F, rlang::f_lhs, ...)
+  side_equal_helper(F, f_lhs, ...)
 }
 #' @rdname formula_tests
 #' @export
 rhs_equals <- function(F, ...) {
-  side_equal_helper(F, rlang::f_rhs, ...)
+  side_equal_helper(F, f_rhs, ...)
 }
 
 side_equal_helper <- function(F, side_fun, ...) {

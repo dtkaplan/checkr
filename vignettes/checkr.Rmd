@@ -37,13 +37,13 @@ HOW DIFFICULT IT IS TO GRADE ESSAYS
 
 One of the most powerful heuristics is Right-or-Wrong. The `checkr` package provides facilities to give some feedback on their work.
 
-"Summative feedback," in the jargon of education, means telling whether the student was right or wrong; whether the submitted work satisfied the requirements. In computer programming, summative feedback can be based on whether a correct result was computed, whether a function works as required, and so on. `Checkr2` provides simple mechanisms for comparing the quantities computed by the student submission to known values.
+"Summative feedback," in the jargon of education, means telling whether the student was right or wrong; whether the submitted work satisfied the requirements. In computer programming, summative feedback can be based on whether a correct result was computed, whether a function works as required, and so on. `Checkr` provides simple mechanisms for comparing the quantities computed by the student submission to known values.
 
-"Formative feedback" attempts to help the student develop a better submission. This is a more subtle situation, since good feedback must involve understanding of how student's think about the problem, typical patterns in student answers, and the variety of ways that the problem can be approached. `Checkr2` provides facilities for looking within the student's code for functions and their arguments, for checking intermediate results, and to look for specific mistake patterns.
+"Formative feedback" attempts to help the student develop a better submission. This is a more subtle situation, since good feedback must involve understanding of how student's think about the problem, typical patterns in student answers, and the variety of ways that the problem can be approached. `Checkr` provides facilities for looking within the student's code for functions and their arguments, for checking intermediate results, and to look for specific mistake patterns.
 
 The `checkr` package provides such an evaluation system that provides both summative and formative feedback and, at the instructor's discretion, logs student submissions for assigning credit and to support looking for common patterns of misconception in student answers.
 
-`Checkr2` can be used in a stand-alone mode or as embedded in a `learnr` tutorial. 
+`Checkr` can be used in a stand-alone mode or as embedded in a `learnr` tutorial. 
 
 ## A catalog of functions
 
@@ -100,7 +100,7 @@ Of course, if the value computed by the student's submission is not correct, the
 3. Is 53 the argument to $\sin$? If not, we can remind the student to convert the angle to radians.
 4. Is multiplication by a conversion factor being used, and is the conversion factor correct?
 
-Answering questions (2) through (4) requires that the student's submission be taken apart: what's the function and what's the argument to the function. `Checkr2` provides a handful of functions that do this in different ways. 
+Answering questions (2) through (4) requires that the student's submission be taken apart: what's the function and what's the argument to the function. `Checkr` provides a handful of functions that do this in different ways. 
 
 ### Submitting what?
 

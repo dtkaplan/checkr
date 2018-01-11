@@ -31,7 +31,7 @@ arg_calling <- function(ex, ..., n=1L, message = "call to function") {
 
 check_qfuns <- function(qfuns) {
   # are they really quoted functions
-  what <- unlist(lapply(c(qfuns), FUN = function(x) rlang::is_function(eval(x))))
+  what <- unlist(lapply(c(qfuns), FUN = function(x) is_function(eval(x))))
   if (! all(what)) stop("passing something other than a quoted function")
 }
 format_qfuns <- function(qfuns) {

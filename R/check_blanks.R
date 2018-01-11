@@ -20,9 +20,9 @@
 #' @export
 check_blanks <- function(ex, pat, ...) {
   stopifnot(inherits(ex, "checkr_result"))
-  cmd <- rlang::enquo(pat)
-  tests <- rlang::quos(...)
-  pat_str <- deparse(rlang::get_expr(cmd))
+  cmd <- enquo(pat)
+  tests <- quos(...)
+  pat_str <- deparse(get_expr(cmd))
   blank_names <- unlist(
     stringr::str_extract_all(string = pat_str,
                              "\\.{2}[\\._a-zA-Z0-9]+\\.{2}")

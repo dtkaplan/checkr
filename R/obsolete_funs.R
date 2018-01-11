@@ -5,7 +5,7 @@
 #' you are using an old version of checkr. If you want to continue using them,
 #' install that old version: `devtools::install_github("dtkaplan/checkr-v-0.1")`
 #'
-#' @param ...
+#' @param ... whatever arguments the original functions took
 #'
 #' @rdname obsolete_funs
 #' @export

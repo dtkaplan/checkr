@@ -13,7 +13,6 @@
 #' `expand_chain()` expands one chain. `expand_all_chains()` takes a sequence of lines, some of
 #' which may be chains, into an equivalent sequence of lines, none of which are chains.
 #'
-#' @importFrom magrittr %>%
 #'
 #' @return A `checkr_result` object with one line for each of the functions in the chain.
 #'
@@ -40,7 +39,7 @@ expand_chain <- function(ex) {
   # which gave expressions for the single LHS and the possibly many RHS.
   # To avoid using an unexported function (i.e. :::), I re-wrote this
   # using lang_tail()
-  CP <- lang_tail(rlang::quo_expr(skip_assign(ex$code[[1]])))
+  CP <- lang_tail(quo_expr(skip_assign(ex$code[[1]])))
   if (is_lang(CP[[1]]) && lang_head(CP[[1]]) == as.name("%>%")) {
     # A chain longer than one link needs to have the first part
     # broken up
@@ -56,7 +55,7 @@ expand_chain <- function(ex) {
   this_env <- environment(ex$code[[1]])
   # loop over the remaining elements in the chain
   for (m in seq_along(CP)) {
-    new_code[[m]] <- rlang::new_quosure(expr = CP[[m]], env = this_env)
+    new_code[[m]] <- new_quosure(expr = CP[[m]], env = this_env)
     value <- eval_tidy(new_code[[m]]) # the previous element
     this_env <- child_env(.parent = this_env, . = value)
   }
@@ -97,11 +96,11 @@ chain_elements <- function(ex) {
 elements_to_chain <- function(elements) {
   if (length(elements) == 1) return(elements[[1]])
   chain_start <-
-    rlang::lang(quote(`%>%`),
+    lang(quote(`%>%`),
                 elements[[1]],
                 elements[[2]])
   for (el in elements[-(1:2)]) {
-    chain_start <- rlang::lang(quote(`%>%`),
+    chain_start <- lang(quote(`%>%`),
                                chain_start,
                                el)
   }
@@ -115,7 +114,7 @@ is_chain <- function(ex) {
   if (! (is.call(ex) && is.call(quo_expr(ex)) )) {
     FALSE
   } else {
-    identical(as.name(rlang::lang_head(ex)), as.name("%>%"))
+    identical(as.name(lang_head(ex)), as.name("%>%"))
   }
 }
 

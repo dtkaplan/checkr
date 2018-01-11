@@ -55,7 +55,7 @@ This is a `learnr` tutorial to display some examples of code-checking with the `
 
 As you may know, `learnr` is a system for creating and distributing interactive documents, particularly documents that provide exercise-boxes where the reader can type and execute R code.
 
-`Checkr2` is a package that provides feedback about the code that is being executed in a `learnr` exercise box.
+`Checkr` is a package that provides feedback about the code that is being executed in a `learnr` exercise box.
 
 ## Hello, World!
 

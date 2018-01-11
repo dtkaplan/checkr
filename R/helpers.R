@@ -1,4 +1,4 @@
-# Functions internal to the checkr2 package.
+# Functions internal to the checkr package.
 
 # utility for copying out the bindings defined by redpen pattern
 copy_env <- function(E) {

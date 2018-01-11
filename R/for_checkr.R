@@ -25,12 +25,12 @@ for_checkr <- function(exprs) {
   }
   exprs <- as_bracketed_expressions(exprs)
   # The environment for the first expression
-  prev_env <- rlang::caller_env()
+  prev_env <- caller_env()
   code <- list()
   values <- list()
   for (m in 2:length(exprs)) {
     next_env <- new.env(parent = prev_env)
-    so_far <- try(rlang::eval_bare(exprs[[m]], env = next_env), silent = TRUE)
+    so_far <- try(eval_bare(exprs[[m]], env = next_env), silent = TRUE)
     if (inherits(so_far, "try-error")) {
       return(checkr_result_on_error(so_far, exprs[[m]]))
     } else {
@@ -39,7 +39,7 @@ for_checkr <- function(exprs) {
       # Assigned directly to values[[m-1]], this would delete the element.
       # So NA is substituted.
     }
-    code[[m - 1]] <- rlang::new_quosure(exprs[[m]], env = prev_env)
+    code[[m - 1]] <- new_quosure(exprs[[m]], env = prev_env)
     prev_env <- next_env
   }
   # return a checkr result augmented with the enquosured code and values
@@ -54,7 +54,7 @@ checkr_result_on_error <- function(v, ex) {
   message <- attr(v, "condition")
   message <- gsub("^.*\\): ", "", message )
   new_checkr_result(action = "fail",
-                    message = paste(rlang::expr_text(ex),
+                    message = paste(expr_text(ex),
                                     "is an invalid command because", message))
 }
 

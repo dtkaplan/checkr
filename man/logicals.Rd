@@ -48,7 +48,7 @@ pa \%or\% fa
 pa \%and\% fa
 pa \%or\% oka
 pa \%and\% oka
-checkr2::not(pa)
-checkr2::not(fa)
+checkr::not(pa)
+checkr::not(fa)
 
 }

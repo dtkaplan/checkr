@@ -1,0 +1,352 @@
+---
+title: "Matching patterns with `redpen`"
+author: "Danny Kaplan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Matching patterns with redpen}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This document explores possibilities for using the `redpen` package as the basis for code pattern matching.
+
+## 2 + 2
+
+> Write a command to add two and two.
+
+Criteria:
+- result should be 4
+- the `+` operator should be used
+- both arguments should be 2
+
+```{r}
+good1 <- quote(2 + 2)
+good2 <- quote((1+1) + 2)
+bad1 <- quote(3 + 1)
+bad2 <- quote(5 - 1)
+bad3 <- quote(2 * 2)
+bad4 <- quote(2 - 2)
+```
+
+- Result is 4. 
+```{r}
+pattern <- ..(foo) ~ identical(foo, 4)
+redpen::redpen::node_match(good1, !!pattern)
+redpen::node_match(bad3, !!pattern)
+redpen::node_match(bad4, !!pattern)
+```
+- `+` operator is used
+```{r}
+op <- `+`
+pattern <- ..(foo)(...) ~ identical(foo, `+`)
+redpen::node_match(good1, !!pattern)
+```
+Note that the `..` is used to get the value of `foo` rather than the (??tag??, ??name??, what?).
+
+- Both arguments are two.
+```{r}
+pattern <- .(op)(.(aa), .(bb)) ~ aa == bb
+pattern2 <- .(op)(..(aa), ..(bb)) ~ aa == bb # the values
+redpen::node_match(good1, !!pattern)
+redpen::node_match(good1, !!pattern)
+redpen::node_match(good2, !!pattern)
+redpen::node_match(good2, !!pattern2)
+redpen::node_match(bad1, !!pattern)
+redpen::node_match(bad2, !!pattern)
+redpen::node_match(bad3, !!pattern)
+redpen::node_match(bad4, !!pattern)
+```
+
+## Some possible supervisor functions
+
+
+Idea: Use moustache interpolation of bindings.
+
+```{r}
+fail <- function(m = "Feedback message",  ...) {
+  # immediately terminate if any of the ... are FALSE
+  
+}
+note <- function(m = "Point out so and so.", ...) {
+  # make a note of a potential problem
+  # to be reported along with the failure message
+  # if the fail() or default() functions are called.
+  
+  # maybe capture the failed component of ... and
+  # include that in the message.
+}
+misconception <- function(m = "That's a common misconception.", ...) {
+  # A kind of `fail()` to make explicit that this is 
+  # a mistake anticipated by the author
+
+}
+pass <- function(m = "Good job!", ...) {
+  # immediately report success if all of the ... are true
+  # this proactive pass requires success for ...
+  
+}
+default <- function(m = "Didn't see anything wrong") {
+  # return a passing feedback, but include the notes.
+}
+roughly <- function(x, y, epsilon = 0.1) {
+  abs(x - y) < epsilon
+}
+has_name <- function(nm, set) {
+  if (is_lang(set)) set <- all.names(set)
+  nm %in% set
+}
+```
+
+## Degrees and radians
+
+> Calculate the cosine of 81 degrees.
+
+```{r}
+good <- quote(cos(81 * pi / 180))
+bad1 <- quote(cos(81))
+bad2 <- quote(cos(81 / 180))
+```
+
+- Converted to radians correctly
+```{r}
+pattern1 <- cos(..(foo)) ~ roughly(foo, 81*pi/180)
+redpen::node_match(good, !!pattern)
+redpen::node_match(bad1, !!pattern)
+redpen::node_match(bad2, !!pattern)
+```
+- Pi appears in the argument to cosine
+```{r}
+pattern2 <- cos(.(foo)) ~ has_name("pi", all.names(foo))
+redpen::node_match(good, !!pattern2)
+redpen::node_match(bad1, !!pattern2)
+redpen::node_match(bad2, !!pattern2)
+```
+Note that `.(foo)` has only one dot, since we want the expression rather than the value.
+
+- Can we figure out if pi is on the top or bottom?
+```{r}
+pattern <- .(a) / .(b)  ~ has_name("pi", a)
+redpen::node_match(quote(81 * pi/180) , !!pattern)
+```
+
+## Assignment
+
+Patterns to pull out the LHS and RHS of assignment.
+```{r}
+y <- 7
+statement <- quote(x <- y^2)
+```
+
+```{r}
+pattern_name <- `<-`(.(a), .(b)) ~ a
+pattern1 <- `<-`(., .(b)) ~ b
+pattern2 <- `<-`(.(a), ..(b)) ~ b
+redpen::node_match(statement[[3]], !!pattern_name)
+redpen::node_match(statement, !!pattern1)
+redpen::node_match(statement, !!pattern2)
+```
+
+A try at an easy-to-use "assigns_to()" function. This generates a formula that can be used in `redpen::node_match()` and returns `TRUE` if the statement assigns to.
+
+```{r}
+assigns_to <- function(ex, assignable) {
+  x <- rlang::node_cadr(rlang::enquo(assignable))
+  pattern <- `<-`(lhs, ...) ~ TRUE
+  mut_node_cadr(rlang::f_lhs(pattern), x) #in place mutation
+  
+  redpen::redpen::node_match(ex, !!pattern)
+}
+get_assigns_val <- function(ex, assignable) {
+  x <- rlang::node_cadr(rlang::enquo(assignable))
+  pattern <- `<-`(lhs, ..(a)) ~ a
+  mut_node_cadr(rlang::f_lhs(pattern), x) #in place mutation
+  
+  redpen::redpen::node_match(ex, !!pattern)
+}
+get_assigns_expr <- function(ex, assignable) {
+  x <- rlang::node_cadr(rlang::enquo(assignable))
+  pattern <- `<-`(lhs, .(a)) ~ a
+  mut_node_cadr(rlang::f_lhs(pattern), x) #in place mutation
+  
+  redpen::redpen::node_match(ex, !!pattern)
+}
+get_arg_expr <- function(arg_nm) {
+  x <- rlang::node_cadr(rlang::enquo(arg_nm))
+  pattern <- .(foo)(arg_nm = .(a), ...) ~ a
+  
+  first <- rlang::node_cadr(pattern)
+  second <- rlang::node_cdr(first)
+  names(second) <- as.character(x)
+  return(pattern)
+}
+get_arg_val <- function(arg_nm) {
+  x <- rlang::node_cadr(rlang::enquo(arg_nm))
+  pattern <- .(foo)(arg_nm = ..(a), ...) ~ a
+  
+  first <- rlang::node_cadr(pattern)
+  second <- rlang::node_cdr(first)
+  names(second) <- as.character(x)
+  return(pattern)
+}
+get_fun_name <- function() {
+  .(fn)(...) ~ fn
+}
+
+# look over the common patterns and customize accordingly
+# e.g. explicit data argument
+get_data_value <- function(ex) {}
+get_data_name <- function(ex) {}
+get_formula <- function(ex){} 
+```
+
+
+## Chains
+
+```{r}
+library(dplyr)
+ex <- quote(
+  mtcars %>% 
+  group_by(cyl) %>%
+  mutate(ghp = mpg / hp) %>%
+  summarise(mn = mean(ghp))
+)
+eval(ex)
+ex2 <- quote(mtcars %>% summarise(m = mean(hp)))
+```
+
+```{r}
+is_chain <- function(ex) {
+  if (is.name(ex) ||
+      is.pairlist(ex)) {
+    FALSE
+  } else {
+    identical(as.name(rlang::node_car(ex)), as.name("%>%"))
+  }
+}
+
+# convert a chain into a list of expressions
+chain_elements <- function(ex) {
+  if (is_chain(ex)) {
+    c(chain_elements(rlang::node_cadr(ex)),
+      chain_elements(rlang::node_cddr(ex)))
+  } else {
+    ex
+  }
+}
+
+# Given a list of chain elements, turn them back into
+# a chain
+
+elements_to_chain <- function(elements) {
+  if (length(elements) == 1) return(elements[[1]])
+  chain_start <-
+    rlang::lang(quote(`%>%`), 
+         elements[[1]], 
+         elements[[2]])
+  for (el in elements[-(1:2)]) {
+    chain_start <- rlang::lang(quote(`%>%`),
+                        chain_start,
+                        el)
+  }
+  chain_start
+}
+
+# evaluate an element of the chain at a given input
+eval_chain_element <- function(input, ex) {
+  with_input <- rlang::lang(quote(`%>%`),as.name("input"), ex)
+  browser()
+  eval(with_input)
+}
+
+```
+
+
+```{r}
+# pull out everything in the chain *after* the specified function or name
+chain_head <- function(chn, pat, include.match = TRUE) {
+  pat <- rlang::node_cadr(rlang::enquo(pat))
+  pattern <- rlang::new_formula(lhs = pat, rhs = TRUE)
+  if ( ! is_chain(chn)) stop("not a chain")
+  parts <- chain_elements(chn)
+  # Find a matching part of the chain
+  kfound <- 0
+  for (k in 2:length(parts)) {
+    if ( ! is_empty(redpen::redpen::node_match(parts[[k]], 
+                               !!pattern))) {
+      kfound <- k
+      break
+    }
+  }
+   # Failed to find any
+  if (kfound == 0) return(NULL)
+  kfound <- ifelse(include.match, kfound, kfound-1)
+
+  elements_to_chain(parts[1:kfound])
+}
+# give back a headless chain
+chain_tail <- function(chn, pat, include.match = TRUE){
+    pat <- rlang::node_cadr(rlang::enquo(pat))
+  pattern <- rlang::new_formula(lhs = pat, rhs = TRUE)
+  if ( ! is_chain(chn)) stop("not a chain")
+  parts <- chain_elements(chn)
+  # Find a matching part of the chain
+  kfound <- 0
+  for (k in 2:length(parts)) {
+    if ( ! is_empty(redpen::redpen::node_match(parts[[k]], 
+                               !!pattern))) {
+      kfound <- k
+      break
+    }
+  }
+   # Failed to find any
+  if (kfound == 0) return(NULL)
+  kfound <- ifelse(include.match, kfound, kfound+1)
+
+  elements_to_chain(parts[-(1:(kfound-1))])
+}
+  
+
+# pull out the input data or output data for the 
+# command set in the pattern
+chain_value_before <- function(chn, pat){
+  pat <- rlang::node_cadr(rlang::enquo(pat))
+  pattern <- rlang::new_formula(lhs = pat, rhs = TRUE)
+  if ( ! is_chain(chn)) stop("not a chain")
+  parts <- chain_elements(chn)
+  # Find a matching part of the chain
+  kfound <- 0
+  for (k in 2:length(parts)) {
+    if ( ! is_empty(redpen::redpen::node_match(parts[[k]], 
+                               !!pattern))) {
+      kfound <- k
+      break
+    }
+  }
+ 
+  
+  # Failed to find any
+  if (kfound == 0) return(NULL)
+  # Found one
+  val <- eval(parts[[1]])
+  for (k in 2:kfound) {
+    val <- eval_chain_element(val, parts[[k]])
+  }    
+    
+  val
+}
+
+chain_value_after <- function(chn){}
+
+# pull out the expression immediately before or after
+# the one that matches the pattern
+chain_expr_before <- function(chn){}
+chain_expr_after <- function(chn){}
+```

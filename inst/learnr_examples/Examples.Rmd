@@ -1,0 +1,82 @@
+---
+title: "Some checking examples"
+author: "Danny Kaplan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Some checking examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Arithmetic
+
+> Write a statement to calculate 2 plus 2.
+
+```{r}
+right_1 <- for_checkr(quote(2 + 2))
+right_2 <- for_checkr(quote(`+`(2, 2)))
+wrong_1 <- for_checkr(quote(2 * 2))
+wrong_2 <- for_checkr(quote(3 + 1))
+wrong_3 <- for_checkr(quote(2 + 5))
+```
+
+```{r}
+ex <- wrong_3 
+check_binding(
+    ex, 
+    {..(val); .(fn)(.(a), .(b))},
+    insist(fn %same_as% `+`,
+           "\"Plus\" means addition, not {{fn}}."),
+    insist(a == 2 && b == 2, "We said, 'add **two plus two**, not {{a}} + {{b}}."),
+    passif(val == 4, "Good job!")
+)
+```
+
+## Trigonometry
+
+> What is the x-coordinate of a point on the unit circle at π/2?
+
+```{r}
+right_1 <- for_checkr(quote(cos(pi / 2)))
+wrong_1 <- for_checkr(quote(sin(pi / 2))) # using wrong trig function
+wrong_2 <- for_checkr(quote(cos(90))) # using degrees
+wrong_3 <- for_checkr(quote(cos(pi))) # wrong value
+wrong_4 <- for_checkr(quote(cos(pi, 2))) # wrong calling syntax
+wrong_5 <- for_checkr(quote(cos(3.14 / 2))) # bad approximation
+```
+
+```{r}
+# same tests to be run on each of the examples
+tests <- function(ex) { 
+  t1 <- misconception(ex, line_calling(ex, sin), "Sorry. We're asking for the **x** coordinate, not the y coordinate.")
+  if (failed(t1)) return(t1)
+  t1 <- check_binding(ex, cos(pi / 2), 
+           passif(TRUE, 
+              "Exactly! Nice use of name 'pi' to represent π.")) 
+  if (passed(t1)) return(t1)
+  check_binding(ex, {..(val); .(fn)(.(arg))},
+         insist(fn %same_as% `cos`, "{{fn}} is not the correct trigonometric function."),
+         # Specific misconceptions
+         failif(arg %same_as% pi, "The angle should be π/2, not π."),
+         failif(arg == 90, "True, pi/2 is the same as 90 degrees. But specify the angle in radians, not degrees."),
+         insist("pi" %in% all.names(arg), "Please use the symbolic `pi`.")
+    )
+}
+```
+
+```{r}
+tests(right_1)
+tests(wrong_1)
+tests(wrong_2)
+tests(wrong_3)
+tests(wrong_4)
+tests(wrong_5)
+```

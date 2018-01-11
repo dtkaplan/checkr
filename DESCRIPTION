@@ -1,0 +1,18 @@
+Package: checkr
+Type: Package
+Title: Facilities for checking R submissions in tutorials
+Version: 0.3.0
+Author: Daniel Kaplan
+Maintainer: Daniel Kaplan <kaplan@macalester.edu>
+Description: Helps check code submissions for learnr tutorials.
+License: MIT + file LICENSE
+Depends: rlang, magrittr
+Imports: redpen, stringr, ggplot2, evaluate
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)
+Suggests: knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr

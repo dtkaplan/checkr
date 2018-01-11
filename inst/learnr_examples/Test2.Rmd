@@ -1,0 +1,98 @@
+---
+title: "Examples for `checkr`"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(checkr)
+knitr::opts_chunk$set(echo = FALSE)
+tutorial_options(exercise.checker = checkr::check_for_learnr)
+# tutorial_options(exercise.checker = function(...) cat("Bogus checker\n"))
+```
+
+
+
+
+
+
+## Using `rep()`
+
+a. Create a vector named `Id` that has contents `1 1 1 2 2 2 3 3 3 4 4 4`. Use the `rep()` function to do this.
+```{r bunch-1-a, exercise = TRUE, echo = FALSE}
+
+```
+
+```{r bunch-1-a-solution, echo = FALSE}
+Id <- rep(1:4, each = 3)
+```
+
+```{r bunch-1-a-hint-1, echo = FALSE}
+1:4
+```
+
+```{r bunch-1-a-hint-2, echo = FALSE}
+rep(1:4, .... = 3) 
+```
+
+```{r bunch-1-a-code-check, echo = FALSE}
+1 # There must be something in this chunk.
+```
+
+```{r bunch-1-a-check, echo = FALSE}
+checkr:::rep_1245(USER_CODE)
+```
+
+
+b. Create a vector named `Letter` that contains `"a" "b" "c" "a" "b" "c" "a" "b" "c" "a" "b" "c"`
+```{r bunch-1-b, exercise = TRUE, echo = FALSE}
+
+```
+
+```{r bunch-1-b-solution, echo = FALSE}
+Letter <- rep(c("a","b","c"), each = 4)
+```
+
+```{r bunch-1-b-hint-1, echo = FALSE}
+c("a", "b", "c")
+```
+
+```{r bunch-1-b-hint-2, echo = FALSE}
+rep(...., length.out = 12)
+```
+
+```{r bunch-1-b-code-check, echo = FALSE}
+1 # chunk can't be empty
+```
+
+```{r bunch-1-b-check, echo = FALSE}
+checkr:::rep_abcd(USER_CODE)
+```
+
+
+c. You've constructed `Id` in the previous exercise. Copy the statement you used to do that into this code block. Then create two more vectors:
+    1. `x` which will be evenly spaced numbers between 1 and 43. `x` will have the same length as `Id`.
+    2. `y` which will be similar to `x`, but will consist of evenly spaced numbers between -20 and 0.
+    
+    Once you have constructed `x` and `y`, make a data frame called `df` that contains `x`, `y`, `Id` as columns. The variable names should be `x`, `y`, and `Id`.
+
+    ```{r bunch-1-c, exercise = TRUE, echo = FALSE}
+Id <- rep(1:4, each=3) 
+x <- seq(1, 43, length = length(Id))
+y <- seq(-20, 0, length = length(Id))
+df <- data.frame(x=x, y = y, Id = Id)
+```
+
+```{r bunch-1-c-solution, echo = FALSE}
+Id <- rep(1:4, each = 3)
+x <- seq(1, 43, along.with=Id)
+y <- seq(-20,0, along.with=Id)
+df <- data.frame(x = x, y = y, Id = Id)
+```
+
+```{r bunch-1-c-check, echo = FALSE}
+#USER_CODE <- "Id <- rep(1:4, each=3); x <- seq(1, 43, length = length(Id)); y <- seq(-20, 0, length = length(Id)); df <- data.frame(x=x, y = y, Id = Id)"
+checkr:::df_abcd_1234_x_y(USER_CODE)
+```
+

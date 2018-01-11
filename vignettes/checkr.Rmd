@@ -1,0 +1,517 @@
+---
+title: "Using `checkr`"
+author: "Daniel Kaplan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{checkr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(checkr)
+library(ggplot2)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Students are often asked to submit work. One of the roles of an instructor is to "grade" the students' work. Grades are both a motivator for students to do the work and, ideally, a way to provide feedback to help students learn the material. This ideal is often lost in the rush and tedium of grading itself. The feedback is generally Right-or-Wrong or a point score corresponding to small red check marks and x's placed on the students' papers by the instructor.
+
+The `checkr` package is an attempt to improve the quality of feedback, reduce the tedium of grading, and enable instructors to collect data to help make more effective the feedback students receive.
+
+BLAH BLAH BLAH ... Domain is R commands.
+
+Writing checkr statements is work, but it is a different kind of work than grading papers. 
+
+Feedback should be immediate.
+
+## Why right is wrong.
+
+It's not just the output. It's the way they went about producing the output.
+
+HOW DIFFICULT IT IS TO GRADE ESSAYS
+
+
+One of the most powerful heuristics is Right-or-Wrong. The `checkr` package provides facilities to give some feedback on their work.
+
+"Summative feedback," in the jargon of education, means telling whether the student was right or wrong; whether the submitted work satisfied the requirements. In computer programming, summative feedback can be based on whether a correct result was computed, whether a function works as required, and so on. `Checkr2` provides simple mechanisms for comparing the quantities computed by the student submission to known values.
+
+"Formative feedback" attempts to help the student develop a better submission. This is a more subtle situation, since good feedback must involve understanding of how student's think about the problem, typical patterns in student answers, and the variety of ways that the problem can be approached. `Checkr2` provides facilities for looking within the student's code for functions and their arguments, for checking intermediate results, and to look for specific mistake patterns.
+
+The `checkr` package provides such an evaluation system that provides both summative and formative feedback and, at the instructor's discretion, logs student submissions for assigning credit and to support looking for common patterns of misconception in student answers.
+
+`Checkr2` can be used in a stand-alone mode or as embedded in a `learnr` tutorial. 
+
+## A catalog of functions
+
+Process the submitted code to prepare for testing:
+
+* `for_checkr(USER_CODE)` will take the code directly from `learnr`. Or, for development purposes, you can set `USER_CODE` yourself to be either a character string containing the code or a quoted line or set of lines. (The set of lines for `quote()` must be in curly braces.)
+* `expand_chain(CODE)` once you've identified a line of interest that happens to be a chain, you may want to do checks within that line. `expand_chain(CODE)` turns the sequence of statements in a chain into individual statements, and provides a binding in each statement for the value of `.` that will be the input to that statement.
+* `expend_all_chains(CODE)` takes a set of statements and expands all the chains in it, so that it can be treated as an ordinary sequence of statements.
+
+Locate a line ...
+
+* `line_where()` - binds V, EX, Z, F. Special case of line_binding. No passif() or failif(), just logical tests written in terms of V, EX, Z, F
+* `line_calling()` - looks for a call to a function anywhere in the line. Compare: `line_where()` provides F, which is just the highest-level call. 
+* `line_binding()` - custom bindings to patterns. (This was originally called `if_matches()`.) Can use `failif()`, etc.
+
+Within a line or expression...
+
+* `call_to()`  Pulls out the expression in a line that is a call to a specified function.
+* `test_binding()` Allows custom binding to an expression. (Just an alias for `line_binding()`)
+
+Arguments. Each returns the argument as an expression, applying any tests
+
+* `arg_calling()` return an argument that calls  a specified function
+* `named_arg()` return an argument that has a specified name.
+* `formula_arg()` return an argument that is a formula. Similar for `data_arg()`, `matrix_arg()`, `vector_arg()`, `list_arg()`, `table_arg()`, `first_arg()`
+* `arg_number()` return the argument in position n
+
+Tests that trigger a desired outcome
+
+* `passif()`, `failif()`, `okif()`
+
+Within tests ...
+
+* `%same_as%`
+* `%not_same_as%`
+
+
+## A first example
+
+Consider this problem from trigonometry:
+
+> ![](trig-problem-1.png)    
+> Write an R statement to compute the numerical value of x.
+
+A mathematically correct answer is $15 \sin(53^\circ)$. The corresponding R command is `15 * sin(53 * pi / 180)`, where the conversion to radians of 53$^\circ$ is accomplished by multiplying by $\pi/180$.
+
+In evaluating a student's submission for this problem, there are a number of things that the instructor might look for:
+
+1. Is the numerical value of the result correct? Here, that would be about `r round(15 * sin(53*pi/180), 2)`. 
+
+Of course, if the value computed by the student's submission is not correct, then we know the submission itself is not right. But we don't know *why* it's not right. Knowing why it's not right is important if we want to provide formative feedback to the student. In providing such formative feedback it would also be good to know:
+
+2. Is the $\sin$ function being used? 
+3. Is 53 the argument to $\sin$? If not, we can remind the student to convert the angle to radians.
+4. Is multiplication by a conversion factor being used, and is the conversion factor correct?
+
+Answering questions (2) through (4) requires that the student's submission be taken apart: what's the function and what's the argument to the function. `Checkr2` provides a handful of functions that do this in different ways. 
+
+### Submitting what?
+
+In a tutorial system like `learnr`, the system itself does the work of collecting the student's submission and handing it off to the checking statements. `Checkr` is written so that it can be used both within a system like `learnr` and also in a stand-alone way. One advantage of this is that you can develop and test your checking statements systematically before deploying them in a tutorial. 
+
+The document you are reading is a vignette, not a tutorial. To play the role of the tutorial system, in this tutorial we'll write student submissions as "quoted" commands. (We'll say more about `quote()` later on. It's an ordinary base R command, albeit one that few R users  encounter.)
+
+```{r}
+USER_CODE <- quote(y <- 15 * sin(53 * pi / 180))
+```
+
+The first task for `checkr` is to parse the submission. The `for_checkr()` function does this along with some additional processing for when there are multiple commands in the submission.
+```{r}
+CODE <- for_checkr(USER_CODE)
+```
+
+From now on, the character-string submission itself is not needed; all the necessary information is in `CODE`.
+
+### Looking for a valid line
+
+The student's submission might include blank lines, or some scratch work, or some setup that calculates some component of the answer. A good way to handle such diverse possibilities is to use the `at()` function to probe the submission for a line that contains the desired result.
+
+To start very simply, let's look for a line that generates the expected numerical result:
+
+
+```{r}
+line_where(CODE, is.numeric(V), abs(V - 11.98) < 0.01, message = "Wrong numerical result.")
+```
+
+The `line_where` function scans through all the lines in `CODE`. (There's just one line in this example.) For each line, `line_where()` creates some pronouns:
+
+- `V` - the value of the line
+- `F` - the top-level function used in the line
+- `EX` - the expression itself, as code.
+- `Z` - the name to which the result was assigned, if any.
+
+If the line contains an assignment, `F` and `EX` both refer to the right-hand side of the assignment.
+
+For each line in `CODE`, `line_where()` runs tests written in terms of the pronouns. These are ordinary R statements that can include any function, but they must return a logical as the result. There can be multiple test statements (each as its own argument to `line_where()`, and so separated by commas as usual in R). The individual test statements can be as complicated as necessary.
+
+If there is any line for which *all* the tests pass, `line_where()` returns that line in a format that can be used for further testing, if desired. If there is no such line in `CODE`, `line_where()` will return a failure result.
+
+The `type = is.numeric` argument to `at()` is a way of saying, "I'm only going to run the tests if `V` is numerical." This provides some armor against the possibility that the submission produces something other than a number.
+
+### Connecting with `learnr`
+
+It might be that all you want is to check that *some* line produces the result you're looking for. For this simple situation, you might implement the tutorial code checking in `learnr` by adding a `-check` block for the exercise with these contents:
+
+NEED TO CHECK THIS IN LEARNR
+```r
+CODE <- for_checkr(USER_CODE)
+line_where(CODE, abs(V - 11.98) < 0.01, message = "Wrong numerical result.")
+```
+
+This is a very simplistic sort of feedback: right or wrong.
+
+### Providing constructive feedback
+
+Depending on your purpose, you may want to examine the submitted code for the kinds of errors you expect to be common and provide messages to guide the student around such errors. The following statements, for instance, check whether the user calls a trig function, uses multiplication, and gets the right value, all in the same line.
+
+```{r}
+CODE <- for_checkr(USER_CODE)
+# CODE <- for_checkr(quote(11.98))
+# CODE <- for_checkr(quote(sin(53)))
+# CODE <- for_checkr(quote(15 * cos(53)))
+t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
+t1 <- line_where(t1, F == quote(`*`),
+              message = "Remember to multiply by the length of the hypotenuse")
+line_where(t1, is.numeric(V), abs(V - 11.98) < 0.01, message = "{{V}} is a wrong numerical result. It should be about 11.98.")
+```
+
+Note that the input to each `line_` function is the output of a previous function. The checking will stop on the first failure, so each line is run conditional on the previous lines passing. The commented out `CODE` fragments would trigger failures with different messages.
+
+Later, we'll see how to have multiple chains exploring different possibilities. 
+
+You could do further checking, if desired. For instance, before checking the final value, perhaps make sure that the sine function specifically is being called, or if the value produced by the sine function is consistent with 53 degrees. How much checking to do is a matter of the desired pedagogical style. 
+
+
+
+### Anticipating student errors
+
+When developing checking code, you likely have in mind some typical mistakes that a student might make. For instance, in trigonometry, it's common to confuse the cosine with the sine. You might want to include checking statements that look specifically for a particular mistake and give a tailored feedback message.
+
+```{r}
+CODE <- for_checkr(quote(15 * cos(53)))
+t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
+t1 <- misconception(t1, line_calling(t1, cos), message = "Are you sure cosine is the right choice?")
+t1 <- line_where(t1, F == quote(`*`),
+              message = "Remember to multiply by the length of the hypotenuse")
+line_where(t1, is.numeric(V), abs(V - 11.98) < 0.01, message = "{{V}} is a wrong numerical result. It should be about 11.98.")
+```
+
+### Testing chains
+
+* If you insist that a particular statement be a chain, you can extract that statement with `line_chaining()`. Then use `expand_chain()` to turn that into a sequence of ordinary statements that can be checked in the ordinary way.
+* By default, use `expand_all_chains()` to turn the code into a single sequence that expands all the chains.
+
+So, if you're anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using `expand_all_chains()` directly on the `CODE`.
+
+### Writing functions for checking
+
+The functions provided by `checkr` can be composed into higher-level functions in the ordinary way. We'll call these *`checkr` functions*.  Keep in mind: that both the input to and output from a `checkr` function should be an object of type `checkr_result`. (There can be other inputs as well, for instance, a specified value.)
+
+To illustrate, consider `trig_radian_check()`, a function to check whether the argument to trigonometric functions is in radians. It takes as arguments a `checkr_result` that (presumably) contains a call to a trigonometric function and the value, in radians, that is expected.
+
+
+
+
+
+Consider this checking statement:
+
+```{r echo = FALSE}
+CHECK <- function(submission) 
+  if_matches(submission, .(fn)(..(ang)), 
+             insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
+             failif(ang == 53, "You need to convert the 53 degrees into radians."),
+             insist(ang == 53 * pi / 180, "Do you have the angle right?"),
+             failif(TRUE, "Remember to take the length of the hypothenuse into account."))
+```
+
+```{r eval = FALSE}
+if_matches(submission, .(fn)(..(ang)), 
+           insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
+           failif(ang == 53, "You need to convert the 53 degrees into radians."),
+           insist(ang == 53 * pi / 180, "Do you have the angle right?"),
+           failif(TRUE, "Remember to take the length of the hypothenuse into account."))
+```
+
+The result, of course, depends on the submission. 
+
+- If the submission is `15 * sin(53 * pi / 180)`, we don't want the submission to fail. For that submission, the result of the above `if_matches()` will be
+```{r eval = FALSE, echo = FALSE}
+CHECK(quote(15*sin(53 * pi/180)))
+```
+The submission fails to match the pattern `.(fn)(..(ang))` because that pattern doesn't incorporate the "multiply by 15" in the submission.
+
+- If the submission is `sin(53 * pi / 180)`, we do want the submission to fail. But it's helpful if the failure message points out what the problem is, namely the failure to multiply by 15. For this submission, the result of the check statement will be
+```{r eval = FALSE, echo = FALSE}
+CHECK(quote(sin(53 * pi/180)))
+```
+- If the submission is `cos(53 * pi / 180)`, the failure should indicate that cosine is the wrong trig function.
+```{r eval = FALSE, echo = FALSE}
+CHECK(quote(cos(53 * pi / 180)))
+```
+- If the submission is `sin(53)`, the failure should be about using degrees as the argument:
+```{r eval = FALSE, echo = FALSE}
+CHECK(quote(sin(53)))
+```
+
+A more complete answer would look for multiplication by 15. This involves a pattern something like: `15 * .(fn)(..(arg))`. But, since we think a common student error will be to leave out the `15 *`, we'll want to check as well for a match to plain `.(fn)(..(arg))`. When there are multiple, structurally different patterns, use multiple `if_matches()` statements, like this:
+
+```{r eval = FALSE}
+if_matches(submission, .(fn)(..(arg)), 
+           failif(TRUE, "Remember to take the length of the hypothenuse into account."))
+if_matches(submission, 15 * .(fn)(..(arg)), 
+           insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
+           failif(ang == 53, "You need to convert the 53 degrees into radians."),
+           insist(ang == 53 * pi / 180, "Do you have the angle right?"),
+           passif(TRUE, "Good job!"))
+```
+
+Remember, it's up to the problem author to anticipate the kinds of wrong answers students will give and how to respond to them. Suppose, for instance, that after some experience with the problem, the instructor notes that many students are writing `225 * sin(53 * pi / 180)`, that is, multiplying by the square length of the hypothenuse. It would be nice to give specific feedback about this mistake. For instance,
+
+```{r eval = FALSE}
+if_matches(submission, .(fn)(..(arg)), 
+           failif(TRUE), "Remember to take the length of the hypothenuse into account.")
+if_matches(submission, .(hyp) * .(fn)(..(ang)), 
+           failif(hyp == 225, "Use the length, not the square length!"),
+           insist(hyp == 15, "What length are you using?"),
+           insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
+           failif(ang == 53, "You need to convert the 53 degrees into radians."),
+           insist(ang == 53 * pi / 180, "Do you have the angle right?"),
+           passif(TRUE, "Good job!"))
+```
+
+The checking can be made more elaborate. For instance, suppose we want to warn about using `+` instead of `*` in the statement. This pattern will capture the function used in the place where we want multiplication:  `.(mult_fn)(.(hyp), .(fn)(..(ang)))`. With this pattern, we might include a test like `` failif(mult_fn != quote(`*`), "{{mult_fn}} is the wrong function.")``
+
+### Taken out
+
+One possibility would be "regular expressions" of the sort supported by `grep()`, `gsub()`, and so on. However, regular expressions do not know about the required syntax of R statements. For instance, "function arguments are enclosed in parentheses and multiple arguments are separated by commas."
+
+The `redpen` package provides a pattern language that knows about R syntax. This allows us to specify patterns in a way that resembles R commands themselves. In particular, every pattern statement in `redpen` must be a syntactically correct R expression. As a trivial example, the pattern `15 * sin(53 * pi / 180)` describes an exact match to a specific correct answer. 
+
+
+
+But there are other possible correct answers, e.g.
+
+```{r}
+submission_2 <- "theta <- 53 * pi/180; r <- 15; r*sin(theta)"
+submission_3 <- "ang <- pi * (53 / 180); sin(ang) * 15"
+```
+
+Since it will be difficult to list every possible statement that produces a correct answer, it's important that the pattern language automatically handle trivial permutations of the correct command, unnecessary grouping parentheses, unconventional whitespace, etc.
+
+To start, here's a pattern that stands for "the sine of something": `sin(.)`. The `.` inside the parentheses means "any single argument." 
+
+To elaborate a bit, the pattern `sin(..(ang))` means "the sine of something, where the value of that something will be stored under the name `ang`." And going further, the pattern `.(fn)(..(ang))` means, "a function applied to a single argument, where the function name will be stored under `fn` and the value of the argument stored under `ang`." Note that `.(fn)(..(ang))` will *not* match `15 * sin(53 * pi / 180)`, because the pattern doesn't say anything about multiplication by 15.
+
+## Fill in the blanks
+
+A good pedagogical technique when introducing a subject is to start an exercise with part of the answer and ask students to fill in one or more blanks. This approach let's the instructor focus on one part of a command. As an example, consider this problem:
+
+> Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
+    ```{r echo = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
+  geom_point()
+```
+>
+> There are four named blanks, for instance `..x..`. You'll have to replace all of them with the correct contents to generate the plot.
+```{r eval = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) +
+  ..geom..()
+```
+
+Let's suppose the student's submission, after filling in the blanks is
+```{r}
+submission <- "library(ggplot2); 
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point()"
+```
+
+To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. Good news: We can use the prompt itself as a pattern.
+```{r eval = FALSE}
+check_blanks(submission,
+             ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
+             passif(x == quote(mpg) && y == quote(hp) && 
+                      c == quote(cyl) && geom == quote(geom_point),
+                    "Good job! {{x}}, {{y}}, {{c}}, and {{geom}}"),
+             noteif(x != quote(mpg), "{{x}} is not the variable on the horizontal axis."),
+             noteif(y != quote(hp), "{{y}} is not the right variable for the vertical axis"),
+             noteif(c != quote(cyl), "{{c}} is not the right variable to map to color."),
+             noteif(geom != quote(geom_point), "{{geom}} is not the correct geom to make a scatter plot."),
+             failif(TRUE, "Try again."))
+```
+
+It may seem a bit odd to use `..x..` as a blank. But R names are allowed to begin with `.` and cannot begin with `_`.
+
+Sometimes you will want just one or two blanks and don't want to clutter up the template with named blanks. It's legal to use just dots for the blanks. Each blank must have a unique number of dots, and there must be eight or more dots. To refer to a blank in the tests, take away four dots to get the name of that blank. For example:
+
+> Calculate the hypothenuse length C of a right triangle whose other edges are A and B.    
+    ```{r eval = FALSE}
+C <- .....(A^2 + B^2)
+```
+
+```{r echo = FALSE}
+CHECK2 <- function(submission) check_blanks(submission, C <- ........(A^2 + B^2),
+             passif(.... == quote(sqrt), "Right!"),
+             insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
+```
+
+The pattern in the checking statement can be the same as the prompt:
+```{r eval = FALSE}
+check_blanks(submission, C <- ........(A^2 + B^2),
+             passif(.... == quote(sqrt), "Right!"),
+             insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
+```
+
+Let's try some different submissions:
+
+- `C <- sqrt(A^2 + B^2)`
+    ```{r eval = FALSE, echo = FALSE}
+CHECK2("C <- sqrt(A^2 + B^2)")
+```
+- `C <- log(A^2 + B^2)`
+    ```{r eval = FALSE, echo = FALSE}
+CHECK2("C <- log(A^2 + B^2)")
+```
+- `C <- ........(A^2 + B^2)` that is, the dots were not replaced
+    ```{r eval = FALSE, echo = FALSE}
+CHECK2("C <- ........(A^2 + B^2)")
+```
+- `C <- sqrt(A + B)`
+    ```{r eval = FALSE, echo = FALSE}
+CHECK2("C <- sqrt(A + B)")
+```
+
+In the above we used names `x`, `y`, `c`, and `geom` to distinguish the blanks one from the other. 
+
+## Checking submissions that throw an error
+
+Sometimes students will submit code that throws an error, either at parse time or at run time. By default, learnr displays such errors in their native, somewhat cryptic format. 
+
+`checkr` has some simple error-catching logic that tries to translate the native R messages into a friendlier format.  To turn this on, you need to add a `-code-check` chunk to each exercise.
+
+* [ASIDE] I would rather that code checking be turned on or off at the document level, perhaps as a choice in `check_for_learnr()`. 
+* [ASIDE] I would also rather that the evaluation of the exercise take place entirely in the checking function, rather than being run first by learnr and then handed off to the checking function.
+
+For an exercise named `prob-1` the code check chunk will look like:
+
+    ` ``{r prob-1-code-check, echo = FALSE}
+    1 # there must be some content
+    ```
+
+If, when trying out your exercises, you find a parsing or run-time error that isn't captured by `checkr`, please submit an "issue" on the GitHub site so that we can add that into the system.
+
+
+## OUTLINEY from here on
+
+## Values vs expressions
+
+`.(a)` versus `..(a)`
+
+## Chains
+
+## Patterns
+
+- Name of an argument: `` rep(.(a), `..(nm)` = .(b)) ``. Note that the wild-card for the argument name needs to be placed in back-quotes. This is because `..(nm)` is not a valid argument name, but `` `..(nm)`
+`` is.
+
+## Use in tutorials
+
+The check function for debugging, but don't use it in tutorial check chunks.
+
+
+
+## Details
+
+- using `quote(sin)` when comparing to a name
+- at least one of the statements should match all of the patterns
+- using `if_matches()` recursively to study a sub-pattern
+
+
+
+
+What's the meaning of `.(fn)(...)`? NEED TO SAY it's a legal R expression, even if it isn't one that many experienced R users would recognize. `...` is a legal statement in R, although typically used only *within* functions. And `.(fn)` is a legal statement, which would usually be read as "the function named `.` being applied to the value of `fn`." The point here is that patterns must be legal R expressions, and `.(fn)(...)` satisfies this. But the components `...` and `.(fn)` in a pattern do not have their usual meaning. Instead, they follow the conventions of the `redpen` package.
+
+As part of a pattern, `...` means any set of arguments: it's a wildcard which matches anything that might legally be used as arguments to a function. 
+
+As part of a pattern, `.(fn)` means, "Give the name `fn` to whatever is being used in this role in the statement." And what part is that? In ordinary syntax, parentheses are used to indicate the application of a function to arguments. So `sin(...)` in a pattern means "evaluate the function `sin` and don't worry about what the specific argument or arguments are." In the pattern `.(fn)(...)` the marker `.(fn)` is in the position of `sin` in `sin(...)`. Thus, `.(fn)(...)` is a pattern that says, "I'm expecting a function being applied to some arguments. Use `fn` to represent the function itself."
+
+
+
+The pattern is the part of the system that provides the flexibility for an author to define what standards should be satisfied by the submission. Let's elaborate on that.
+
+
+
+WARNING TO THE READER: The patterns that follow may seem bizarre when you first encounter them. Rest assured, you'll have time to get to know them. And, even if they don't look like it, each pattern is a syntactically correct R statement.
+
+Here are a few patterns that will be relevant to the rest of the example:
+
+- `..(res)` -- the overall result of the submission, which will be available under the name `res`.
+- `"+"(.(a), .(b))` -- the + function applied to two arguments, which we'll call `a` and `b`, which might themselves be expressions, as in `(2^1) + sqrt(9)`, where the arguments to + are `(2^1)` and `sqrt(9)`.
+- `"+"(..(a), ..(b))` -- similar to be above, but if the two arguments happen to be expressions, `a` and `b` should stand for the *values* of their corresponding expressions. For instance matching the pattern to the submission `(2^1) + sqrt(9)` would result in `a` being 2 and `b` being 3.
+- `.(fn)(.(a), .(b))` -- a function, which we'll call `fn`, being applied to arguments which we'll call `a` and `b`.
+- `.(fn)(.)` -- a function applied to a single argument.
+- `.(fn)(., ., ., ...)` a function applied to three or more arguments.
+
+The facilities for implementing and applying these sorts of patterns are provided by the remarkable `redpen` package in conjunction with `rlang`.
+
+
+
+## Multiple `if_matches` {#multiple_if_matches}
+
+Introduce `check()` and multiple patterns.
+
+## Expressions and `quote()` vs values
+
+Consider this R command (which generates an error):
+```{r error = TRUE}
+a
+```
+Why the error? Because `a` does not have a value associated with it. But there's nothing wrong with `a` in itself; the statement would have worked if `a` had been bound to some value.
+
+WHERE IS THIS GOING? 
+- What `quote()` is doing in the examples. (Setting up the submission as an expression rather than the value of an expression.)
+- Why you would need to use `quote()` in testing the expression itself. E.g. looking at the *name* of a function.
+- The quoting goes on automatically when a string is passed as the submission.
+
+```{r eval = FALSE}
+submission <- "x <- 3; sin(x)"
+# This will work. `fn` will be a symbol, as will `quote(sin)`.
+if_matches(submission, .(fn)(.(arg)), passif(fn == quote(sin), "Function is {{fn}}, argument is {{arg}}"))
+# This won't work. `fn` will be a symbol, but `sin` is a function, not a symbol.
+if_matches(submission, .(fn)(.(arg)), passif(fn == sin, "Function is {{fn}}, argument is {{arg}}"))
+# Back to working again. With the double dots, `fn` will be the value that the name "sin" points to. In this case, that will be the function `sin()`. 
+if_matches(submission, ..(fn)(.(arg)), passif(fn == sin, "Function is {{fn}}, argument is {{arg}}"))
+# The funny `.Primitive("sin")` reflects that the function `sin` is something called a "primitive," as opposed to the kind of thing like `function(x) x^2`. This will certainly be confusing as a message to students, so better to use comparison of the very first form, where the single-dot pattern is used and compared to `quote(sin)`.
+
+```
+## Tips on patterns and tests
+
+- Patterns are raw R statements, for instance 
+- Assignment-to has a pattern `` `<-`(x, ...) ``
+    - If you want to allow assignment to any of several names, try `` `<-`(.(nm), ...) `` as the pattern and `nm == quote(x) || nm == quote(X)` as the test:
+    ```{r eval = FALSE}
+    if_matches(quote(x <- 3 + 2), `<-`(.(nm), ..(val)), 
+               passif(nm == quote(X) || nm == quote(x), "{{nm}} was assigned the value {{val}}"))
+    ```
+    - Notice that the pattern has a single dot (`.(nm)`) for the assigned-to part of pattern. Similarly, the value to which it's being compared is in `quote()`, as appropriate for matching a language-name object.
+- Distinguish between `.(a)` and `..(a)`. Suppose you want to check which trigonometric function has been used in a command like `quote(cos(x))`. An appropriate pattern would be `.(fn)(...)`, like this:
+```{r eval = FALSE}
+submission <- quote({x <- pi; cos(x)})
+pattern <- quote(.(fn)(.(var))) # will have to unquote
+if_matches(submission, !!pattern, passif(TRUE, "Found match"))
+if_matches(submission, .(fn)(.(var)),
+           passif(fn == quote(cos) && var == quote(x), "Right. The function is {{fn}} on variable {{var}}."))
+```
+
+## Some kinds of questions
+
+<http://third-bit.com/2017/10/16/exercise-types.html>
+
+## Taken out
+
+
+
+
+To help meet the demand for R-related training, various *interactive tutorial systems* have been developed. These include [Swirl](http://swirlstats.com/), [DataComp.com](http://DataCamp.com), and the Shiny-based system introduced by RStudio: [`learnr`](http://github.com/rstudio/learnr). In each of these systems, a problem is posed to the student, who has an opportunity to construct R commands as a solution. The R commands are then passed to an evaluation system.
+
+
+
+Readers may also want to check out the system for *[submission correctness tests](https://www.datacamp.com/community/blog/submission-correctness-testing-in-datacamp-datacamp-part-i#gs.vuTG8Xw)* provided by DataCamp.

@@ -84,39 +84,22 @@ table_arg <- function(ex, ..., n=1L, message = "") {
   line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
 }
 
-generic_arg <- function(tidy_expr, type_description, type_test,
-                        message = "", pass = "", n = 1L, use_value = TRUE) {
-  # Can also take results straight from for_checkr()
-  if (inherits(tidy_expr, "checkr_result")) {
-    # pass along any input that is already failed.
-    if (failed(tidy_expr)) return(tidy_expr)
-    if (length(tidy_expr$code) > 1) stop("Narrow down to a single line of code before calling.")
-    code <- skip_assign(tidy_expr$code[[1]])
-  } else {
-    code <- tidy_expr # it was a straight quosure, not a checkr_result
-  }
+generic_arg <- function(ex, type_description, type_test,
+                        message = "", n = 1L, use_value = TRUE) {
+  stopifnot(inherits(ex, "checkr_result"))
+  if (failed(ex)) return(ex)
+  if (length(ex$code) > 1) stop("Narrow down to a single line of code before calling.") # author
+  code <- skip_assign(ex$code[[1]])
 
   if (message == "") {
     # Pre-form the failure message
-    fail <- paste(expr_text(quo_expr(code)),
+    message <- paste(expr_text(quo_expr(code)),
                   "doesn't contain an argument that is",
                   type_description)
   }
-  bad_return <- new_checkr_result(action = "fail", message = message, code = tidy_expr$code)
+  bad_return <- new_checkr_result(action = "fail", message = message, code = ex$code)
 
-  if ( ! is_lang(code)) {
-    # if it's the right kind of object, just return that
-    if (type_test(code)) {
-      # create a dummy expression whose value is the value of this thing
-      # Q <- quo(v)
-      # environment(Q) <- list(v = code)
-      Q <- new_quosure(expr = as.name("v"), env = list(v = code))
-      return(new_checkr_result("ok", code = list(Q)))
-    }
-    else return(bad_return)
-  }
-
-  # But usually will be a tidy expression containing a call
+  # But usually will be a quo
   this_env <- environment(code)
   the_args <- lang_args(code)
   found_target <- FALSE
@@ -124,11 +107,8 @@ generic_arg <- function(tidy_expr, type_description, type_test,
   found_count <- 0
 
   for (k in 1:length(the_args)) {
-    val <- if (use_value && (is.name(the_args[[k]]) || is.call(the_args[[k]]))) {
-      eval_tidy(the_args[[k]], data = this_env)
-    } else {
-      the_args[[k]]
-    }
+    val <- the_args[[k]]
+    if (use_value) val <- eval_tidy(val, data = this_env)
 
     if (type_test(val)) {
       found_count <- found_count + 1
@@ -141,8 +121,7 @@ generic_arg <- function(tidy_expr, type_description, type_test,
   }
   if (found_target) {
     code = list(new_quosure(target, env = this_env))
-    if (nchar(pass)) new_checkr_result("pass", message = pass, code = code)
-    else new_checkr_result("ok", code = code)
+    new_checkr_result("ok", code = code)
   } else {
     bad_return
   }

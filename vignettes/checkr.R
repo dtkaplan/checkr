@@ -1,7 +1,7 @@
 ## ----setup, include = FALSE----------------------------------------------
 library(checkr)
 library(ggplot2)
-#library(mosaic)
+library(mosaic)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -47,6 +47,69 @@ check_exer_1(s1wrong)
 check_exer_1(s2)
 check_exer_1(s2wrong)
 check_exer_1(s3wrong)
+
+## ------------------------------------------------------------------------
+check_exer_1_v0 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  desired <- rep(1:4, each = 3)
+  line_where(code, all(V == desired), 
+             message = "Your vector is {{V}}. That is not the result asked for.")
+}
+
+## ------------------------------------------------------------------------
+check_exer_1_v0("c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)")
+
+## ------------------------------------------------------------------------
+check_exer_1_v1 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  line_binding(code, rep(1:4, each = 3), passif(TRUE, "Just what I wanted!"), 
+               message = "Sorry. Not exactly what I was looking for.")
+}
+
+## ------------------------------------------------------------------------
+check_exer_1_v1("c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)")
+
+## ------------------------------------------------------------------------
+check_exer_1_v1("x <- rep(1:4,each=3); x")
+
+## ------------------------------------------------------------------------
+check_exer_1_v1("x <- 1:4; rep(x, each = 3)")
+check_exer_1_v1("sort(rep(1:4, 3))")
+
+## ------------------------------------------------------------------------
+check_exer_1_v2 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  desired <- rep(1:4, each = 3)
+  LineA <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
+  t1 <- vector_arg(LineA, insist(all(V == 1:4), "Where did you use `1:4`?"))
+  if (failed(t1)) return(t1)
+  line_where(code, all(V == desired), 
+             message = "Your vector is {{V}}. That is not the result asked for.")
+}
+
+## ------------------------------------------------------------------------
+check_exer_1_v2("x <- 1:4; rep(x, each = 3)")
+check_exer_1_v2("sort(rep(1:4, 3))")
+
+## ------------------------------------------------------------------------
+check_exer_1_v3 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  desired <- rep(1:4, each = 3)
+  LineA <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
+  t1 <- vector_arg(LineA, insist(all(V == 1:4), "Where did you use `1:4`?"))
+  if (failed(t1)) return(t1)
+  rep_call <- arg_calling(LineA, rep) # in case rep() is buried in another function application, e.g. 1 * rep()
+  t2 <- named_arg(rep_call, "each", 
+                  insist(V == 3, "Remember, you want 12 elements in the output made from the 4 elements in the input"), 
+                  message = "See what use you can make of the `each` argument to rep().")
+  if (failed(t2)) return(t2)
+  line_where(code, all(V == desired), 
+             message = "Your vector is {{V}}. That is not the result asked for.")
+}
+
+## ------------------------------------------------------------------------
+check_exer_1_v3("x <- 1:4; rep(x, each = 3)")
+check_exer_1_v3("sort(rep(1:4, 3))")
 
 ## ------------------------------------------------------------------------
 USER_CODE <- quote(y <- 15 * sin(53 * pi / 180))

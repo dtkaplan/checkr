@@ -6,14 +6,18 @@ Author: Daniel Kaplan
 Maintainer: Daniel Kaplan <kaplan@macalester.edu>
 Description: Helps check code submissions for learnr tutorials.
 License: MIT + file LICENSE
-Depends: rlang, magrittr
-Imports: redpen, stringr, ggplot2, evaluate
-Suggests: mosaic
+Depends: rlang
+Imports: redpen, 
+    stringr,
+    evaluate,
+    magrittr
+Suggests: knitr,
+    rmarkdown,
+    testthat, 
+    mosaic, 
+    ggplot2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
-Suggests: knitr,
-    rmarkdown,
-    testthat
 VignetteBuilder: knitr

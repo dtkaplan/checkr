@@ -189,7 +189,8 @@ named_arg <- function(ex, nm, ..., message = "") {
   res <-
     if (length(the_arg) == 0) {
       new_checkr_result(action = "fail",
-                        message = paste0("could not find an argument named '", nm, "'"),
+                        message = ifelse(nchar(message), message,
+                                         paste0("could not find an argument named '", nm, "'")),
                         code = ex$code)
     } else {
       # we found a match, return it along with the environment

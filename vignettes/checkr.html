@@ -139,40 +139,154 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fce36a65580&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7c1ee110&gt;</span>
 <span class="kw">check_exer_1</span>(s1wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your data argument head(mtcars) was not `mtcars`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; head(mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fce381f5ff0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd78761fc8&gt;</span>
 <span class="kw">check_exer_1</span>(s2)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Great job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mod &lt;- lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fce3735dae0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7a374640&gt;</span>
 <span class="kw">check_exer_1</span>(s2wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; You need to have the miles-per-gallon variable on the left side of the model formula. You've got hp instead.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; hp ~ mpg</span>
-<span class="co">#&gt; &lt;environment: 0x7fce36d1cc30&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd79f5b708&gt;</span>
 <span class="kw">check_exer_1</span>(s3wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your R-squared is 0. That's too small.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(data = for_me, mpg ~ 1)</span>
-<span class="co">#&gt; &lt;environment: 0x7fce36f129f8&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fbd78852df0&gt;</span></code></pre></div>
 <p>The printed form of the result includes whether the submission passed or failed, a congratulatory or diagnostic message, and the component of the code being checked at the point where the test passed or failed. When integrated with a tutorial system such as <code>learnr</code>, the <code>checkr</code> result is formatted as appropriate for that user interface. (For instance the code component is mainly of interest to the author of checking functions, not the student.)</p>
 </div>
 </div>
-<div id="short-examples" class="section level2">
-<h2>Short examples</h2>
+<div id="a-range-of-approaches" class="section level2">
+<h2>A range of approaches</h2>
+<p>Ultimately, it’s up to the instructor to decide how much flexibility to give the student and how much to guide the student. To illustrate some possibilities, consider this task:</p>
+<blockquote>
+<p><strong>Exercise 2</strong>: Use the <code>rep()</code> function, with <code>1:4</code> as an input, to generate the 12-element vector <code>1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4</code></p>
+</blockquote>
+<p>The most flexibility comes by checking if the correct result was produced. You can check the value produced by a line with the pronoun <code>V</code> (for value). Like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v0 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
+  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
+             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+}</code></pre></div>
+<p>This may be more flexbility than desired. Here’s a cheating solution:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v0</span>(<span class="st">&quot;c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7c23ab78&gt;</span></code></pre></div>
+<p>Another approach is to have in mind a specific command and check for exactly that. This provides little or no flexibility. For instance:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v1 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  <span class="kw">line_binding</span>(code, <span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>), <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Just what I wanted!&quot;</span>), 
+               <span class="dt">message =</span> <span class="st">&quot;Sorry. Not exactly what I was looking for.&quot;</span>)
+}</code></pre></div>
+<p>This won’t be fooled by the cheating answer …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7a330e78&gt;</span></code></pre></div>
+<p>… and it will work with a command matching that specified, even allowing assignment or trivial white-space changes …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- rep(1:4,each=3); x&quot;</span>)
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Just what I wanted!</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; x &lt;- rep(1:4, each = 3)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7a5ab800&gt;</span></code></pre></div>
+<p>But here are reasonable student submissions that won’t pass the test:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; x &lt;- 1:4</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7b66d990&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; rep(x, each = 3)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7b66fca0&gt;</span>
+<span class="kw">check_exer_1_v1</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; sort(rep(1:4, 3))</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7ad3b8b0&gt;</span></code></pre></div>
+<p>The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using <code>rep()</code> and that one argument will be <code>1:4</code>. To test this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
+  LineA &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, rep, <span class="dt">message =</span> <span class="st">&quot;I'm not seeing where you used `rep()`.&quot;</span>)
+  t1 &lt;-<span class="st"> </span><span class="kw">vector_arg</span>(LineA, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;Where did you use `1:4`?&quot;</span>))
+  <span class="cf">if</span> (<span class="kw">failed</span>(t1)) <span class="kw">return</span>(t1)
+  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
+             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v2</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; rep(x, each = 3)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7a9d9ce0&gt;</span>
+<span class="kw">check_exer_1_v2</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; sort(rep(1:4, 3))</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd77c99068&gt;</span></code></pre></div>
+<p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v3 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
+  LineA &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, rep, <span class="dt">message =</span> <span class="st">&quot;I'm not seeing where you used `rep()`.&quot;</span>)
+  t1 &lt;-<span class="st"> </span><span class="kw">vector_arg</span>(LineA, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;Where did you use `1:4`?&quot;</span>))
+  <span class="cf">if</span> (<span class="kw">failed</span>(t1)) <span class="kw">return</span>(t1)
+  rep_call &lt;-<span class="st"> </span><span class="kw">arg_calling</span>(LineA, rep) <span class="co"># in case rep() is buried in another function application, e.g. 1 * rep()</span>
+  t2 &lt;-<span class="st"> </span><span class="kw">named_arg</span>(rep_call, <span class="st">&quot;each&quot;</span>, 
+                  <span class="kw">insist</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">3</span>, <span class="st">&quot;Remember, you want 12 elements in the output made from the 4 elements in the input&quot;</span>), 
+                  <span class="dt">message =</span> <span class="st">&quot;See what use you can make of the `each` argument to rep().&quot;</span>)
+  <span class="cf">if</span> (<span class="kw">failed</span>(t2)) <span class="kw">return</span>(t2)
+  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
+             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+}</code></pre></div>
+<p>Trying this out …</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v3</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
+<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; rep(x, each = 3)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7c2858a0&gt;</span>
+<span class="kw">check_exer_1_v3</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; See what use you can make of the `each` argument to rep().</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; rep(1:4, 3)</span>
+<span class="co">#&gt; &lt;environment: 0x7fbd7b334240&gt;</span></code></pre></div>
 </div>
 <div id="why-right-is-wrong." class="section level2">
 <h2>Why right is wrong.</h2>

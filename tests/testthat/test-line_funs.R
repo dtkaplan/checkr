@@ -3,22 +3,24 @@ context("Line locator functions")
 CODE <- for_checkr(quote({x <- 2; y <- x^3; z <- y + I(x)}))
 
 test_that("line_where() identifies assignment", {
-  res1 <- line_where(CODE, Z == "y")
+  res1 <- line_where(CODE, insist(Z == "y"))
   expect_equal(res1$code[[1]], quo(y <- x^3))
+  res2 <- line_where(CODE, insist(Z == "bogus"))
+  expect_true(failed(res2))
 })
 
 test_that("line_where() identifies a function", {
-  res1 <- line_where(CODE, F == `^`)
+  res1 <- line_where(CODE, insist(F == `^`))
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
 test_that("line_where() identifies a line value", {
-  res1 <- line_where(CODE, V == 8)
+  res1 <- line_where(CODE, insist(V == 8))
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
 test_that("line_where() identifies an expression", {
-  res1 <- line_where(CODE, EX == quo(x^3))
+  res1 <- line_where(CODE, insist(EX == quo(x^3)))
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
@@ -34,7 +36,7 @@ test_that("line_calling() works", {
 })
 
 test_that("line_where() and line_binding() return code in the form of a list of quosures.", {
-  res1 <- line_where(CODE, EX == quo(x^3))
+  res1 <- line_where(CODE, insist(EX == quo(x^3)))
   expect_true(is.list(res1$code))
   expect_true(rlang::is_quosure(res1$code[[1]]))
   res2 <- line_binding(CODE, {`^`(...);..(v)}, passif(v == 8, "The line producing 8."))
@@ -100,7 +102,7 @@ test_that("line_calling() works", {
 test_that("On failure, the returned code is that of the original input.", {
   res1 <- line_calling(CODE, `*`, message = "No multiplication found.")
   expect_true(length(res1$code) == 3) # all the input lines
-  res2 <- line_where(CODE, V == 100, message = "No line producing value 100.")
+  res2 <- line_where(CODE, insist(V == 100), message = "No line producing value 100.")
   expect_true(length(res2$code) == 3)
   res3 <- line_binding(CODE, exp(...), message = "Exponential wasn't used.")
   expect_true(length(res3$code) == 3)

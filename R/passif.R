@@ -9,7 +9,7 @@
 #' many people.
 #'
 #' @rdname passif
-#' @aliases passif failif noteif
+#' @aliases passif failif noteif insist
 #'
 #' @param test an expression written in terms of values found
 #' in the pattern-matching bindings
@@ -21,17 +21,20 @@
 #' with language objects such as names. They are translated to be equivalent to "\%same_as\%".
 #' You can refer to the expression being tested with `{{expression_string}}` and to the `test` itself as `{{test_string}}`.
 #'
+#' Use `insist()` to denote necessary but not sufficient conditions
+#' Use `failif()` and `passif()` for sufficient conditions.
 #'
 #' @examples
 #' code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
-#' my_line <- line_where(code, F == `+`)
+#' my_line <- line_where(code, passif(F == `+`, "You used + so you've succeeded."))
+#' my_line <- line_where(code, insist(F == `+`, "Where did you use +?"))
 #' check_binding(my_line, `+`(..(x), ..(y)), insist(y == 4, "use 4 for the second argument to +"))
 #' # or equivalently with a double negative ... fail and y != 4
 #' check_binding(my_line, `+`(..(x), ..(y)), failif(y != 4, "use 4 for the second argument to +"))
 #'
 #' @rdname passif
 #' @export
-passif <- generic_test(pass="pass", fail = "ok", "Good!")
+passif <- generic_test(pass="pass", fail = "fail", "Good!")
 #' @rdname passif
 #' @export
 failif <- generic_test(pass = "fail", fail = "ok", "Sorry.")
@@ -42,6 +45,7 @@ noteif <- generic_test(pass = "ok", fail = "ok", "Just a note ...")
 #' @export
 insist <- function(test, message = "") {
   test <- rlang::enquo(test)
+  if (message == "") message <- paste("Failed test", expr_text(quo_expr(test)))
   function(task, res) {
     if (task == "test") test
     else if (task == "message") ifelse(res, "", message)

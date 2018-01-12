@@ -13,17 +13,17 @@ tutorial_options(exercise.checker = checkr::check_for_learnr)
 
 hello_check <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- misconception(code, line_where(code, is.null(F)), 
+  res <- misconception(code, line_where(code, passif(is.null(F))), 
                        message = paste(
                          "Just typing the string doesn't do it. Note that the output", 
                          "has quotes and is formatted as an output, not a simple message."))
-  res <- misconception(res, line_where(res, F == print), 
+  res <- misconception(res, line_where(res, passif(F == print)), 
                        message = paste(
                          "Using print() isn't right.",
                          "True, that's the way character strings are displayed,", 
                          "but the format of the display is as a quoted output and",
                          "not just a simple message."))
-  res <- line_where(res, F == cat, message = "Try the cat() function.")
+  res <- line_where(res, insist(F == cat, "Try the cat() function."))
   check(arg_number(res, 1), passif(V == "Hello, World!", "Good job!"),
         failif(tolower(V) == "hello, world!", "Get the capitalization right!"),
         failif(TRUE, "The string should be 'Hello, World!', not '{{V}}'.")) 
@@ -31,11 +31,11 @@ hello_check <- function(USER_CODE) {
 
 two_plus_two_check <- function(USER_CODE) {
   res <- for_checkr(USER_CODE)
-  res <- line_where(res, V == 4, message = "The result should be 4, not {{V}}.")
-  res <- line_where(res, F == `+`, 
-                    message = 
-                      paste("Think about what function corresponds to 'addition'.", 
-                            "It isn't {{F}}."))
+  res <- line_where(res, insist(V == 4, "The result should be 4, not {{V}}."))
+  res <- line_where(res, 
+                    insist(F == `+`, paste(
+                      "Think about what function corresponds to 'addition'.", 
+                      "It isn't {{F}}.")))
   arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{EX}}."),
              passif(TRUE, "Yes, that's it!"))
 }

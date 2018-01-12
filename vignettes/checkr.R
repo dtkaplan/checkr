@@ -2,6 +2,7 @@
 library(checkr)
 library(ggplot2)
 library(mosaic)
+library(dplyr)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -52,7 +53,7 @@ check_exer_1(s3wrong)
 check_exer_1_v0 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   desired <- rep(1:4, each = 3)
-  line_where(code, all(V == desired), 
+  line_where(code, passif(all(V == desired)), 
              message = "Your vector is {{V}}. That is not the result asked for.")
 }
 
@@ -83,7 +84,7 @@ check_exer_1_v2 <- function(USER_CODE) {
   LineA <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
   t1 <- vector_arg(LineA, insist(all(V == 1:4), "Where did you use `1:4`?"))
   if (failed(t1)) return(t1)
-  line_where(code, all(V == desired), 
+  line_where(code, passif(all(V == desired)), 
              message = "Your vector is {{V}}. That is not the result asked for.")
 }
 
@@ -103,8 +104,7 @@ check_exer_1_v3 <- function(USER_CODE) {
                   insist(V == 3, "Remember, you want 12 elements in the output made from the 4 elements in the input"), 
                   message = "See what use you can make of the `each` argument to rep().")
   if (failed(t2)) return(t2)
-  line_where(code, all(V == desired), 
-             message = "Your vector is {{V}}. That is not the result asked for.")
+  line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
 
 ## ------------------------------------------------------------------------
@@ -118,7 +118,10 @@ USER_CODE <- quote(y <- 15 * sin(53 * pi / 180))
 CODE <- for_checkr(USER_CODE)
 
 ## ------------------------------------------------------------------------
-line_where(CODE, is.numeric(V), abs(V - 11.98) < 0.01, message = "Wrong numerical result.")
+line_where(CODE, 
+           insist(is.numeric(V)), 
+           passif(abs(V - 11.98) < 0.01, "Good job!"), 
+           message = "Wrong numerical result.")
 
 ## ------------------------------------------------------------------------
 CODE <- for_checkr(USER_CODE)
@@ -126,17 +129,35 @@ CODE <- for_checkr(USER_CODE)
 # CODE <- for_checkr(quote(sin(53)))
 # CODE <- for_checkr(quote(15 * cos(53)))
 t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
-t1 <- line_where(t1, F == quote(`*`),
-              message = "Remember to multiply by the length of the hypotenuse")
-line_where(t1, is.numeric(V), abs(V - 11.98) < 0.01, message = "{{V}} is a wrong numerical result. It should be about 11.98.")
+t1 <- line_where(t1, insist(F == quote(`*`), "Remember to multiply by the length of the hypotenuse"))
+line_where(t1, insist(is.numeric(V)), 
+           passif(abs(V - 11.98) < 0.01, "Good!"), 
+           message = "{{V}} is a wrong numerical result. It should be about 11.98.")
 
 ## ------------------------------------------------------------------------
 CODE <- for_checkr(quote(15 * cos(53)))
 t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
 t1 <- misconception(t1, line_calling(t1, cos), message = "Are you sure cosine is the right choice?")
-t1 <- line_where(t1, F == quote(`*`),
-              message = "Remember to multiply by the length of the hypotenuse")
-line_where(t1, is.numeric(V), abs(V - 11.98) < 0.01, message = "{{V}} is a wrong numerical result. It should be about 11.98.")
+t1 <- line_where(t1, 
+                 insist(F == quote(`*`), 
+                        "Remember to multiply by the length of the hypotenuse"))
+line_where(t1, insist(is.numeric(V)), 
+           insist(abs(V - 11.98) < 0.01, 
+                  "{{V}} is a wrong numerical result. It should be about 11.98."))
+
+## ------------------------------------------------------------------------
+chk_exer_9 <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  t1 <- line_chaining(code, message = "Remember, chains involve `%>%`.")
+  check(t1, 
+        insist(identical(V, mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))), "Your chain doesn't produce the right value."),
+        passif(TRUE, "Great!"))
+}
+
+## ------------------------------------------------------------------------
+chk_exer_9("mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))")
+chk_exer_9("mtcars %>% group_by(hp) %>% summarise(disp = mean(disp))")
+chk_exer_9("res <- group_by(mtcars, cyl); summarise(res, disp = mean(disp))")
 
 ## ----echo = FALSE--------------------------------------------------------
 CHECK <- function(submission) 

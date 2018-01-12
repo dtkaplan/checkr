@@ -6,7 +6,7 @@ Author: Daniel Kaplan
 Maintainer: Daniel Kaplan <kaplan@macalester.edu>
 Description: Helps check code submissions for learnr tutorials.
 License: MIT + file LICENSE
-Depends: rlang
+Depends: rlang, dplyr
 Imports: redpen, 
     stringr,
     evaluate,

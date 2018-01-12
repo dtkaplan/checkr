@@ -19,32 +19,38 @@
 #'
 #' @examples
 #' ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))
-#' line_where(ex, F == "^")
+#' line_where(ex, insist(F == "^", "Didn't find exponentiation"))
 #'
 #' @export
 line_where <- function(ex, ..., message = "") {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex) # short circuit on failure
-  res <- matching_line(ex, ..., message = message)
-  if (res$n == 0) {
-    the_message <-
-      if (nchar(message)) res$message
-      else "Didn't find a line passing tests."
-      new_checkr_result(action = "fail", message = the_message, code = ex$code)
-  }
-  else {
-    # note: assignment will be included in the returned code.
-    new_checkr_result(action = "pass",
-                      message = "",
-                      code = ex$code[res$n])
-    }
+  tests <- rlang::quos(...)
+  res <- matching_line(ex, tests, message = message)
+
+  res
+  # if (res$n == 0) {
+  #   the_message <-
+  #     if (nchar(message)) res$message
+  #     else "Didn't find a line passing tests."
+  #     new_checkr_result(action = "fail", message = the_message, code = ex$code)
+  # }
+  # else {
+  #   # note: assignment will be included in the returned code.
+  #   new_checkr_result(action = "pass",
+  #                     message = "",
+  #                     code = ex$code[res$n])
+  #   }
 }
 #' Grab the lines after a specified line (which is included)
 #'
 #' @rdname line_where
 #' @export
 lines_after <- function(ex, ..., message = "") {
-  res <- matching_line(ex, ..., message = "")
+  stopifnot(inherits(ex, "checkr_result"))
+  if (failed(ex)) return(ex) # short circuit on failure
+  tests <- rlang::quos(...)
+  res <- matching_line(ex, tests, message = "")
   if (res$n == 0) {
     if (nchar(message)) new_checkr_result(action = "fail",
                                        message = res$message)
@@ -55,13 +61,13 @@ lines_after <- function(ex, ..., message = "") {
 
 
 # internal function to run the tests to find a matching line
-matching_line <- function(ex, ..., message = "", type = NULL, type_text="") {
-  tests <- rlang::quos(...)
+matching_line <- function(ex, tests, message = "", type = NULL, type_text="") {
+  stopifnot(inherits(ex, "checkr_result"))
   type_failure <- "" # a flag
   for (k in 1:length(ex$code)) {
     # Create the bindings
     V <- if ("values" %in% names(ex)) {
-      ex$values[[k]]
+      ex$values[[k]] # the value was pre-computed
     } else {
       rlang::eval_tidy(ex$code[[k]])
     }
@@ -70,31 +76,46 @@ matching_line <- function(ex, ..., message = "", type = NULL, type_text="") {
     EX <- skip_assign(ex$code[[k]])
     # other attributes to identify a line?
 
-    # run the tests in an environment where V and F
-    # are defined. The tests should return a logical
-    passed_all <- TRUE
-    for (t in seq_along(tests)) {
-      bindings <- list(V = V, F = F, Z = Z, EX = EX, `==` = `%same_as%`, `!=` = `%not_same_as%` )
-
-
-      pass_this_test <-
-        try(rlang::eval_tidy(tests[[t]], data = bindings), silent = TRUE)
-      if (inherits(pass_this_test, "try-error")) {
-        warning("Error in checkr test statement.")
-        passed_all <- FALSE
-        break
-      }
-      else if ( ! pass_this_test) {
-        passed_all <- FALSE
-        break
-      }
+    # run the tests in an environment where the pronouns V, F, Z, EX are defined
+    # run the tests with these bindings
+    bindings <- list(V = V, F = F, Z = Z, EX = EX)
+    simp_ex <- simplify_ex(ex$code[[k]])
+    res <- run_tests(tests, bindings, simp_ex)
+    if ( ! failed(res)) {
+      res$code <- list(ex$code[[k]])
+      attr(res, "line_number") <- k  # include line number
+      return(res)
     }
-    if (passed_all) break
   }
+  #   # are defined. The tests should return a logical
+  #   passed_all <- TRUE
+  #   for (t in seq_along(tests)) {
+  #     bindings <- list(V = V, F = F, Z = Z, EX = EX, `==` = `%same_as%`, `!=` = `%not_same_as%` )
+  #
+  #
+  #     pass_this_test <-
+  #       try(rlang::eval_tidy(tests[[t]], data = bindings), silent = TRUE)
+  #     if (inherits(pass_this_test, "try-error")) {
+  #       warning("Error in checkr test statement.")
+  #       passed_all <- FALSE
+  #       break
+  #     }
+  #     else if ( ! pass_this_test) {
+  #       passed_all <- FALSE
+  #       break
+  #     }
+  #   }
+  #   if (passed_all) break
+  # }
 
+  # return the input expression, marked as a failure
+  ex$action <- "fail"
+  ex$message <- message
+
+  ex
   # return the line number: zero if no line was found
 
-  list(n = ifelse(passed_all, k, 0),
-       message = moustache(message, bindings = bindings))
+  # list(n = ifelse(passed_all, k, 0),
+  #      message = moustache(message, bindings = bindings))
 }
 

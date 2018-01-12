@@ -15,8 +15,8 @@
 #' code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
 #' class(code)
 #' passed(code)
-#' line_where(code, Z == "z")
-#' line_where(code, V == 4, Z == "y")
+#' line_where(code, insist(Z == "z", "No line with assignment to 'z'."))
+#' line_where(code, insist(V == 4), insist(Z == "y"))
 
 #' @export
 for_checkr <- function(exprs) {

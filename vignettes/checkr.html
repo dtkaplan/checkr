@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Kaplan" />
 
-<meta name="date" content="2018-01-11" />
+<meta name="date" content="2018-01-12" />
 
 <title>Using checkr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using <code>checkr</code></h1>
 <h4 class="author"><em>Daniel Kaplan</em></h4>
-<h4 class="date"><em>2018-01-11</em></h4>
+<h4 class="date"><em>2018-01-12</em></h4>
 
 
 
@@ -139,35 +139,35 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7c1ee110&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf82722940&gt;</span>
 <span class="kw">check_exer_1</span>(s1wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your data argument head(mtcars) was not `mtcars`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; head(mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd78761fc8&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf862f4808&gt;</span>
 <span class="kw">check_exer_1</span>(s2)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Great job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mod &lt;- lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7a374640&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf81761278&gt;</span>
 <span class="kw">check_exer_1</span>(s2wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; You need to have the miles-per-gallon variable on the left side of the model formula. You've got hp instead.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; hp ~ mpg</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd79f5b708&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf85bcb348&gt;</span>
 <span class="kw">check_exer_1</span>(s3wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your R-squared is 0. That's too small.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(data = for_me, mpg ~ 1)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd78852df0&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf8499c378&gt;</span></code></pre></div>
 <p>The printed form of the result includes whether the submission passed or failed, a congratulatory or diagnostic message, and the component of the code being checked at the point where the test passed or failed. When integrated with a tutorial system such as <code>learnr</code>, the <code>checkr</code> result is formatted as appropriate for that user interface. (For instance the code component is mainly of interest to the author of checking functions, not the student.)</p>
 </div>
 </div>
@@ -181,17 +181,17 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v0 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
   desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
-  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
+  <span class="kw">line_where</span>(code, <span class="kw">passif</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired)), 
              <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
 }</code></pre></div>
 <p>This may be more flexbility than desired. Here’s a cheating solution:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v0</span>(<span class="st">&quot;c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
-<span class="co">#&gt; </span>
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Good!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7c23ab78&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf83057a28&gt;</span></code></pre></div>
 <p>Another approach is to have in mind a specific command and check for exactly that. This provides little or no flexibility. For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v1 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -205,7 +205,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7a330e78&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf82773ae8&gt;</span></code></pre></div>
 <p>… and it will work with a command matching that specified, even allowing assignment or trivial white-space changes …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- rep(1:4,each=3); x&quot;</span>)
 <span class="co">#&gt; checkr result *pass* with message:</span>
@@ -213,7 +213,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- rep(1:4, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7a5ab800&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf80b48f88&gt;</span></code></pre></div>
 <p>But here are reasonable student submissions that won’t pass the test:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
@@ -221,18 +221,18 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- 1:4</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7b66d990&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf836a5718&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7b66fca0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf836a8868&gt;</span>
 <span class="kw">check_exer_1_v1</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7ad3b8b0&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf84602140&gt;</span></code></pre></div>
 <p>The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using <code>rep()</code> and that one argument will be <code>1:4</code>. To test this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -240,23 +240,23 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
   LineA &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, rep, <span class="dt">message =</span> <span class="st">&quot;I'm not seeing where you used `rep()`.&quot;</span>)
   t1 &lt;-<span class="st"> </span><span class="kw">vector_arg</span>(LineA, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;Where did you use `1:4`?&quot;</span>))
   <span class="cf">if</span> (<span class="kw">failed</span>(t1)) <span class="kw">return</span>(t1)
-  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
+  <span class="kw">line_where</span>(code, <span class="kw">passif</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired)), 
              <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
 }</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v2</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
-<span class="co">#&gt; </span>
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Good!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7a9d9ce0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf84886060&gt;</span>
 <span class="kw">check_exer_1_v2</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
-<span class="co">#&gt; </span>
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Good!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd77c99068&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf869004e8&gt;</span></code></pre></div>
 <p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v3 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -269,24 +269,23 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
                   <span class="kw">insist</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">3</span>, <span class="st">&quot;Remember, you want 12 elements in the output made from the 4 elements in the input&quot;</span>), 
                   <span class="dt">message =</span> <span class="st">&quot;See what use you can make of the `each` argument to rep().&quot;</span>)
   <span class="cf">if</span> (<span class="kw">failed</span>(t2)) <span class="kw">return</span>(t2)
-  <span class="kw">line_where</span>(code, <span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), 
-             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+  <span class="kw">line_where</span>(code, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>))
 }</code></pre></div>
 <p>Trying this out …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v3</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
+<span class="co">#&gt; checkr result: *ok*</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7c2858a0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf82d15e68&gt;</span>
 <span class="kw">check_exer_1_v3</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; See what use you can make of the `each` argument to rep().</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(1:4, 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fbd7b334240&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fdf836fe2e0&gt;</span></code></pre></div>
 </div>
 <div id="why-right-is-wrong." class="section level2">
 <h2>Why right is wrong.</h2>
@@ -308,9 +307,9 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 </ul>
 <p>Locate a line …</p>
 <ul>
-<li><code>line_where()</code> - binds V, EX, Z, F. Special case of line_binding. No passif() or failif(), just logical tests written in terms of V, EX, Z, F</li>
+<li><code>line_where()</code> - binds V, EX, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F</li>
 <li><code>line_calling()</code> - looks for a call to a function anywhere in the line. Compare: <code>line_where()</code> provides F, which is just the highest-level call.</li>
-<li><code>line_binding()</code> - custom bindings to patterns. (This was originally called <code>if_matches()</code>.) Can use <code>failif()</code>, etc.</li>
+<li><code>line_binding()</code> - custom bindings to patterns. Can use <code>failif()</code>, etc.</li>
 </ul>
 <p>Within a line or expression…</p>
 <ul>
@@ -366,9 +365,12 @@ Write an R statement to compute the numerical value of x.</p>
 <h3>Looking for a valid line</h3>
 <p>The student’s submission might include blank lines, or some scratch work, or some setup that calculates some component of the answer. A good way to handle such diverse possibilities is to use the <code>at()</code> function to probe the submission for a line that contains the desired result.</p>
 <p>To start very simply, let’s look for a line that generates the expected numerical result:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">line_where</span>(CODE, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
-<span class="co">#&gt; </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">line_where</span>(CODE, 
+           <span class="kw">insist</span>(<span class="kw">is.numeric</span>(V)), 
+           <span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;Good job!&quot;</span>), 
+           <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Good job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
@@ -381,8 +383,14 @@ Write an R statement to compute the numerical value of x.</p>
 <li><code>Z</code> - the name to which the result was assigned, if any.</li>
 </ul>
 <p>If the line contains an assignment, <code>F</code> and <code>EX</code> both refer to the right-hand side of the assignment.</p>
-<p>For each line in <code>CODE</code>, <code>line_where()</code> runs tests written in terms of the pronouns. These are ordinary R statements that can include any function, but they must return a logical as the result. There can be multiple test statements (each as its own argument to <code>line_where()</code>, and so separated by commas as usual in R). The individual test statements can be as complicated as necessary.</p>
-<p>If there is any line for which <em>all</em> the tests pass, <code>line_where()</code> returns that line in a format that can be used for further testing, if desired. If there is no such line in <code>CODE</code>, <code>line_where()</code> will return a failure result.</p>
+<p>For each line in <code>CODE</code>, <code>line_where()</code> runs tests written in terms of the pronouns. These tests are written using the functions <code>passif()</code>, <code>failif()</code>, <code>insist()</code>. The first argument to these functions is an ordinary R statement written in terms of the pronouns and which returns a logical. The second argument (optional) is a message. There can be multiple test statements (each as its own argument to <code>line_where()</code>, and so separated by commas as usual in R).</p>
+<ul>
+<li><code>passif()</code> - denotes a sufficient condition. This is a good place to put a success message.</li>
+<li><code>failif()</code> - denotes a sufficient condition, but one that leads to a failure. The message should indicate the reason for the failure.</li>
+<li><code>insist()</code> - denotes a necessary condition to pass, but not a sufficient one. If the test passes, go on to any following tests without note. The message here should indicate the reason for the failure, that is, what necessary condition was not satisfied.</li>
+<li><code>noteif()</code> - neither necessary nor sufficient. This is merely a way of appending a note to the message that will eventually be returned by the other functions. The message will be that note.</li>
+</ul>
+<p>If there is any line for which <em>none</em> of the tests fail, <code>line_where()</code> returns that line in a format that can be used for further testing, if desired. If there is no such line in <code>CODE</code>, <code>line_where()</code> will return a failure result.</p>
 <p>The <code>type = is.numeric</code> argument to <code>at()</code> is a way of saying, “I’m only going to run the tests if <code>V</code> is numerical.” This provides some armor against the possibility that the submission produces something other than a number.</p>
 </div>
 <div id="connecting-with-learnr" class="section level3">
@@ -390,7 +398,9 @@ Write an R statement to compute the numerical value of x.</p>
 <p>It might be that all you want is to check that <em>some</em> line produces the result you’re looking for. For this simple situation, you might implement the tutorial code checking in <code>learnr</code> by adding a <code>-check</code> block for the exercise with these contents:</p>
 <p>NEED TO CHECK THIS IN LEARNR</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
-<span class="kw">line_where</span>(CODE, <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)</code></pre></div>
+<span class="kw">line_where</span>(CODE, 
+<span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;{{V}} is indeed the right answer.&quot;</span>), 
+<span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)</code></pre></div>
 <p>This is a very simplistic sort of feedback: right or wrong.</p>
 </div>
 <div id="providing-constructive-feedback" class="section level3">
@@ -401,11 +411,12 @@ Write an R statement to compute the numerical value of x.</p>
 <span class="co"># CODE &lt;- for_checkr(quote(sin(53)))</span>
 <span class="co"># CODE &lt;- for_checkr(quote(15 * cos(53)))</span>
 t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
-t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>),
-              <span class="dt">message =</span> <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>)
-<span class="kw">line_where</span>(t1, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
-<span class="co">#&gt; checkr result: *pass*</span>
-<span class="co">#&gt; </span>
+t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, <span class="kw">insist</span>(F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>), <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>))
+<span class="kw">line_where</span>(t1, <span class="kw">insist</span>(<span class="kw">is.numeric</span>(V)), 
+           <span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;Good!&quot;</span>), 
+           <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Good!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
@@ -420,9 +431,12 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span 
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(<span class="kw">quote</span>(<span class="dv">15</span> <span class="op">*</span><span class="st"> </span><span class="kw">cos</span>(<span class="dv">53</span>)))
 t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
 t1 &lt;-<span class="st"> </span><span class="kw">misconception</span>(t1, <span class="kw">line_calling</span>(t1, cos), <span class="dt">message =</span> <span class="st">&quot;Are you sure cosine is the right choice?&quot;</span>)
-t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>),
-              <span class="dt">message =</span> <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>)
-<span class="kw">line_where</span>(t1, <span class="kw">is.numeric</span>(V), <span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
+t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, 
+                 <span class="kw">insist</span>(F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>), 
+                        <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>))
+<span class="kw">line_where</span>(t1, <span class="kw">insist</span>(<span class="kw">is.numeric</span>(V)), 
+           <span class="kw">insist</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, 
+                  <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>))
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Are you sure cosine is the right choice?</span>
 <span class="co">#&gt; CODE:</span>
@@ -437,6 +451,47 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, F <span 
 <li>By default, use <code>expand_all_chains()</code> to turn the code into a single sequence that expands all the chains.</li>
 </ul>
 <p>So, if you’re anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using <code>expand_all_chains()</code> directly on the <code>CODE</code>.</p>
+<p>A POSSIBLE EXAMPLE:</p>
+<p>Sometimes the exercise is itself about constructing a chain. For instance:</p>
+<blockquote>
+<p><strong>Exercise 9</strong>: Consider the following wrangling statement:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">group_by</span>(mtcars, cyl)
+<span class="kw">summarise</span>(res, <span class="dt">disp =</span> <span class="kw">mean</span>(disp))</code></pre></div>
+<p>Rewrite it as a chain.</p>
+</blockquote>
+<p>The checking function needs to make sure the task is accomplished, like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">chk_exer_<span class="dv">9</span> &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  t1 &lt;-<span class="st"> </span><span class="kw">line_chaining</span>(code, <span class="dt">message =</span> <span class="st">&quot;Remember, chains involve `%&gt;%`.&quot;</span>)
+  <span class="kw">check</span>(t1, 
+        <span class="kw">insist</span>(<span class="kw">identical</span>(V, mtcars <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(cyl) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">disp =</span> <span class="kw">mean</span>(disp))), <span class="st">&quot;Your chain doesn't produce the right value.&quot;</span>),
+        <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Great!&quot;</span>))
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))&quot;</span>)
+<span class="co">#&gt; checkr result *pass* with message:</span>
+<span class="co">#&gt; Great!</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf83178910&gt;</span>
+<span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Your chain doesn't produce the right value.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf8627b2a8&gt;</span>
+<span class="kw">chk_exer_9</span>(<span class="st">&quot;res &lt;- group_by(mtcars, cyl); summarise(res, disp = mean(disp))&quot;</span>)
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Remember, chains involve `%&gt;%`.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; res &lt;- group_by(mtcars, cyl)</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf81e6fc30&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; summarise(res, disp = mean(disp))</span>
+<span class="co">#&gt; &lt;environment: 0x7fdf81e6c840&gt;</span></code></pre></div>
 </div>
 <div id="writing-functions-for-checking" class="section level3">
 <h3>Writing functions for checking</h3>

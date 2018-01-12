@@ -4,12 +4,14 @@
 \alias{line_chaining}
 \title{Find a line that is a magrittr chain}
 \usage{
-line_chaining(ex, n = 1L)
+line_chaining(ex, n = 1L, message = "Didn't find a chained command.")
 }
 \arguments{
-\item{ex}{a checkr_result object such as produced by \code{for_checkr()}}
+\item{ex}{A checkr_result object such as produced by \code{for_checkr()}}
 
 \item{n}{An integer indicating which line that is a chain is desired: first, second, ...}
+
+\item{message}{A message to include in a failed result.}
 }
 \description{
 Code submissions may consist of one or more lines. Each of those lines may be

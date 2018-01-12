@@ -4,6 +4,7 @@
 \alias{passif}
 \alias{failif}
 \alias{noteif}
+\alias{insist}
 \alias{failif}
 \alias{noteif}
 \alias{insist}
@@ -38,10 +39,14 @@ Enclose these in moustaches, e.g. "The \code{{{F}}} function is not appropriate 
 Within a test, the operators \code{==} and \code{!=} in a test have been augmented to deal
 with language objects such as names. They are translated to be equivalent to "\%same_as\%".
 You can refer to the expression being tested with \code{{{expression_string}}} and to the \code{test} itself as \code{{{test_string}}}.
+
+Use \code{insist()} to denote necessary but not sufficient conditions
+Use \code{failif()} and \code{passif()} for sufficient conditions.
 }
 \examples{
 code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
-my_line <- line_where(code, F == `+`)
+my_line <- line_where(code, passif(F == `+`, "You used + so you've succeeded."))
+my_line <- line_where(code, insist(F == `+`, "Where did you use +?"))
 check_binding(my_line, `+`(..(x), ..(y)), insist(y == 4, "use 4 for the second argument to +"))
 # or equivalently with a double negative ... fail and y != 4
 check_binding(my_line, `+`(..(x), ..(y)), failif(y != 4, "use 4 for the second argument to +"))

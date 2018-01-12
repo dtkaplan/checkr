@@ -6,4 +6,9 @@
 #' @importFrom magrittr %>%
 #'
 #' @importFrom utils capture.output head tail
+#'
+# The following is just to avoid an R CMD check note. I use dplyr in the vignette,
+# but not otherwise in the package. Still, I need to import from it to avoid
+# the CMD check message
+#' @importFrom dplyr filter
 NULL

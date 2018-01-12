@@ -35,6 +35,6 @@ Grab the lines after a specified line (which is included)
 }
 \examples{
 ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))
-line_where(ex, F == "^")
+line_where(ex, insist(F == "^", "Didn't find exponentiation"))
 
 }

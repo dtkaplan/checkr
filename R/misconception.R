@@ -10,8 +10,12 @@
 #'
 #' @examples
 #' code <- for_checkr(quote({theta <- 53; x <- sin(theta)}))
-#' misconception(code, line_where(code,V == 53), message = "Angle should be in degrees, not radians.")
-#' misconception(code, line_calling(code, sin), message = "For the x-coordinate, use cos().")
+#' misconception(code,
+#'   line_where(code,
+#'              passif(V == 53)),
+#'   message = "Angle should be in degrees, not radians.")
+#' misconception(code, line_calling(code, sin),
+#'    message = "For the x-coordinate, use cos().")
 #'
 #' @export
 misconception <- function(ex, pattern, message) {

@@ -12,12 +12,14 @@
 #'
 #' @examples
 #' code <- for_checkr(quote({x <- 3; y <- x^2 + 2}))
-#' line2 <- line_where(code, Z == "y")
+#' line2 <- line_where(code, insist(Z == "y"))
 #' check(line2, passif(V == 11, "Right, eleven!"),
 #'       message = "Sorry. The result should be 11.")
 #' @export
 check <- function(ex, ..., message = "Sorry!") {
-  stopifnot(inherits(ex, "checkr_result"),
-            length(ex$code) == 1)
+  stopifnot(inherits(ex, "checkr_result"))
+  if (failed(ex)) return(ex) # short circuit.
+  if(length(ex$code) != 1) stop("check() is for handling just a single line of code.") # Author error
+
   line_binding(ex, I, ..., message = message, qkeys = quote({.(EX); ..(V)}))
 }

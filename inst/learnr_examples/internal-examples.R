@@ -4,11 +4,11 @@
 
 rep_1234 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- line_where(code, Z != "",
+  res <- line_where(code, insist(Z != ""),
                     message = "Remember to store the result under the name `Id`.")
-  res <- line_where(res, Z == "Id", message = "Use `Id` for the assignment, not {{Z}}.")
+  res <- line_where(res, insist(Z == "Id"), message = "Use `Id` for the assignment, not {{Z}}.")
 
-  res <- line_where(res, F == rep, message = "You're supposed to use `rep()`.")
+  res <- line_where(res, insist(F == rep), message = "You're supposed to use `rep()`.")
   the_each_arg <- named_arg(res, "each",
                             message = "Look at the help for `rep()` to see what arguments are available to control the pattern of repetition. (These are documented under `...`)")
   t1 <- check(the_each_arg,
@@ -28,11 +28,11 @@ rep_1234 <- function(USER_CODE) {
 
 rep_abcd <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- line_where(code, Z != "",
+  res <- line_where(code, insist(Z != ""),
                     message = "Remember to store the result under the name `Letter`.")
-  res <- line_where(res, Z == "Letter", message = "Use `Letter` for the assignment, not {{Z}}.")
+  res <- line_where(res, insist(Z == "Letter", "Use `Letter` for the assignment, not {{Z}}."))
 
-  res <- line_where(res, F == rep, message = "You're supposed to use `rep()`.")
+  res <- line_where(res, insist(F == rep), message = "You're supposed to use `rep()`.")
   the_each_arg <- named_arg(res, "each",
                             message = "Look at the help for `rep()` to see what arguments are available to control the pattern of repetition. (These are documented under `...`)")
   t1 <- check(the_each_arg,
@@ -58,12 +58,14 @@ check_assigns <- function(ex, names = NULL, vals = NULL) {
   res <- ex
   for (k in seq_along(names)) {
     m <- paste("You're supposed to assign to an object called", names[k])
-    t1 <- line_where(res, Z == names[k], message = m)
+    t1 <- line_where(res, insist(Z == names[k], m))
     if (! is.null(vals)) {
       m <- paste("The object called", names[k], "should be a",
                  to_sensible_character(vals[[k]]))
-      t1 <- line_where(t1, Z == names[k], identical(V, vals[[k]]),
-                 message = m)
+      t1 <- line_where(t1,
+                       insist(Z == names[k], "Wrong name used for assignment"),
+                       insist(identical(V, vals[[k]]), "Wrong value for {{EX}}."),
+                       message = m)
     }
     if (failed(t1)) return(t1)
   }

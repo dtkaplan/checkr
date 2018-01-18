@@ -102,7 +102,7 @@ test_that("line_calling() works", {
 test_that("On failure, the returned code is that of the original input.", {
   res1 <- line_calling(CODE, `*`, message = "No multiplication found.")
   expect_true(length(res1$code) == 3) # all the input lines
-  res2 <- line_where(CODE, insist(V == 100), message = "No line producing value 100.")
+  res2 <- line_where(CODE, insist(V == 100, "No line producing value 100."))
   expect_true(length(res2$code) == 3)
   res3 <- line_binding(CODE, exp(...), message = "Exponential wasn't used.")
   expect_true(length(res3$code) == 3)

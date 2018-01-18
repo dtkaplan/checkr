@@ -19,7 +19,7 @@ as_bracketed_expressions <- function(ex) {
     # ex came from the parser, not quote.
     # turn it into a bracketed set of expressions
     Res <- quote({})
-    for (k in 1:length(ex))
+    for (k in seq_along(ex))
       Res[[k+1]] <- ex[[k]]
   } else if ( ! inherits(ex, "{")) { # it's a single expression
     # put into the framework of a bracketed set of expressions

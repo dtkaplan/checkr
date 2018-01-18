@@ -5,18 +5,14 @@
 \title{Check that argument is in radians}
 \usage{
 trig_radian_check(ex, radian_val,
-  fail = "could not find call to a trigonometric function", pass = "",
-  eps = 0.001)
+  message = "Could not find call to a trigonometric function", eps = 0.001)
 }
 \arguments{
 \item{ex}{A \code{checkr_result}, presumably containing a call to a trig function.}
 
 \item{radian_val}{a number: the desired angle in radians}
 
-\item{fail}{character string message to produce on failure}
-
-\item{pass}{character string message to produce on pass (and switches output action
-from OK to pass.)}
+\item{message}{character string message to produce on failure}
 
 \item{eps}{precision of comparison}
 }

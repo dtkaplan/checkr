@@ -48,7 +48,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h2>What’s this document about?</h2>
 <p>This is a <code>learnr</code> tutorial to display some examples of code-checking with the <code>checkr</code> package.</p>
 <p>As you may know, <code>learnr</code> is a system for creating and distributing interactive documents, particularly documents that provide exercise-boxes where the reader can type and execute R code.</p>
-<p><code>Check2</code> is a package that provides feedback about the code that is being executed in a <code>learnr</code> exercise box.</p>
+<p><code>Checkr</code> is a package that provides feedback about the code that is being executed in a <code>learnr</code> exercise box.</p>
 </div>
 <div id="section-hello-world" class="section level2">
 <h2>Hello, World!</h2>
@@ -63,22 +63,22 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <div class="tutorial-exercise" data-label="hello-world" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>&quot;Hello, World!&quot;</code></pre>
-<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        cat(\"We're checking it now.\\n\")","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    if (res$action == \"ok\" && res$message == \"\") ","        res$message = \"Good\"","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
 </div>
 <div id="section-the-man-behind-the-curtain" class="section level3">
 <h3>The man behind the curtain</h3>
 <p>Ordinarily, you would not show students the <code>checkr</code> statements implementing this behavior. But our purpose here is to introduce <code>checkr</code>, So here are the statements for the above exercise.</p>
 <pre><code> [1] code &lt;- for_checkr(USER_CODE)
- [2] res &lt;- misconception(code, line_where(code, is.null(F)),
- [3]     message = paste(&quot;Just typing the string doesn&#39;t do it. Note that the output&quot;,
+ [2] res &lt;- misconception(code, line_where(code, passif(is.null(F))), 
+ [3]     message = paste(&quot;Just typing the string doesn&#39;t do it. Note that the output&quot;, 
  [4]         &quot;has quotes and is formatted as an output, not a simple message.&quot;))
- [5] res &lt;- misconception(res, line_where(res, F == print), message = paste(&quot;Using print() isn&#39;t right.&quot;,
- [6]     &quot;True, that&#39;s the way character strings are displayed,&quot;,
- [7]     &quot;but the format of the display is as a quoted output and&quot;,
- [8]     &quot;not just a simple message.&quot;))
- [9] res &lt;- line_where(res, F == cat, message = &quot;Try the cat() function.&quot;)
-[10] check(arg_number(res, 1), passif(V == &quot;Hello, World!&quot;, &quot;Good job!&quot;),
-[11]     failif(tolower(V) == &quot;hello, world!&quot;, &quot;Get the capitalization right!&quot;),
+ [5] res &lt;- misconception(res, line_where(res, passif(F == print)), 
+ [6]     message = paste(&quot;Using print() isn&#39;t right.&quot;, &quot;True, that&#39;s the way character strings are displayed,&quot;, 
+ [7]         &quot;but the format of the display is as a quoted output and&quot;, 
+ [8]         &quot;not just a simple message.&quot;))
+ [9] res &lt;- line_where(res, insist(F == cat, &quot;Try the cat() function.&quot;))
+[10] check(arg_number(res, 1), passif(V == &quot;Hello, World!&quot;, &quot;Good job!&quot;), 
+[11]     failif(tolower(V) == &quot;hello, world!&quot;, &quot;Get the capitalization right!&quot;), 
 [12]     failif(TRUE, &quot;The string should be &#39;Hello, World!&#39;, not &#39;{{V}}&#39;.&quot;))</code></pre>
 <p>Breaking this down, line by line:</p>
 <ul>
@@ -91,11 +91,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>Depending on the submission, any of the checks on lines 2, 5, 9, and 10 might fail. If a check fails, later checks that use the previous result will short circuit to a failed check. For instance, if the check on line [2] fails, the remaining checks won’t be performed in detail: they will just pass along the failed result from line [2].</p>
 <p>An instructor with a different pedagogical approach might prefer to structure the checking in an entirely different way. For instance, here are <code>checkr</code> statements that simply tell the user whether or not the submission did what was requested:</p>
 <pre><code>## [1] code &lt;- for_checkr(USER_CODE)
-## [2] line_binding(code, cat(&quot;Hello, World!&quot;), passif(TRUE, &quot;That&#39;s right.&quot;),
+## [2] line_binding(code, cat(&quot;Hello, World!&quot;), passif(TRUE, &quot;That&#39;s right.&quot;), 
 ## [3]     fail = &quot;No. Try aain.&quot;)</code></pre>
 <div class="tutorial-exercise" data-label="hello-world-strict" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>&quot;Hello, World!&quot;</code></pre>
-<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        cat(\"We're checking it now.\\n\")","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    if (res$action == \"ok\" && res$message == \"\") ","        res$message = \"Good\"","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="hello-world-strict-check" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>hello_fun_strict(USER_CODE)</code></pre>
@@ -109,7 +109,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>Write the code to add two and two.</p>
 </blockquote>
 <div class="tutorial-exercise" data-label="two-plus-two" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
-<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        cat(\"We're checking it now.\\n\")","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    if (res$action == \"ok\" && res$message == \"\") ","        res$message = \"Good\"","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
 </div>
 <p>Of course, a submission of <code>2 + 2</code> will work. See what happens when you try to fool the checking system with a submission like <code>6 - 4</code> or <code>1 + 1 + 1 + 1</code>.</p>
 <div class="tutorial-exercise-support" data-label="two-plus-two-code-check" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
@@ -120,10 +120,10 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 <p>Here are the <code>checkr</code> statements implementing the above behavior:</p>
 <pre><code>## [1] res &lt;- for_checkr(USER_CODE)
-## [2] res &lt;- line_where(res, V == 4, message = &quot;The result should be 4, not {{V}}.&quot;)
-## [3] res &lt;- line_where(res, F == `+`, message = paste(&quot;Think about what function corresponds to &#39;addition&#39;.&quot;,
-## [4]     &quot;It isn&#39;t {{F}}.&quot;))
-## [5] arg_number(res, 1, failif(V != 2, &quot;The first argument should be 2, not {{EX}}.&quot;),
+## [2] res &lt;- line_where(res, insist(V == 4, &quot;The result should be 4, not {{V}}.&quot;))
+## [3] res &lt;- line_where(res, insist(F == `+`, paste(&quot;Think about what function corresponds to &#39;addition&#39;.&quot;, 
+## [4]     &quot;It isn&#39;t {{F}}.&quot;)))
+## [5] arg_number(res, 1, failif(V != 2, &quot;The first argument should be 2, not {{EX}}.&quot;), 
 ## [6]     passif(TRUE, &quot;Yes, that&#39;s it!&quot;))</code></pre>
 
 <script type="application/shiny-prerendered" data-context="server-start">
@@ -135,60 +135,60 @@ tutorial_options(exercise.checker = checkr::check_for_learnr)
 
 hello_check <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- misconception(code, line_where(code, is.null(F)),
+  res <- misconception(code, line_where(code, passif(is.null(F))), 
                        message = paste(
-                         "Just typing the string doesn't do it. Note that the output",
+                         "Just typing the string doesn't do it. Note that the output", 
                          "has quotes and is formatted as an output, not a simple message."))
-  res <- misconception(res, line_where(res, F == print),
+  res <- misconception(res, line_where(res, passif(F == print)), 
                        message = paste(
                          "Using print() isn't right.",
-                         "True, that's the way character strings are displayed,",
+                         "True, that's the way character strings are displayed,", 
                          "but the format of the display is as a quoted output and",
                          "not just a simple message."))
-  res <- line_where(res, F == cat, message = "Try the cat() function.")
+  res <- line_where(res, insist(F == cat, "Try the cat() function."))
   check(arg_number(res, 1), passif(V == "Hello, World!", "Good job!"),
         failif(tolower(V) == "hello, world!", "Get the capitalization right!"),
-        failif(TRUE, "The string should be 'Hello, World!', not '{{V}}'."))
+        failif(TRUE, "The string should be 'Hello, World!', not '{{V}}'.")) 
 }
 
 two_plus_two_check <- function(USER_CODE) {
   res <- for_checkr(USER_CODE)
-  res <- line_where(res, V == 4, message = "The result should be 4, not {{V}}.")
-  res <- line_where(res, F == `+`,
-                    message =
-                      paste("Think about what function corresponds to 'addition'.",
-                            "It isn't {{F}}."))
+  res <- line_where(res, insist(V == 4, "The result should be 4, not {{V}}."))
+  res <- line_where(res, 
+                    insist(F == `+`, paste(
+                      "Think about what function corresponds to 'addition'.", 
+                      "It isn't {{F}}.")))
   arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{EX}}."),
              passif(TRUE, "Yes, that's it!"))
 }
 
 hello_fun_strict <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  line_binding(code,
+  line_binding(code, 
                cat("Hello, World!"),  # a pattern with no flexibility.
                passif(TRUE, "That's right."),
                fail = "No. Try aain.")
 }
 </script>
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::register_http_handlers(session, metadata = NULL)
 </script>
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-hello-world-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-hello-world-code-editor`)), session)
 output$`tutorial-exercise-hello-world-output` <- renderUI({
   `tutorial-exercise-hello-world-result`()
 })
 </script>
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-hello-world-strict-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-hello-world-strict-code-editor`)), session)
 output$`tutorial-exercise-hello-world-strict-output` <- renderUI({
   `tutorial-exercise-hello-world-strict-result`()
 })
 </script>
-
+ 
 <script type="application/shiny-prerendered" data-context="server">
 `tutorial-exercise-two-plus-two-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-two-plus-two-code-editor`)), session)
 output$`tutorial-exercise-two-plus-two-output` <- renderUI({
@@ -211,7 +211,7 @@ output$`tutorial-exercise-two-plus-two-output` <- renderUI({
 
 <!-- begin doc-metadata -->
 <div id="doc-metadata">
-<h2 class="title toc-ignore" style="display:none;">Introducing <code>checkr2</code></h2>
+<h2 class="title toc-ignore" style="display:none;">Introducing <code>checkr</code></h2>
 </div>
 <!-- end doc-metadata -->
 

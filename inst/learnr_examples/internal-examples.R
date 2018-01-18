@@ -4,11 +4,10 @@
 
 rep_1234 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- line_where(code, insist(Z != ""),
-                    message = "Remember to store the result under the name `Id`.")
-  res <- line_where(res, insist(Z == "Id"), message = "Use `Id` for the assignment, not {{Z}}.")
+  res <- line_where(code, insist(Z != "", "Remember to store the result under the name `Id`."))
+  res <- line_where(res, insist(Z == "Id", "Use `Id` for the assignment, not {{Z}}."))
 
-  res <- line_where(res, insist(F == rep), message = "You're supposed to use `rep()`.")
+  res <- line_where(res, insist(F == rep, "You're supposed to use `rep()`."))
   the_each_arg <- named_arg(res, "each",
                             message = "Look at the help for `rep()` to see what arguments are available to control the pattern of repetition. (These are documented under `...`)")
   t1 <- check(the_each_arg,
@@ -28,8 +27,7 @@ rep_1234 <- function(USER_CODE) {
 
 rep_abcd <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- line_where(code, insist(Z != ""),
-                    message = "Remember to store the result under the name `Letter`.")
+  res <- line_where(code, insist(Z != "", "Remember to store the result under the name `Letter`."))
   res <- line_where(res, insist(Z == "Letter", "Use `Letter` for the assignment, not {{Z}}."))
 
   res <- line_where(res, insist(F == rep), message = "You're supposed to use `rep()`.")

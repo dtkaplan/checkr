@@ -33,7 +33,7 @@ rhs_contains(F, ...)
 \description{
 Provide facilities for checking the layout of formulas. Use these
 with an input that is the \emph{value} of a formula, that is, with a V binding rather
-than an EX binding.
+than an E binding.
 }
 \examples{
 CODE <- for_checkr(quote({

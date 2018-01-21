@@ -13,5 +13,7 @@ test_that("Can combine results from tests.", {
                       noteif(V == 6, "Should have been 6."), message = "z should be 4")
   expect_true(passed(line1 %or% line2))
   expect_false(passed(line1 %and% line2))
-  expect_true(passed(line1 %and% line3))
+  # line1 and line3 are "ok", so combining them with %and% produces an ok.
+  expect_false(failed(line1 %and% line3))
+  expect_false(passed(line1 %and% line3))
 })

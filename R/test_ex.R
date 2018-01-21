@@ -1,9 +1,9 @@
 #' Tests on expressions
 #'
-#' These functions can be applied to EX bindings as produced by `line_where()`.
-#' They calculate something about the EX expression.
+#' These functions can be applied to E bindings as produced by `line_where()`.
+#' They calculate something about the E expression.
 #'
-#' @param ex A straight expression, for instance as bound to `EX` in `line_where().`
+#' @param ex A straight expression, for instance as bound to `E` in `line_where().`
 #'
 #' @rdname test_ex
 #' @export

@@ -20,7 +20,7 @@ test_that("line_where() identifies a line value", {
 })
 
 test_that("line_where() identifies an expression", {
-  res1 <- line_where(CODE, insist(EX == quo(x^3)))
+  res1 <- line_where(CODE, insist(E == quo(x^3)))
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
@@ -36,7 +36,7 @@ test_that("line_calling() works", {
 })
 
 test_that("line_where() and line_binding() return code in the form of a list of quosures.", {
-  res1 <- line_where(CODE, insist(EX == quo(x^3)))
+  res1 <- line_where(CODE, insist(E == quo(x^3)))
   expect_true(is.list(res1$code))
   expect_true(rlang::is_quosure(res1$code[[1]]))
   res2 <- line_binding(CODE, {`^`(...);..(v)}, passif(v == 8, "The line producing 8."))

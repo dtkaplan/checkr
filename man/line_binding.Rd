@@ -6,7 +6,7 @@
 \title{Locates a line matching a redpen pattern and conducts tests on the resulting bindings.}
 \usage{
 line_binding(ex, keys, ..., message = "No match found to specified patterns.",
-  qkeys = NULL)
+  qkeys = NULL, qtests = NULL)
 }
 \arguments{
 \item{ex}{a checkr_result object produced by some previous checkr function, e.g. \code{for_checkr()}}
@@ -25,6 +25,8 @@ when there's no assignment in the line.)}
 give with the failed checkr_result.}
 
 \item{qkeys}{(for internal use only) a quoted expression containing the keys.}
+
+\item{qtests}{(for internal use only) the tests that would be in ...}
 }
 \value{
 A checkr_test object with an action ("pass", "fail", or "ok")

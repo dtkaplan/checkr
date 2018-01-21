@@ -3,12 +3,9 @@
 \name{line_where}
 \alias{line_where}
 \alias{lines_after}
-\alias{lines_after}
 \title{Identify an individual line in a sequence of commands}
 \usage{
 line_where(ex, ..., message = "")
-
-lines_after(ex, ..., message = "")
 }
 \arguments{
 \item{ex}{expressions as made by for_checkr()}
@@ -16,7 +13,7 @@ lines_after(ex, ..., message = "")
 \item{...}{tests specifying the kind of line we want}
 
 \item{message}{A character string to be included as the message in the result. This
-can have moustaches written in terms of F, Z, V, or EX}
+can have moustaches written in terms of F, Z, V, or E}
 }
 \value{
 A checkr test result. By default, if the line is found, the result
@@ -28,10 +25,8 @@ The tests are written in terms of pronouns
 \item F the function at the highest level (but with assignment removed)
 \item Z the name being bound to the line's value by assignment. ("" if no assignment.)
 \item V the value produced by the line.
-\item EX the expression itself (but with assignment removed)
+\item E the expression itself (but with assignment removed)
 }
-
-Grab the lines after a specified line (which is included)
 }
 \examples{
 ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))

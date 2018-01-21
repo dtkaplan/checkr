@@ -22,13 +22,13 @@ check_exer_1 <- function(USER_CODE) {
   lm_call <- arg_calling(lm_line, lm)
   t1 <- data_arg(lm_call, 
                  insist(identical(V, mtcars), 
-                        "Your data argument {{EX}} was not `mtcars`."),
+                        "Your data argument {{E}} was not `mtcars`."),
                  message = "You didn't supply a `data = ` argument to `lm()`.")
   if (failed(t1)) return(t1)
   f <- formula_arg(lm_call,
                   message = "You didn't give a formula specifying the structure of the model.")
   t2 <- check(f, insist(two_sided(f), "There's no response variable in your formula."))
-  t2 <- check(t2, insist(rlang::f_lhs(EX) == as.name("mpg"), 
+  t2 <- check(t2, insist(rlang::f_lhs(E) == as.name("mpg"), 
                    paste("You need to have the miles-per-gallon variable",
                          "on the left side of the model formula.",
                          "You've got {{rlang::f_lhs(V)}} instead.")))

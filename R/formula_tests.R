@@ -2,7 +2,7 @@
 #'
 #' Provide facilities for checking the layout of formulas. Use these
 #' with an input that is the *value* of a formula, that is, with a V binding rather
-#' than an EX binding.
+#' than an E binding.
 #'
 #' @aliases formula_equals, two_sided, lhs_equals, rhs_equals, rhs_contains
 #'

@@ -19,6 +19,11 @@
 #'
 #' @export
 arg_calling <- function(ex, ..., n=1L, message = "call to function") {
+
+  # THIS ISN'T working in the trig_radian_check() function. It gives back the whole line rather than the sin(angle)
+  # I THINK IT'S BECAUSE I NEED TO APPLY IT RECURSIVELY TO THE RESULT, until it get's winnowed down to just the
+  # function itself, instead of a line containing the function.
+
   qfuns <- quos(...)
   qfuns <- lapply(qfuns, FUN = quo_expr)
   # see whether the call itself is to the function
@@ -35,9 +40,16 @@ arg_calling <- function(ex, ..., n=1L, message = "call to function") {
   test <- function(arg) {
     argument_calls(arg, qfuns)
   }
-  generic_arg(ex, "specified function", test, n = n,
+  res <- generic_arg(ex, "specified function", test, n = n,
               message = message,
               use_value = FALSE)
+  if (failed(res)) return(res) # no such call found
+
+  # is the desired function at the top of the tree?
+  stopifnot(length(res$code) == 1)
+  top_fun <-get_function(res$code[[1]])
+  if (c(top_fun) %in% c(qfuns)) return(res)
+  else arg_calling(res, ..., n=n, message = message)
 }
 
 check_qfuns <- function(qfuns) {

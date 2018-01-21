@@ -72,13 +72,13 @@ check_exer_1 <- function(USER_CODE) {
   lm_call <- arg_calling(lm_line, lm)
   t1 <- data_arg(lm_call, 
                  insist(identical(V, mtcars), 
-                        "Your data argument {{EX}} was not `mtcars`."),
+                        "Your data argument {{E}} was not `mtcars`."),
                  message = "You didn't supply a `data = ` argument to `lm()`.")
   if (failed(t1)) return(t1)
   f <- formula_arg(lm_call,
                   message = "You didn't give a formula specifying the structure of the model.")
   t2 <- check(f, insist(two_sided(f), "There's no response variable in your formula."))
-  t2 <- check(t2, insist(rlang::f_lhs(EX) == as.name("mpg"), 
+  t2 <- check(t2, insist(rlang::f_lhs(E) == as.name("mpg"), 
                    paste("You need to have the miles-per-gallon variable",
                          "on the left side of the model formula.",
                          "You've got {{rlang::f_lhs(V)}} instead.")))
@@ -234,7 +234,7 @@ Process the submitted code to prepare for testing:
 
 Locate a line ...
 
-* `line_where()` - binds V, EX, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F
+* `line_where()` - binds V, E, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F
 * `line_calling()` - looks for a call to a function anywhere in the line. Compare: `line_where()` provides F, which is just the highest-level call. 
 * `line_binding()` - custom bindings to patterns. Can use `failif()`, etc.
 
@@ -316,10 +316,10 @@ The `line_where` function scans through all the lines in `CODE`. (There's just o
 
 - `V` - the value of the line
 - `F` - the top-level function used in the line
-- `EX` - the expression itself, as code.
+- `E` - the expression itself, as code.
 - `Z` - the name to which the result was assigned, if any.
 
-If the line contains an assignment, `F` and `EX` both refer to the right-hand side of the assignment.
+If the line contains an assignment, `F` and `E` both refer to the right-hand side of the assignment.
 
 For each line in `CODE`, `line_where()` runs tests written in terms of the pronouns. These tests are written using the functions `passif()`, `failif()`, `insist()`. The first argument to these functions is an ordinary R statement written in terms of the pronouns and which returns a logical. The second argument (optional) is a message.  There can be multiple test statements (each as its own argument to `line_where()`, and so separated by commas as usual in R). 
 

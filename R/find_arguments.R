@@ -27,61 +27,61 @@
 #'   insist("hp" %in% names(V),
 #'           "The data should have a column named 'hp'."))
 #' matrix_arg(code)
-#' named_arg(code, "data", failif(EX == `mtcars`, "I didn't want mtcars."))
+#' named_arg(code, "data", failif(E == `mtcars`, "I didn't want mtcars."))
 #' arg_number(code, 3)
 
 #' @export
 formula_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "a formula e.g. a ~ b", is_formula, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 data_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "a data frame", is.data.frame, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 matrix_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "a matrix", is.matrix, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 vector_arg <- function(ex, ...,  n=1L, message = "") {
   res <- generic_arg(ex, "a vector", is.vector, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 character_arg <- function(ex, ...,  n=1L, message = "") {
   res <- generic_arg(ex, "a character string", is.character, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 numeric_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "numeric", is.numeric, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 list_arg <- function(ex, ...,  n=1L, message = "") {
   res <- generic_arg(ex, "a list", is.list, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 function_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "a function", is.function, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 #' @rdname find_arguments
 #' @export
 table_arg <- function(ex, ..., n=1L, message = "") {
   res <- generic_arg(ex, "a table", is.table, n = n, message = message)
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 
 generic_arg <- function(ex, type_description, type_test,
@@ -145,7 +145,7 @@ arg_number <- function(ex, n = 1L, ..., message = "") {
       code <- list(new_quosure(argv[[n]], env = environment(code)))
       new_checkr_result("ok", code = code)
     }
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }
 
 #' @rdname find_arguments
@@ -176,5 +176,5 @@ named_arg <- function(ex, nm, ..., message = "") {
       code <- list(new_quosure(argv[[the_arg]], env = environment(code)))
       new_checkr_result("ok", code = code)
     }
-  line_binding(res, I , ..., message = message, qkeys = quote({.(EX); ..(V)}))
+  line_binding(res, I , ..., message = message, qkeys = quote({.(E); ..(V)}))
 }

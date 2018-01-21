@@ -45,26 +45,18 @@
 `%or%.checkr_result` <- function(res1, res2) {
   stopifnot(inherits(res2, "checkr_result"))
   # Make sure they are both checkr_result and then combine in some sensible way
-  # 1) req  || pass -> pass
-  # 2) req  || fail -> req
-  # 3) req  || req  -> req
+  # 1) ok   || pass -> pass
+  # 2) ok   || fail -> pass
+  # 3) ok   || ok   -> pass
   # 4) pass || pass -> pass
   # 5) pass || fail -> pass
   # 6) fail || fail -> fail
 
-  one <- res1$action
-  two <- res2$action
   # combine the notes
   mess <- combine_messages(res1, res2)
 
-  # Now the logic
-  if (one == "pass" || two == "pass") { # Cases 1, 4, 5
-    new_checkr_result("pass", message = mess$pass_message)
-  } else if (one == "fail" || two == "fail") { # Cases 2, 6
-    new_checkr_result("fail", message = mess$fail_message)
-  } else if (one == "ok" || two == "ok") { # Case 3
-    new_checkr_result("ok", message = mess$ok_note)
-  } else stop("illegal combination of checkr_results")
+  if (failed(res1) && failed(res2)) new_checkr_result("fail", message = mess$fail_message)
+  else new_checkr_result("pass", message = mess$pass_message)
 }
 #' @rdname logicals
 #' @export
@@ -75,19 +67,17 @@
   # 3) ok && ok   -> ok
   # 4) pass && ok -> pass
 
-  one <- res1$action
-  two <- res2$action
   # combine the notes
   mess <- combine_messages(res1, res2)
 
-  if (one == "fail" || two == "fail") {
+  if (failed(res1) || failed(res2)) {
     new_checkr_result("fail", mess$fail_message)
-  } else if (one == "pass" || two == "pass") {
+  } else if (passed(res1) || passed(res2)) {
     new_checkr_result("pass", mess$pass_message)
-  } else if (one == "ok" && two == "ok") {
+  } else if ((!failed(res1)) && (!failed(res2))) {
     new_checkr_result("ok", mess$ok_note)
   } else {
-    stop("Illegal combination of checkr_results")
+    stop("Illegal combination of checkr_results. ")
   }
 
 }

@@ -62,7 +62,7 @@ check_assigns <- function(ex, names = NULL, vals = NULL) {
                  to_sensible_character(vals[[k]]))
       t1 <- line_where(t1,
                        insist(Z == names[k], "Wrong name used for assignment"),
-                       insist(identical(V, vals[[k]]), "Wrong value for {{EX}}."),
+                       insist(identical(V, vals[[k]]), "Wrong value for {{E}}."),
                        message = m)
     }
     if (failed(t1)) return(t1)

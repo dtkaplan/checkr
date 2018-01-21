@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Kaplan" />
 
-<meta name="date" content="2018-01-12" />
+<meta name="date" content="2018-01-21" />
 
 <title>Using checkr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using <code>checkr</code></h1>
 <h4 class="author"><em>Daniel Kaplan</em></h4>
-<h4 class="date"><em>2018-01-12</em></h4>
+<h4 class="date"><em>2018-01-21</em></h4>
 
 
 
@@ -117,13 +117,13 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
  [1]     code &lt;- for_checkr(USER_CODE)
  [2]     lm_line &lt;- line_calling(code, lm, message = &quot;Use lm() to construct the model.&quot;)
  [3]     lm_call &lt;- arg_calling(lm_line, lm)
- [4]     t1 &lt;- data_arg(lm_call, insist(identical(V, mtcars), &quot;Your data argument {{EX}} was not `mtcars`.&quot;), 
+ [4]     t1 &lt;- data_arg(lm_call, insist(identical(V, mtcars), &quot;Your data argument {{E}} was not `mtcars`.&quot;), 
  [5]         message = &quot;You didn't supply a `data = ` argument to `lm()`.&quot;)
  [6]     if (failed(t1)) 
  [7]         return(t1)
  [8]     f &lt;- formula_arg(lm_call, message = &quot;You didn't give a formula specifying the structure of the model.&quot;)
  [9]     t2 &lt;- check(f, insist(two_sided(f), &quot;There's no response variable in your formula.&quot;))
-[10]     t2 &lt;- check(t2, insist(rlang::f_lhs(EX) == as.name(&quot;mpg&quot;), 
+[10]     t2 &lt;- check(t2, insist(rlang::f_lhs(E) == as.name(&quot;mpg&quot;), 
 [11]         paste(&quot;You need to have the miles-per-gallon variable&quot;, 
 [12]             &quot;on the left side of the model formula.&quot;, &quot;You've got {{rlang::f_lhs(V)}} instead.&quot;)))
 [13]     if (failed(t2)) 
@@ -139,35 +139,35 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf82722940&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8c44d6860&gt;</span>
 <span class="kw">check_exer_1</span>(s1wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your data argument head(mtcars) was not `mtcars`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; head(mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf862f4808&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8cc27aed0&gt;</span>
 <span class="kw">check_exer_1</span>(s2)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Great job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mod &lt;- lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf81761278&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8c9f9ab20&gt;</span>
 <span class="kw">check_exer_1</span>(s2wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; You need to have the miles-per-gallon variable on the left side of the model formula. You've got hp instead.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; hp ~ mpg</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf85bcb348&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8cc272200&gt;</span>
 <span class="kw">check_exer_1</span>(s3wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your R-squared is 0. That's too small.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(data = for_me, mpg ~ 1)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf8499c378&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8c471a388&gt;</span></code></pre></div>
 <p>The printed form of the result includes whether the submission passed or failed, a congratulatory or diagnostic message, and the component of the code being checked at the point where the test passed or failed. When integrated with a tutorial system such as <code>learnr</code>, the <code>checkr</code> result is formatted as appropriate for that user interface. (For instance the code component is mainly of interest to the author of checking functions, not the student.)</p>
 </div>
 </div>
@@ -191,7 +191,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf83057a28&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8c7ed5430&gt;</span></code></pre></div>
 <p>Another approach is to have in mind a specific command and check for exactly that. This provides little or no flexibility. For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v1 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -205,7 +205,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf82773ae8&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8c9fb0390&gt;</span></code></pre></div>
 <p>… and it will work with a command matching that specified, even allowing assignment or trivial white-space changes …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- rep(1:4,each=3); x&quot;</span>)
 <span class="co">#&gt; checkr result *pass* with message:</span>
@@ -213,7 +213,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- rep(1:4, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf80b48f88&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8c6bfc878&gt;</span></code></pre></div>
 <p>But here are reasonable student submissions that won’t pass the test:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
@@ -221,18 +221,18 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- 1:4</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf836a5718&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8caca5508&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf836a8868&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8caca7070&gt;</span>
 <span class="kw">check_exer_1_v1</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf84602140&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8caf56200&gt;</span></code></pre></div>
 <p>The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using <code>rep()</code> and that one argument will be <code>1:4</code>. To test this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -249,14 +249,14 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf84886060&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8cc186840&gt;</span>
 <span class="kw">check_exer_1_v2</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Good!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf869004e8&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8ca4cab20&gt;</span></code></pre></div>
 <p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v3 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -278,14 +278,14 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf82d15e68&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8c9e7e860&gt;</span>
 <span class="kw">check_exer_1_v3</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; See what use you can make of the `each` argument to rep().</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(1:4, 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf836fe2e0&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8cad833f0&gt;</span></code></pre></div>
 </div>
 <div id="why-right-is-wrong." class="section level2">
 <h2>Why right is wrong.</h2>
@@ -307,7 +307,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 </ul>
 <p>Locate a line …</p>
 <ul>
-<li><code>line_where()</code> - binds V, EX, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F</li>
+<li><code>line_where()</code> - binds V, E, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F</li>
 <li><code>line_calling()</code> - looks for a call to a function anywhere in the line. Compare: <code>line_where()</code> provides F, which is just the highest-level call.</li>
 <li><code>line_binding()</code> - custom bindings to patterns. Can use <code>failif()</code>, etc.</li>
 </ul>
@@ -379,10 +379,10 @@ Write an R statement to compute the numerical value of x.</p>
 <ul>
 <li><code>V</code> - the value of the line</li>
 <li><code>F</code> - the top-level function used in the line</li>
-<li><code>EX</code> - the expression itself, as code.</li>
+<li><code>E</code> - the expression itself, as code.</li>
 <li><code>Z</code> - the name to which the result was assigned, if any.</li>
 </ul>
-<p>If the line contains an assignment, <code>F</code> and <code>EX</code> both refer to the right-hand side of the assignment.</p>
+<p>If the line contains an assignment, <code>F</code> and <code>E</code> both refer to the right-hand side of the assignment.</p>
 <p>For each line in <code>CODE</code>, <code>line_where()</code> runs tests written in terms of the pronouns. These tests are written using the functions <code>passif()</code>, <code>failif()</code>, <code>insist()</code>. The first argument to these functions is an ordinary R statement written in terms of the pronouns and which returns a logical. The second argument (optional) is a message. There can be multiple test statements (each as its own argument to <code>line_where()</code>, and so separated by commas as usual in R).</p>
 <ul>
 <li><code>passif()</code> - denotes a sufficient condition. This is a good place to put a success message.</li>
@@ -473,25 +473,25 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1,
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf83178910&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8cac62608&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your chain doesn't produce the right value.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf8627b2a8&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8caa2c9f0&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;res &lt;- group_by(mtcars, cyl); summarise(res, disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Remember, chains involve `%&gt;%`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; res &lt;- group_by(mtcars, cyl)</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf81e6fc30&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe8c9be0708&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; summarise(res, disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fdf81e6c840&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe8c9bde660&gt;</span></code></pre></div>
 </div>
 <div id="writing-functions-for-checking" class="section level3">
 <h3>Writing functions for checking</h3>

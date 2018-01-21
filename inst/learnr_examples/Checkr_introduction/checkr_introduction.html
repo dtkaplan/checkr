@@ -69,14 +69,14 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <h3>The man behind the curtain</h3>
 <p>Ordinarily, you would not show students the <code>checkr</code> statements implementing this behavior. But our purpose here is to introduce <code>checkr</code>, So here are the statements for the above exercise.</p>
 <pre><code> [1] code &lt;- for_checkr(USER_CODE)
- [2] res &lt;- misconception(code, line_where(code, passif(is.null(F))), 
+ [2] res &lt;- misconception(code, line_where(code, insist(is.null(F))), 
  [3]     message = paste(&quot;Just typing the string doesn&#39;t do it. Note that the output&quot;, 
  [4]         &quot;has quotes and is formatted as an output, not a simple message.&quot;))
- [5] res &lt;- misconception(res, line_where(res, passif(F == print)), 
+ [5] res &lt;- misconception(res, line_where(res, insist(F == print)), 
  [6]     message = paste(&quot;Using print() isn&#39;t right.&quot;, &quot;True, that&#39;s the way character strings are displayed,&quot;, 
  [7]         &quot;but the format of the display is as a quoted output and&quot;, 
  [8]         &quot;not just a simple message.&quot;))
- [9] res &lt;- line_where(res, insist(F == cat, &quot;Try the cat() function.&quot;))
+ [9] res &lt;- line_calling(res, cat, message, message = &quot;Try the cat() or message() functions.&quot;)
 [10] check(arg_number(res, 1), passif(V == &quot;Hello, World!&quot;, &quot;Good job!&quot;), 
 [11]     failif(tolower(V) == &quot;hello, world!&quot;, &quot;Get the capitalization right!&quot;), 
 [12]     failif(TRUE, &quot;The string should be &#39;Hello, World!&#39;, not &#39;{{V}}&#39;.&quot;))</code></pre>
@@ -123,7 +123,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 ## [2] res &lt;- line_where(res, insist(V == 4, &quot;The result should be 4, not {{V}}.&quot;))
 ## [3] res &lt;- line_where(res, insist(F == `+`, paste(&quot;Think about what function corresponds to &#39;addition&#39;.&quot;, 
 ## [4]     &quot;It isn&#39;t {{F}}.&quot;)))
-## [5] arg_number(res, 1, failif(V != 2, &quot;The first argument should be 2, not {{EX}}.&quot;), 
+## [5] arg_number(res, 1, failif(V != 2, &quot;The first argument should be 2, not {{E}}.&quot;), 
 ## [6]     passif(TRUE, &quot;Yes, that&#39;s it!&quot;))</code></pre>
 
 <script type="application/shiny-prerendered" data-context="server-start">
@@ -133,19 +133,21 @@ knitr::opts_chunk$set(echo = FALSE)
 tutorial_options(exercise.checker = checkr::check_for_learnr)
 # tutorial_options(exercise.checker = function(...) cat("Bogus checker\n"))
 
+#USER_CODE = "message(\"Hi world\")"
 hello_check <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- misconception(code, line_where(code, passif(is.null(F))), 
+  res <- misconception(code, line_where(code, insist(is.null(F))), 
                        message = paste(
                          "Just typing the string doesn't do it. Note that the output", 
                          "has quotes and is formatted as an output, not a simple message."))
-  res <- misconception(res, line_where(res, passif(F == print)), 
+  res <- misconception(res, line_where(res, insist(F == print)), 
                        message = paste(
                          "Using print() isn't right.",
                          "True, that's the way character strings are displayed,", 
                          "but the format of the display is as a quoted output and",
                          "not just a simple message."))
-  res <- line_where(res, insist(F == cat, "Try the cat() function."))
+  res <- line_calling(res, cat, message, message = "Try the cat() or message() functions.")
+                    
   check(arg_number(res, 1), passif(V == "Hello, World!", "Good job!"),
         failif(tolower(V) == "hello, world!", "Get the capitalization right!"),
         failif(TRUE, "The string should be 'Hello, World!', not '{{V}}'.")) 
@@ -158,7 +160,7 @@ two_plus_two_check <- function(USER_CODE) {
                     insist(F == `+`, paste(
                       "Think about what function corresponds to 'addition'.", 
                       "It isn't {{F}}.")))
-  arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{EX}}."),
+  arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{E}}."),
              passif(TRUE, "Yes, that's it!"))
 }
 

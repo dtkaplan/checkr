@@ -110,7 +110,8 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":["function (label = NULL, user_code = NULL, solution_code = NULL, ","    check_code = NULL, envir_result = NULL, evaluate_result = NULL, ","    ..., debug = FALSE) ","{","    if (debug) {","        save_file_name <- sprintf(\"~/Downloads/CheckR/chunk-%s.rds\", ","            label)","        saveRDS(list(label = label, user_code = user_code, solution_code = solution_code, ","            check_code = check_code, envir = envir_result, evaluate_result = evaluate_result), ","            file = save_file_name)","    }","    if (is.null(envir_result)) {","        res <- pre_check(user_code, solution_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","        else {","            return(TRUE)","        }","    }","    if (!is.null(envir_result)) {","        res <- parse_check(user_code)","        if (!res$correct) {","            return(list(correct = FALSE, type = \"error\", location = \"prepend\", ","                message = res$message))","        }","    }","    parsed_check_code <- parse(text = check_code)","    res <- eval(parsed_check_code, envir = list(USER_CODE = user_code))","    if (res$action == \"ok\" && res$message == \"\") ","        res$message = \"Good\"","    feedback_type <- switch(res$action, pass = \"success\", fail = \"error\", ","        ok = \"warning\")","    final <- list(correct = (res$action == \"pass\"), message = res$message, ","        type = feedback_type, location = \"prepend\")","    final","}"]}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="trig-2-check" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
-<pre class="text"><code># USER_CODE &lt;- quote(&quot;sin(53*pi/180)&quot;)
+<pre class="text"><code># USER_CODE &lt;- quote(&quot;15 * sin(53*pi/180) + 2&quot;)
+# USER_CODE &lt;- quote(&quot;sin(53*pi/180)&quot;)
 trig_2_check &lt;- function(USER_CODE) {
   code &lt;- for_checkr(USER_CODE)
   t1 &lt;- if_empty_submission(code, message = &quot;OK. Let&#39;s get you started. Pick a trig function such as sin(), cos(), tan(), giving the angle as an argument. Perhaps something like tan(40). This won&#39;t be right, but it will get you on track. &quot;)
@@ -119,12 +120,15 @@ trig_2_check &lt;- function(USER_CODE) {
   if (failed(t1)) return(t1)
   a1 &lt;- trig_radian_check(t1, 53*pi/180)
   if (failed(a1)) return(a1)
-  t1 &lt;- line_where(code, 
-                   insist(F == quote(`*`), &quot;Remember to multiply by the length of the hypotenuse.&quot;))
-  t1 &lt;- arg_number(t1, 1, insist(V == 15, &quot;How long is the hypothenuse? It says right on the diagram.&quot;))
-  line_where(t1, insist(is.numeric(V)), 
-             passif(abs(V - 11.98) &lt; 0.01, &quot;Good!&quot;), 
-             message = &quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;)
+  t2 &lt;- line_where(code, insist(F == `*`, &quot;Remember to multiply by the length of the hypotenuse.&quot;))
+  t3 &lt;- arg_calling(t2, `*`)
+
+  a1 &lt;- arg_number(t3, 1, insist(V == 15, &quot;How long is the hypothenuse? It says right on the diagram.&quot;))
+  a2 &lt;- arg_number(t3, 2, insist(V == 15, &quot;How long is the hypothenuse? It says right on the diagram.&quot;))
+  if (failed(a1 %or% a2)) return(a2)
+  line_where(t2, insist(is.numeric(V)), 
+             insist(abs(V - 11.98) &lt; 0.01, &quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;), 
+             passif(TRUE, &quot;Good!&quot;))
 }
 trig_2_check(USER_CODE)</code></pre>
 </div>
@@ -158,14 +162,14 @@ line_where(code, passif(TRUE, &quot;Nice!&quot;))</code></pre>
 <h2>The man behind the curtain</h2>
 <p>Ordinarily, you would not show students the <code>checkr</code> statements implementing this behavior. But our purpose here is to introduce <code>checkr</code>, So here are the statements for the above exercise.</p>
 <pre><code> [1] code &lt;- for_checkr(USER_CODE)
- [2] res &lt;- misconception(code, line_where(code, passif(is.null(F))), 
+ [2] res &lt;- misconception(code, line_where(code, insist(is.null(F))), 
  [3]     message = paste(&quot;Just typing the string doesn&#39;t do it. Note that the output&quot;, 
  [4]         &quot;has quotes and is formatted as an output, not a simple message.&quot;))
- [5] res &lt;- misconception(res, line_where(res, passif(F == print)), 
+ [5] res &lt;- misconception(res, line_where(res, insist(F == print)), 
  [6]     message = paste(&quot;Using print() isn&#39;t right.&quot;, &quot;True, that&#39;s the way character strings are displayed,&quot;, 
  [7]         &quot;but the format of the display is as a quoted output and&quot;, 
  [8]         &quot;not just a simple message.&quot;))
- [9] res &lt;- line_where(res, insist(F == cat, &quot;Try the cat() function.&quot;))
+ [9] res &lt;- line_calling(res, cat, message, message = &quot;Try the cat() or message() functions.&quot;)
 [10] check(arg_number(res, 1), passif(V == &quot;Hello, World!&quot;, &quot;Good job!&quot;), 
 [11]     failif(tolower(V) == &quot;hello, world!&quot;, &quot;Get the capitalization right!&quot;), 
 [12]     failif(TRUE, &quot;The string should be &#39;Hello, World!&#39;, not &#39;{{V}}&#39;.&quot;))</code></pre>
@@ -227,17 +231,17 @@ tutorial_options(exercise.checker = checkr::check_for_learnr)
 
 hello_check <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
-  res <- misconception(code, line_where(code, passif(is.null(F))), 
+  res <- misconception(code, line_where(code, insist(is.null(F))), 
                        message = paste(
                          "Just typing the string doesn't do it. Note that the output", 
                          "has quotes and is formatted as an output, not a simple message."))
-  res <- misconception(res, line_where(res, passif(F == print)), 
+  res <- misconception(res, line_where(res, insist(F == print)), 
                        message = paste(
                          "Using print() isn't right.",
                          "True, that's the way character strings are displayed,", 
                          "but the format of the display is as a quoted output and",
                          "not just a simple message."))
-  res <- line_where(res, insist(F == cat, "Try the cat() function."))
+  res <- line_calling(res, cat, message, message = "Try the cat() or message() functions.")
   check(arg_number(res, 1), passif(V == "Hello, World!", "Good job!"),
         failif(tolower(V) == "hello, world!", "Get the capitalization right!"),
         failif(TRUE, "The string should be 'Hello, World!', not '{{V}}'.")) 
@@ -250,7 +254,7 @@ two_plus_two_check <- function(USER_CODE) {
                     insist(F == `+`, paste(
                       "Think about what function corresponds to 'addition'.", 
                       "It isn't {{F}}.")))
-  arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{EX}}."),
+  arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{E}}."),
              passif(TRUE, "Yes, that's it!"))
 }
 

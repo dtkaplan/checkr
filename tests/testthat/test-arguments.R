@@ -35,20 +35,20 @@ test_that("checks for different kinds of arguments work", {
   lineB <- line_calling(CODE2, data)
   res5 <- data_arg(lineB, passif(identical(V, mtcars), "Yes, you were using mtcars."))
   expect_true(passed(res5))
-  res6 <- data_arg(lineB, passif(identical(EX, quote(`mtcars`)), "You used mtcars by name!"))
+  res6 <- data_arg(lineB, passif(identical(E, quote(`mtcars`)), "You used mtcars by name!"))
   expect_true(passed(res6))
   res7 <- character_arg(lineB, passif(V == "datasets", "Right, it's in the datasets package."))
   expect_true(passed(res7))
 })
 
-test_that("argument functions bind to EX and V", {
+test_that("argument functions bind to E and V", {
   lineA <- line_calling(CODE2, lm)
   res1 <- data_arg(lineA,
                    failif(nrow(V) != 32, "Wrong number of rows in data argument."),
-                   passif(EX == `mtcars`, "Right! Use mtcars by name.")
+                   passif(E == `mtcars`, "Right! Use mtcars by name.")
                    )
   expect_true(passed(res1))
-  res2 <- formula_arg(lineA, passif(EX == quote(mpg ~ hp), "Right order in formula {{V}}."))
+  res2 <- formula_arg(lineA, passif(E == quote(mpg ~ hp), "Right order in formula {{V}}."))
   expect_equal(res2$message, "Right order in formula mpg ~ hp.")
 })
 
@@ -60,5 +60,11 @@ test_that("On failure, the returned code is that of the original input.", {
   expect_equal(res2$code, lineA$code)
   res3 <- matrix_arg(lineA) # other, similar functions should be the same
   expect_equal(res3$code, lineA$code)
+})
+
+test_that("Can locate a nested call to an argument.", {
+  code <- for_checkr("15 * sin(53 * pi/180) + 2")
+  res1 <- arg_calling(code, sin)
+  expect_equal(res1$code[[1]], quo(sin(53 * pi / 180)))
 })
 

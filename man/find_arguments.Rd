@@ -77,6 +77,6 @@ data_arg(code,
   insist("hp" \%in\% names(V),
           "The data should have a column named 'hp'."))
 matrix_arg(code)
-named_arg(code, "data", failif(EX == `mtcars`, "I didn't want mtcars."))
+named_arg(code, "data", failif(E == `mtcars`, "I didn't want mtcars."))
 arg_number(code, 3)
 }

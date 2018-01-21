@@ -27,7 +27,7 @@ moustache <- function(string, bindings = rlang::env_parent()) {
 
 to_sensible_character <- function(v) {
   if (is.vector(v)) {
-    v <- if(is.numeric(v)) signif(v, 3) else v
+    v <- if(is.numeric(v)) signif(v, 4) else v
     if (length(v) > 5) {
       S <- paste(paste(as.character(head(v,2)), collapse = ", "),
             "...",

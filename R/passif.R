@@ -34,7 +34,7 @@
 #'
 #' @rdname passif
 #' @export
-passif <- generic_test(pass="pass", fail = "fail", "Good!")
+passif <- generic_test(pass="pass", fail = "ok", "Good!")
 #' @rdname passif
 #' @export
 failif <- generic_test(pass = "fail", fail = "ok", "Sorry.")

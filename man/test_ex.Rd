@@ -10,9 +10,9 @@ n_args(ex)
 func_of(ex)
 }
 \arguments{
-\item{ex}{A straight expression, for instance as bound to \code{EX} in \code{line_where().}}
+\item{ex}{A straight expression, for instance as bound to \code{E} in \code{line_where().}}
 }
 \description{
-These functions can be applied to EX bindings as produced by \code{line_where()}.
-They calculate something about the EX expression.
+These functions can be applied to E bindings as produced by \code{line_where()}.
+They calculate something about the E expression.
 }

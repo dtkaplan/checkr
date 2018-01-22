@@ -53,8 +53,7 @@ check_exer_1(s3wrong)
 check_exer_1_v0 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   desired <- rep(1:4, each = 3)
-  line_where(code, passif(all(V == desired)), 
-             message = "Your vector is {{V}}. That is not the result asked for.")
+  line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
 
 ## ------------------------------------------------------------------------
@@ -81,11 +80,10 @@ check_exer_1_v1("sort(rep(1:4, 3))")
 check_exer_1_v2 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   desired <- rep(1:4, each = 3)
-  LineA <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
-  t1 <- vector_arg(LineA, insist(all(V == 1:4), "Where did you use `1:4`?"))
+  line_a <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
+  t1 <- vector_arg(line_a, insist(all(V == 1:4), "Where did you use `1:4`?"))
   if (failed(t1)) return(t1)
-  line_where(code, passif(all(V == desired)), 
-             message = "Your vector is {{V}}. That is not the result asked for.")
+  line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
 
 ## ------------------------------------------------------------------------
@@ -106,6 +104,70 @@ check_exer_1_v3 <- function(USER_CODE) {
   if (failed(t2)) return(t2)
   line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
+
+## ------------------------------------------------------------------------
+# this is file check_bee_data.R
+s1 <- quote(Circuits <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s2 <- quote(Circuits <- load("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s3 <- quote(read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s4 <- quote(bees <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+
+## ------------------------------------------------------------------------
+# also in the file check_bee_data.R
+check_bee_data <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  # The messages 
+  m1 <- "Right!"
+  m2 <- "Notice that the filename has a CSV extension. `load()` is for reading RDA files. Try `read.csv()` instead."
+  m3 <- "Remember to store the contents of the data file under the name `Circuits`."
+  m4 <- "Store the data under the name `Circuits`, not `{{Z}}`."
+  
+  # The checking statements will follow
+  
+}
+
+## ------------------------------------------------------------------------
+# also in the file check_bee_data.R
+check_bee_data <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  # The messages 
+  m1 <- "Right!"
+  m2 <- "Notice that the filename has a CSV extension. `{{F}}` is for reading RDA files. Try `read.csv()` instead."
+  m3 <- "Remember to store the contents of the data file under the name `Circuits`."
+  m4 <- "Store the data under the name `Circuits`, not `{{Z}}`."
+  
+  browser()
+  result <- line_where(code, 
+                      passif(Z == "Circuits"), 
+                      failif(Z == "", m3), 
+                      failif(TRUE, m4))
+  
+  return(result) # return the result of the checking
+}
+
+## ------------------------------------------------------------------------
+# just checking ...
+check_bee_data(s3)
+check_bee_data(s4)
+
+## ----eval = FALSE--------------------------------------------------------
+#  # this will go in the `check_bee_data()` function
+#  result <- line_where(result, insist(F == read.csv, m2))
+
+## ----results = "hide"----------------------------------------------------
+x <- 3 / 5
+sqrt(x)
+
+## ----eval = FALSE--------------------------------------------------------
+#  paste("How now",
+#        color, animal,
+#        "?")
+
+## ------------------------------------------------------------------------
+sqrt
+
+## ------------------------------------------------------------------------
+y <- quote(sin(f + g))
 
 ## ------------------------------------------------------------------------
 check_exer_1_v3("x <- 1:4; rep(x, each = 3)")

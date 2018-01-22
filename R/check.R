@@ -21,7 +21,6 @@ check <- function(ex, ..., message = "Sorry!") {
   if (failed(ex)) return(ex) # short circuit.
   if(length(ex$code) != 1) stop("check() is for handling just a single line of code.") # Author error
 
-  line_binding(ex, I, message = message,
-               qkeys = quote({.(E); ..(V)}),
-               qtests = list(...))
+  line_binding(ex, I, ..., message = message,
+               qkeys = quote({.(E); ..(V)}))
 }

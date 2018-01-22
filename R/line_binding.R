@@ -32,7 +32,6 @@
 #' @param message a character string message. If the patterns don't match, the message to
 #' give with the failed checkr_result.
 #' @param qkeys (for internal use only) a quoted expression containing the keys.
-#' @param qtests (for internal use only) the tests that would be in ...
 #'
 #' @details Remember that the `keys` should be designed around statements *not* involving assignment.
 #' If you want to check assignment, use the `Z` pronoun.
@@ -78,7 +77,7 @@
 
 #' @export
 line_binding <- function(ex, keys, ..., message = "No match found to specified patterns.",
-                         qkeys = NULL, qtests = NULL) {
+                         qkeys = NULL) {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex) # short circuit on failed input
 
@@ -88,8 +87,7 @@ line_binding <- function(ex, keys, ..., message = "No match found to specified p
   # make sure the patterns, even if from parse(),
   # are put into the form of a set of bracketed expressions
   keys <- as_bracketed_expressions(keys)
-  if (! is.null(qtests)) tests <- qtests
-  else tests <- rlang::quos(...)
+  tests <- rlang::quos(...)
 
   # We'll be indexing <keys> from 2, since slot 1 has
   # the bracket `{`

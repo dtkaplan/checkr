@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Kaplan" />
 
-<meta name="date" content="2018-01-21" />
+<meta name="date" content="2018-01-22" />
 
 <title>Using checkr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using <code>checkr</code></h1>
 <h4 class="author"><em>Daniel Kaplan</em></h4>
-<h4 class="date"><em>2018-01-21</em></h4>
+<h4 class="date"><em>2018-01-22</em></h4>
 
 
 
@@ -94,7 +94,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <div id="a-rich-example" class="section level3">
 <h3>A rich example</h3>
-<p>The following section presents some short, simple examples. The example here is more elaborate and tolerant of the inevitable variations in student coding style. Suppose the task set for the student is:</p>
+<p>Suppose the task set for the student is:</p>
 <blockquote>
 <p><strong>Exercise 1</strong>: Construct an appropriate linear regression model of the <code>mpg</code> of cars in the <code>mtcars</code> data set. Your model should have an R-squared of at least 0.30.</p>
 </blockquote>
@@ -112,7 +112,8 @@ s2 &lt;-<span class="st"> &quot;mod &lt;- lm(mpg ~ hp, data = mtcars); summary(m
 s2wrong &lt;-<span class="st"> &quot;mod &lt;- lm(hp ~ mpg, data = mtcars); summary(mod)&quot;</span>
 s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(data = for_me, mpg ~ 1))&quot;</span></code></pre></div>
 <p>Some of these are right and some are wrong. (<code>s2wrong</code> will produce a model with a passing R-squared, but it’s a model of <code>hp</code> rather than <code>mpg</code>. <code>s3wrong</code> has a model formula that cannot produce any R-squared but zero.) The commands have different structures. In <code>s1</code>, even though it’s a satisfactory model, the R-squared is not calculated at all. (Perhaps the student “cleaned up” their code before submitting.)</p>
-<p>One pedagogical choice would be to insist that the student submission follow a specific template. The pedagogical choice I’ll make here is to focus on the model itself and accept variant forms of the submission so long as they make a model with the specified qualities. Here’s a corresponding checking function:</p>
+<p>One pedagogical choice would be to insist that the student submission follow a specific template. The pedagogical choice I’ll make here is to focus on the model itself and accept variant forms of the submission so long as they make a model with the specified qualities.</p>
+<p>The <code>checkr</code> package provides a means to implement your pedagogical choices. To illustrate, consider the function <code>check_exer_1()</code> defined below. <code>Check_exer_1()</code> uses several <code>checkr</code> functions that have not yet been explained, so on a first reading it will be hard to make sense of. Still, it may give you a general impression.</p>
 <pre><code>check_exer_1 &lt;- function( USER_CODE ) {
  [1]     code &lt;- for_checkr(USER_CODE)
  [2]     lm_line &lt;- line_calling(code, lm, message = &quot;Use lm() to construct the model.&quot;)
@@ -139,35 +140,35 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c44d6860&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff342985040&gt;</span>
 <span class="kw">check_exer_1</span>(s1wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your data argument head(mtcars) was not `mtcars`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; head(mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8cc27aed0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff3456f3908&gt;</span>
 <span class="kw">check_exer_1</span>(s2)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Great job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mod &lt;- lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c9f9ab20&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff3449610e8&gt;</span>
 <span class="kw">check_exer_1</span>(s2wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; You need to have the miles-per-gallon variable on the left side of the model formula. You've got hp instead.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; hp ~ mpg</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8cc272200&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff3456fc108&gt;</span>
 <span class="kw">check_exer_1</span>(s3wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your R-squared is 0. That's too small.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(data = for_me, mpg ~ 1)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c471a388&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff343beea00&gt;</span></code></pre></div>
 <p>The printed form of the result includes whether the submission passed or failed, a congratulatory or diagnostic message, and the component of the code being checked at the point where the test passed or failed. When integrated with a tutorial system such as <code>learnr</code>, the <code>checkr</code> result is formatted as appropriate for that user interface. (For instance the code component is mainly of interest to the author of checking functions, not the student.)</p>
 </div>
 </div>
@@ -181,17 +182,16 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v0 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
   desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
-  <span class="kw">line_where</span>(code, <span class="kw">passif</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired)), 
-             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+  <span class="kw">line_where</span>(code, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>))
 }</code></pre></div>
-<p>This may be more flexbility than desired. Here’s a cheating solution:</p>
+<p>This may be more flexbility than desired. Here’s a cheating solution that passes:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v0</span>(<span class="st">&quot;c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)&quot;</span>)
-<span class="co">#&gt; checkr result *pass* with message:</span>
-<span class="co">#&gt; Good!</span>
+<span class="co">#&gt; checkr result: *ok*</span>
+<span class="co">#&gt; </span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c7ed5430&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff341185840&gt;</span></code></pre></div>
 <p>Another approach is to have in mind a specific command and check for exactly that. This provides little or no flexibility. For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v1 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -205,7 +205,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c9fb0390&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff344999aa8&gt;</span></code></pre></div>
 <p>… and it will work with a command matching that specified, even allowing assignment or trivial white-space changes …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- rep(1:4,each=3); x&quot;</span>)
 <span class="co">#&gt; checkr result *pass* with message:</span>
@@ -213,7 +213,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- rep(1:4, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c6bfc878&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff343e30260&gt;</span></code></pre></div>
 <p>But here are reasonable student submissions that won’t pass the test:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
@@ -221,43 +221,42 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- 1:4</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8caca5508&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff34597b708&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8caca7070&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff34597ca70&gt;</span>
 <span class="kw">check_exer_1_v1</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8caf56200&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff3452c4438&gt;</span></code></pre></div>
 <p>The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using <code>rep()</code> and that one argument will be <code>1:4</code>. To test this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
   desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
-  LineA &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, rep, <span class="dt">message =</span> <span class="st">&quot;I'm not seeing where you used `rep()`.&quot;</span>)
-  t1 &lt;-<span class="st"> </span><span class="kw">vector_arg</span>(LineA, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;Where did you use `1:4`?&quot;</span>))
+  line_a &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, rep, <span class="dt">message =</span> <span class="st">&quot;I'm not seeing where you used `rep()`.&quot;</span>)
+  t1 &lt;-<span class="st"> </span><span class="kw">vector_arg</span>(line_a, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">4</span>), <span class="st">&quot;Where did you use `1:4`?&quot;</span>))
   <span class="cf">if</span> (<span class="kw">failed</span>(t1)) <span class="kw">return</span>(t1)
-  <span class="kw">line_where</span>(code, <span class="kw">passif</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired)), 
-             <span class="dt">message =</span> <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>)
+  <span class="kw">line_where</span>(code, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>))
 }</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v2</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
-<span class="co">#&gt; checkr result *pass* with message:</span>
-<span class="co">#&gt; Good!</span>
+<span class="co">#&gt; checkr result: *ok*</span>
+<span class="co">#&gt; </span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8cc186840&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff34562a828&gt;</span>
 <span class="kw">check_exer_1_v2</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
-<span class="co">#&gt; checkr result *pass* with message:</span>
-<span class="co">#&gt; Good!</span>
+<span class="co">#&gt; checkr result: *ok*</span>
+<span class="co">#&gt; </span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8ca4cab20&gt;</span></code></pre></div>
-<p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
+<span class="co">#&gt; &lt;environment: 0x7ff344840e28&gt;</span></code></pre></div>
+<p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps you want to check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v3 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
   desired &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dt">each =</span> <span class="dv">3</span>)
@@ -271,6 +270,182 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
   <span class="cf">if</span> (<span class="kw">failed</span>(t2)) <span class="kw">return</span>(t2)
   <span class="kw">line_where</span>(code, <span class="kw">insist</span>(<span class="kw">all</span>(V <span class="op">==</span><span class="st"> </span>desired), <span class="st">&quot;Your vector is {{V}}. That is not the result asked for.&quot;</span>))
 }</code></pre></div>
+</div>
+<div id="starting-out" class="section level2">
+<h2>Starting out</h2>
+<p>The point of <code>checkr</code> is to allow interactive tutorials, such as <code>learnr</code> documents, to provide adaptive feedback. To start, however, I recommend that you develop your checkr commands within an ordinary R script or Rmd file where it’s easy to inspect intermediate results and debug. Once you have the commands working satisfactory, it’s straightforward to move your checking code into the interactive tutorial document.</p>
+<p>A reasonable process is …</p>
+<ol style="list-style-type: decimal">
+<li>Write down a few examples of possible submissions and what sort of feedback you want to give for each.</li>
+<li>Create a script file containing your examples.</li>
+<li>Put your checkr lines in a function that takes one argument: <code>USER_CODE</code>.</li>
+<li>When you have all your examples working, integrate the function into your tutorial. For <code>learnr</code> documents, this amounts to creating a <code>-check</code> chunk in which you call your function with one argument: <code>USER_CODE</code>.</li>
+</ol>
+<p>Let’s illustrate this with a specific example problem.</p>
+<blockquote>
+<p>Read the data file <code>&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</code> into a dataframe named <code>Circuits</code>.</p>
+</blockquote>
+<div id="examples-of-possible-submissions" class="section level3">
+<h3>1. Examples of possible submissions</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Circuits &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>)</code></pre></div>
+<p>Response: Right!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Circuits &lt;-<span class="st"> </span><span class="kw">load</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>)</code></pre></div>
+<p>Response: Notice that the filename has a CSV extension. <code>load()</code> is for reading RDA files. Try <code>read.csv()</code> instead.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>)</code></pre></div>
+<p>Response: Remember to store the contents of the data file under the name <code>Circuits</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bees &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>)</code></pre></div>
+<p>Response: Store the data under the name <code>Circuits</code>, not <code>bees</code>.</p>
+<p>Of course, there are many other possibilities. Students are particularly good at finding them.</p>
+</div>
+<div id="create-a-script-file" class="section level3">
+<h3>2. Create a script file</h3>
+<p>Open up an R script file and add your example submissions. Let’s suppose the file is named <code>check_bee_data.R</code>. It will look like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this is file check_bee_data.R</span>
+s1 &lt;-<span class="st"> </span><span class="kw">quote</span>(Circuits &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>))
+s2 &lt;-<span class="st"> </span><span class="kw">quote</span>(Circuits &lt;-<span class="st"> </span><span class="kw">load</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>))
+s3 &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>))
+s4 &lt;-<span class="st"> </span><span class="kw">quote</span>(bees &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;</span>))</code></pre></div>
+<p>The <code>quote()</code> function will be unfamiliar to many R users. It provides a way to objects that contain executable expressions.</p>
+</div>
+<div id="create-the-checking-function" class="section level3">
+<h3>3. Create the checking function</h3>
+<p>A checking function takes a submission, for example <code>s1</code> or <code>s2</code>, and returns a value indicating whether the submission passes or fails along with an appropriate congratulatory or explanatory message. The function has a straightforward skeleton.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># also in the file check_bee_data.R</span>
+check_bee_data &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  <span class="co"># The messages </span>
+  m1 &lt;-<span class="st"> &quot;Right!&quot;</span>
+  m2 &lt;-<span class="st"> &quot;Notice that the filename has a CSV extension. `load()` is for reading RDA files. Try `read.csv()` instead.&quot;</span>
+  m3 &lt;-<span class="st"> &quot;Remember to store the contents of the data file under the name `Circuits`.&quot;</span>
+  m4 &lt;-<span class="st"> &quot;Store the data under the name `Circuits`, not `{{Z}}`.&quot;</span>
+  
+  <span class="co"># The checking statements will follow</span>
+  
+}</code></pre></div>
+<p>The messages are plain text strings. I’ve named them (e.g. <code>m1</code>) purely for later convenience. Looking at <code>m4</code>, you’ll notice the characters <code>{{Z}}</code>. Similarly, there’s <code>{{F}}</code> in <code>m2</code>. Such “moustached” statements allow you to include in the message the result of some calculation. For <code>m4</code>, we want the assignment name used by the student. For <code>m2</code>, we want the name of the function actually used by the student.</p>
+<p>At this point, you need to start thinking about the order in which you want to check the submission. For instance, do you want to check the function being used or that a correctly named object is being created? In this example, we’ll start with the latter.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># also in the file check_bee_data.R</span>
+check_bee_data &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
+  code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+  <span class="co"># The messages </span>
+  m1 &lt;-<span class="st"> &quot;Right!&quot;</span>
+  m2 &lt;-<span class="st"> &quot;Notice that the filename has a CSV extension. `{{F}}` is for reading RDA files. Try `read.csv()` instead.&quot;</span>
+  m3 &lt;-<span class="st"> &quot;Remember to store the contents of the data file under the name `Circuits`.&quot;</span>
+  m4 &lt;-<span class="st"> &quot;Store the data under the name `Circuits`, not `{{Z}}`.&quot;</span>
+  
+  <span class="kw">browser</span>()
+  result &lt;-<span class="st"> </span><span class="kw">line_where</span>(code, 
+                      <span class="kw">passif</span>(Z <span class="op">==</span><span class="st"> &quot;Circuits&quot;</span>), 
+                      <span class="kw">failif</span>(Z <span class="op">==</span><span class="st"> &quot;&quot;</span>, m3), 
+                      <span class="kw">failif</span>(<span class="ot">TRUE</span>, m4))
+  
+  <span class="kw">return</span>(result) <span class="co"># return the result of the checking</span>
+}</code></pre></div>
+<p>To find out what the pronoun <code>Z</code> stands for, see the documentation for <code>line_where()</code>, or look later in this vignette.</p>
+<p>The <code>check_bee_data()</code> function does not yet fully implement the tests needed for the various submissions, but it is a working function that handles <code>s3</code> and <code>s4</code>. You need merely run the submissions through the function to see this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># just checking ...</span>
+<span class="kw">check_bee_data</span>(s3)
+<span class="co">#&gt; Called from: check_bee_data(s3)</span>
+<span class="co">#&gt; debug at &lt;text&gt;#11: result &lt;- line_where(code, passif(Z == &quot;Circuits&quot;), failif(Z == </span>
+<span class="co">#&gt;     &quot;&quot;, m3), failif(TRUE, m4))</span>
+<span class="co">#&gt; debug at &lt;text&gt;#16: return(result)</span>
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Remember to store the contents of the data file under the name `Circuits`.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; read.csv(&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;)</span>
+<span class="co">#&gt; &lt;environment: 0x7ff344612a08&gt;</span>
+<span class="kw">check_bee_data</span>(s4)
+<span class="co">#&gt; Called from: check_bee_data(s4)</span>
+<span class="co">#&gt; debug at &lt;text&gt;#11: result &lt;- line_where(code, passif(Z == &quot;Circuits&quot;), failif(Z == </span>
+<span class="co">#&gt;     &quot;&quot;, m3), failif(TRUE, m4))</span>
+<span class="co">#&gt; debug at &lt;text&gt;#16: return(result)</span>
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Store the data under the name `Circuits`, not `bees`.</span>
+<span class="co">#&gt; CODE:</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; bees &lt;- read.csv(&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;)</span>
+<span class="co">#&gt; &lt;environment: 0x7ff343e18b78&gt;</span></code></pre></div>
+<p>Another checking statement is needed to make sure that the <code>read.csv()</code> function is being used. It could be as simple as this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this will go in the `check_bee_data()` function</span>
+result &lt;-<span class="st"> </span><span class="kw">line_where</span>(result, <span class="kw">insist</span>(F <span class="op">==</span><span class="st"> </span>read.csv, m2))</code></pre></div>
+<p>Unfortunately, things are not so simple. We intend message <code>m2</code> to be given in response to submission <code>s2</code>. But there’s something special about <code>s2</code> as compared to the other submissions: <code>s2</code> generates a run-time error; <code>load()</code> is not set up to accept a character string URL as an argument. Such errors need to be trapped before the code is evaluated. We discuss the matter below in the section on re-evaluation checking.</p>
+</div>
+<div id="integrating-the-checking-with-learnr" class="section level3">
+<h3>4. Integrating the checking with <code>learnr</code></h3>
+<p>Once you have your checking function in a reasonable state, you can integrate it with <code>learnr</code>. There are two components to this.</p>
+<ol style="list-style-type: decimal">
+<li>In the <code>setup</code> chunk of your tutorial
+<ol style="list-style-type: lower-alpha">
+<li>Tell <code>learnr</code> to connect to <code>checkr</code> with the statement <code>tutorial_options(exercise.checker = checkr::check_for_learnr)</code></li>
+<li>Source the script file where you define your checking function. Typically, such files need to be placed in the <code>www</code> subdirectory of your <code>learnr</code> application. The statement will look like this: <code>source(&quot;www/check_bee_data.R&quot;)</code></li>
+</ol></li>
+<li>Put the call to the function in the appropriate <code>-check</code> chunk for your exercise. The call must <em>always</em> use <code>USER_CODE</code> as the argument; this is the way the <code>learnr</code> exercise checker will set things up.</li>
+</ol>
+</div>
+</div>
+<div id="checkr_result-objects" class="section level2">
+<h2>checkr_result objects</h2>
+<p>These are the input and output of many checkr functions. Your checkr statements should ultimately return one of these. These automatically get translated into the format that <code>learnr</code> wants by <code>check_for_learnr()</code></p>
+</div>
+<div id="some-r-background" class="section level2">
+<h2>Some R background</h2>
+<p>Most R users learn how to compute on dataframes, vectors, and so on. The <code>checkr</code> system involves something different: computing on the language itself. That is to say, the inputs to most <code>checkr</code> functions are language statements.</p>
+<p>It will help you to use <code>checkr</code> if you learn some basics about the structure of the R language. Your students won’t have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.</p>
+<div id="lines-functions-arguments-constants-names-values" class="section level3">
+<h3>Lines, functions, arguments, constants, names, values</h3>
+<p>Consider this sequence of R commands:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="dv">3</span> <span class="op">/</span><span class="st"> </span><span class="dv">5</span>
+<span class="kw">sqrt</span>(x)</code></pre></div>
+<p>The code is written on three lines typographically, but it’s also helpful to think about “lines” computationally. Informally, let’s define a <strong>line of code</strong> to be a set of characters which, if typed at the command prompt in the console, would cause the R interpreter to perform a computation rather than to prompt you with the + continuation. For instance, the following code consists of just one computational line even though typographically it is spread out over three lines on the page:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">paste</span>(<span class="st">&quot;How now&quot;</span>,
+      color, animal, 
+      <span class="st">&quot;?&quot;</span>)</code></pre></div>
+<p>Every line of R code consists of one or more expressions, each of which could constitute a complete command and thus could compute a <strong>value</strong>. In the line <code>x &lt;- 3 / 5</code>, for example, you can see expressions <code>3</code> and <code>5</code>. As it happens, these two expressions are both <strong>constants</strong>. Another kind of constant is a character string: <code>&quot;like this&quot;</code>. In the line <code>sqrt(x)</code>, there is a simple expression, <code>x</code>, which is called a <strong>name</strong>. And, of course, there is a value assigned to the name <code>x</code> by the previous line. Other names in the examples are <code>sqrt</code>, and <code>`\`</code>. The values of those names were assigned by the R system itself during start-up. You can look at the value bound to any name by giving the name itself as a command:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sqrt
+<span class="co">#&gt; function (x)  .Primitive(&quot;sqrt&quot;)</span></code></pre></div>
+<p>Ignore for the moment the assignment part of the line; we’ll treat that separately.</p>
+<ul>
+<li>Statement 1: Every line in R is either a single constant or a single name or a function call.</li>
+<li>Statement 2: Every function call in R involves two parts: 1) the function itself (typically specified with a name, e.g. . <code>`+`</code>, <code>sqrt</code>, <code>paste</code>) and 2) the arguments to which the function is being applied.</li>
+<li>Statement 3: Every argument in a function call is either a single constant (e.g. <code>&quot;How now&quot;</code>) or a single name (e.g. <code>color</code>) or a function call.</li>
+</ul>
+<p>Some of the functions in <code>checkr</code> are intended to isolate a specific line. Other functions isolate a function call or an argument to a function. Once isolated, you can check the name of the function involved in the function call, or the name (if any) or value (always) used as an argument.</p>
+<p>PRACTICE IDENTIFYING the parts of a line as either a function call, a name, or a constant.</p>
+</div>
+<div id="quote-and-quo" class="section level3">
+<h3>Quote and quo</h3>
+<p>You’re used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are <code>substitute()</code>, <code>parse()</code>, <code>expression()</code>. To illustrate, consider the <code>quote()</code> function. This is not about character strings but the R-language itself:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">sin</span>(f <span class="op">+</span><span class="st"> </span>g))</code></pre></div>
+<p>A standard way to think about <code>sin(f + g)</code> is “add the values of <code>f</code> and <code>g</code> and then take the sine of the result.” But in terms of the language, you can see four names: <code>f</code>, <code>g</code>, <code>sin</code>, <code>`+`</code> and some punctuation.</p>
+<p>Think about what might be the value bound to the name <code>y</code> after the above line is evaluated. And while you’re doing it, assume that no value has been yet bound to the names <code>f</code> and <code>g</code>.</p>
+<p>We need still another kind of object: something that can hold expressions for later evaluation or for taking apart or other manipulations.</p>
+<p>We need still another kind of thing: something that represents an expression in the R language.</p>
+</div>
+<div id="assignment" class="section level3">
+<h3>Assignment</h3>
+<ul>
+<li>Treating assignment</li>
+</ul>
+</div>
+</div>
+<div id="checkr-functions" class="section level2">
+<h2>Checkr functions</h2>
+<ul>
+<li>transform code: for_checkr, expand_chain</li>
+<li>locating lines
+<ul>
+<li>line_binding: Looking for something exactly matching a template</li>
+<li>line_calling,</li>
+<li>line_where,</li>
+<li>line_chaining</li>
+</ul></li>
+<li>pronoun tests
+<ul>
+<li>passif, failif, insist</li>
+<li>line_where</li>
+</ul></li>
+</ul>
 <p>Trying this out …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v3</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
 <span class="co">#&gt; checkr result: *ok*</span>
@@ -278,14 +453,19 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c9e7e860&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff344cb6ed0&gt;</span>
 <span class="kw">check_exer_1_v3</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; See what use you can make of the `each` argument to rep().</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(1:4, 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8cad833f0&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff342775cd8&gt;</span></code></pre></div>
+</div>
+<div id="pre-evaluation-checking" class="section level2">
+<h2>Pre-evaluation checking</h2>
+<p>WHAT TO DO WHEN THERE IS A PARSE ERROR.</p>
+<p>POSSIBILITIES WHEN THERE IS A RUN-TIME ERROR to anticipate particular situations.</p>
 </div>
 <div id="why-right-is-wrong." class="section level2">
 <h2>Why right is wrong.</h2>
@@ -473,25 +653,25 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1,
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8cac62608&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff344885e98&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your chain doesn't produce the right value.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8caa2c9f0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff33eb646b0&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;res &lt;- group_by(mtcars, cyl); summarise(res, disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Remember, chains involve `%&gt;%`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; res &lt;- group_by(mtcars, cyl)</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c9be0708&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7ff3459952a8&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; summarise(res, disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7fe8c9bde660&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7ff345997b88&gt;</span></code></pre></div>
 </div>
 <div id="writing-functions-for-checking" class="section level3">
 <h3>Writing functions for checking</h3>

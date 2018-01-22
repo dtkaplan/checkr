@@ -41,7 +41,7 @@ An instructor uses `checkr` by writing a custom checking function that takes com
 
 ### A rich example
 
-The following section presents some short, simple examples. The example here is more elaborate and tolerant of the inevitable variations in student coding style. Suppose the task set for the student is:
+Suppose the task set for the student is:
 
 > **Exercise 1**: Construct an appropriate linear regression model of the `mpg` of cars in the `mtcars` data set. Your model should have an R-squared of at least 0.30.
 
@@ -63,7 +63,9 @@ s3wrong <- "for_me <- mtcars; mosaic::rsquared(lm(data = for_me, mpg ~ 1))"
 
 Some of these are right and some are wrong. (`s2wrong` will produce a model with a passing R-squared, but it's a model of `hp` rather than `mpg`. `s3wrong` has a model formula that cannot produce any R-squared but zero.) The commands have different structures. In `s1`, even though it's a satisfactory model, the R-squared is not calculated at all. (Perhaps the student "cleaned up" their code before submitting.) 
 
-One pedagogical choice would be to insist that the student submission follow a specific template. The pedagogical choice I'll make here is to focus on the model itself and accept variant forms of the submission so long as they make a model with the specified qualities. Here's a corresponding checking function:
+One pedagogical choice would be to insist that the student submission follow a specific template. The pedagogical choice I'll make here is to focus on the model itself and accept variant forms of the submission so long as they make a model with the specified qualities. 
+
+The `checkr` package provides a means to implement your pedagogical choices. To illustrate, consider the function `check_exer_1()` defined below. `Check_exer_1()` uses several `checkr` functions that have not yet been explained, so on a first reading it will be hard to make sense of. Still, it may give you a general impression.
 
 ```{r echo = FALSE}
 check_exer_1 <- function(USER_CODE) {
@@ -120,12 +122,11 @@ The most flexibility comes by checking if the correct result was produced. You c
 check_exer_1_v0 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   desired <- rep(1:4, each = 3)
-  line_where(code, passif(all(V == desired)), 
-             message = "Your vector is {{V}}. That is not the result asked for.")
+  line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
 ```
 
-This may be more flexbility than desired. Here's a cheating solution:
+This may be more flexbility than desired. Here's a cheating solution that passes:
 ```{r}
 check_exer_1_v0("c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)")
 ```
@@ -161,18 +162,16 @@ check_exer_1_v1("x <- 1:4; rep(x, each = 3)")
 check_exer_1_v1("sort(rep(1:4, 3))")
 ```
 
-
 The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using `rep()` and that one argument will be `1:4`. To test this:
 
 ```{r}
 check_exer_1_v2 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   desired <- rep(1:4, each = 3)
-  LineA <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
-  t1 <- vector_arg(LineA, insist(all(V == 1:4), "Where did you use `1:4`?"))
+  line_a <- line_calling(code, rep, message = "I'm not seeing where you used `rep()`.")
+  t1 <- vector_arg(line_a, insist(all(V == 1:4), "Where did you use `1:4`?"))
   if (failed(t1)) return(t1)
-  line_where(code, passif(all(V == desired)), 
-             message = "Your vector is {{V}}. That is not the result asked for.")
+  line_where(code, insist(all(V == desired), "Your vector is {{V}}. That is not the result asked for."))
 }
 ```
 
@@ -181,7 +180,7 @@ check_exer_1_v2("x <- 1:4; rep(x, each = 3)")
 check_exer_1_v2("sort(rep(1:4, 3))")
 ```
 
-If the point of the exercise is to have the student see that `rep()` has optional named arguments, perhaps check if the line involving `rep()` also has an argument named `each`. 
+If the point of the exercise is to have the student see that `rep()` has optional named arguments, perhaps you want to check if the line involving `rep()` also has an argument named `each`. 
 
 ```{r}
 check_exer_1_v3 <- function(USER_CODE) {
@@ -199,6 +198,210 @@ check_exer_1_v3 <- function(USER_CODE) {
 }
 ```
 
+## Starting out
+
+The point of `checkr` is to allow interactive tutorials, such as `learnr` documents, to provide adaptive feedback. To start, however, I recommend that you develop your checkr commands within an ordinary R script or Rmd file where it's easy to inspect intermediate results and debug. Once you have the commands working satisfactory, it's straightforward to move your checking code into the interactive tutorial document.
+
+A reasonable process is ...
+
+1. Write down a few examples of possible submissions and what sort of feedback you want to give for each.
+2. Create a script file containing your examples. 
+3. Put your checkr lines in a function that takes one argument: `USER_CODE`.
+4. When you have all your examples working, integrate the function into your tutorial. For `learnr` documents, this amounts to creating a `-check` chunk in which you call your function with one argument: `USER_CODE`.
+
+Let's illustrate this with a specific example problem.
+
+> Read the data file `"http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"` into a dataframe named `Circuits`.
+
+### 1. Examples of possible submissions
+
+```r
+Circuits <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv")
+```
+Response: Right!
+
+```r
+Circuits <- load("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv")
+```
+Response: Notice that the filename has a CSV extension. `load()` is for reading RDA files. Try `read.csv()` instead.
+
+```r
+read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv")
+```
+Response: Remember to store the contents of the data file under the name `Circuits`.
+
+```r
+bees <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv")
+```
+Response: Store the data under the name `Circuits`, not `bees`.
+
+Of course, there are many other possibilities. Students are particularly good at finding them.
+
+### 2. Create a script file
+
+Open up an R script file and add your example submissions. Let's suppose the file is named `check_bee_data.R`. It will look like this:
+```{r}
+# this is file check_bee_data.R
+s1 <- quote(Circuits <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s2 <- quote(Circuits <- load("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s3 <- quote(read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+s4 <- quote(bees <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
+```
+
+The `quote()` function will be unfamiliar to many R users. It provides a way to objects that contain executable expressions.
+
+### 3. Create the checking function
+
+A checking function takes a submission, for example `s1` or `s2`, and returns a value indicating whether the submission passes or fails along with an appropriate congratulatory or explanatory message. The function has a straightforward skeleton.
+
+```{r}
+# also in the file check_bee_data.R
+check_bee_data <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  # The messages 
+  m1 <- "Right!"
+  m2 <- "Notice that the filename has a CSV extension. `load()` is for reading RDA files. Try `read.csv()` instead."
+  m3 <- "Remember to store the contents of the data file under the name `Circuits`."
+  m4 <- "Store the data under the name `Circuits`, not `{{Z}}`."
+  
+  # The checking statements will follow
+  
+}
+```
+
+The messages are plain text strings. I've named them (e.g. `m1`) purely for later convenience. Looking at `m4`, you'll notice the characters `{{Z}}`. Similarly, there's `{{F}}` in `m2`. Such "moustached" statements allow you to include in the message the result of some calculation. For `m4`, we want the assignment name used by the student. For `m2`, we want the name of the function actually used by the student.
+
+At this point, you need to start thinking about the order in which you want to check the submission. For instance, do you want to check the function being used or that a correctly named object is being created? In this example, we'll start with the latter.
+
+```{r}
+# also in the file check_bee_data.R
+check_bee_data <- function(USER_CODE) {
+  code <- for_checkr(USER_CODE)
+  # The messages 
+  m1 <- "Right!"
+  m2 <- "Notice that the filename has a CSV extension. `{{F}}` is for reading RDA files. Try `read.csv()` instead."
+  m3 <- "Remember to store the contents of the data file under the name `Circuits`."
+  m4 <- "Store the data under the name `Circuits`, not `{{Z}}`."
+  
+  browser()
+  result <- line_where(code, 
+                      passif(Z == "Circuits"), 
+                      failif(Z == "", m3), 
+                      failif(TRUE, m4))
+  
+  return(result) # return the result of the checking
+}
+```
+To find out what the pronoun `Z` stands for, see the documentation for `line_where()`, or look later in this vignette. 
+
+
+The `check_bee_data()` function does not yet fully implement the tests needed for the various submissions, but it is a working function that handles `s3` and `s4`. You need merely run the submissions through the function to see this:
+
+```{r}
+# just checking ...
+check_bee_data(s3)
+check_bee_data(s4)
+```
+
+Another checking statement is needed to make sure that the `read.csv()` function is being used. It could be as simple as this:
+
+```{r eval = FALSE}
+# this will go in the `check_bee_data()` function
+result <- line_where(result, insist(F == read.csv, m2))
+```
+
+Unfortunately, things are not so simple. We intend message `m2` to be given in response to submission `s2`. But there's something special about `s2` as compared to the other submissions: `s2` generates a run-time error; `load()` is not set up to accept a character string URL as an argument. Such errors need to be trapped before the code is evaluated. We discuss the matter below in the section on re-evaluation checking.
+ 
+### 4. Integrating the checking with `learnr`
+
+Once you have your checking function in a reasonable state, you can integrate it with `learnr`. There are two components to this.
+
+1. In the `setup` chunk of your tutorial 
+    a. Tell `learnr` to connect to `checkr` with the statement 
+        `tutorial_options(exercise.checker = checkr::check_for_learnr)`
+    b. Source the script file where you define your checking function. Typically, such files need to be placed in the `www` subdirectory of your `learnr` application. The statement will look like this:
+        `source("www/check_bee_data.R")`
+2. Put the call to the function in the appropriate `-check` chunk for your exercise. The call must *always* use `USER_CODE` as the argument; this is the way the `learnr` exercise checker will set things up.
+        
+
+
+
+## checkr_result objects 
+
+These are the input and output of many checkr functions. Your checkr statements should ultimately return one of these. These automatically get translated into the format that `learnr` wants by `check_for_learnr()`
+
+## Some R background 
+
+Most R users learn how to compute on dataframes, vectors, and so on. The `checkr` system involves something different: computing on the language itself. That is to say, the inputs to most `checkr` functions are language statements.
+
+It will help you to use `checkr` if you learn some basics about the structure of the R language. Your students won't have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.
+
+### Lines, functions, arguments, constants, names, values 
+
+Consider this sequence of R commands:
+```{r results = "hide"}
+x <- 3 / 5
+sqrt(x)
+```
+
+The code is written on three lines typographically, but it's also helpful to think about "lines" computationally. Informally, let's define a **line of code** to be a set of characters which, if typed at the command prompt in the console, would cause the R interpreter to perform a computation rather than to prompt you with the + continuation. For instance, the following code consists of just one computational line even though typographically it is spread out over three lines on the page:
+```{r eval = FALSE}
+paste("How now",
+      color, animal, 
+      "?")
+```
+
+Every line of R code consists of one or more expressions, each of which could constitute a complete command and thus could compute a **value**. In the line `x <- 3 / 5`, for example, you can see expressions `3` and `5`. As it happens, these two expressions are both **constants**. Another kind of constant is a character string: `"like this"`. In the line `sqrt(x)`, there is a simple expression, `x`, which is called a **name**. And, of course, there is a value assigned to the name `x` by the previous line. Other names in the examples are `sqrt`, and `` `\` ``. The values of those names were assigned by the R system itself during start-up. You can look at the value bound to any name by giving the name itself as a command:
+
+```{r}
+sqrt
+```
+
+Ignore for the moment the assignment part of the line; we'll treat that separately.
+
+- Statement 1: Every line in R is either a single constant or a single name or a function call. 
+- Statement 2: Every function call in R involves two parts: 1) the function itself (typically specified with a name, e.g. . `` `+` ``, `sqrt`, `paste`) and 2) the arguments to which the function is being applied.
+- Statement 3: Every argument in a function call is either a single constant (e.g. `"How now"`) or a single name (e.g. `color`) or a function call.
+
+Some of the functions in `checkr` are intended to isolate a specific line. Other functions isolate a function call or an argument to a function. Once isolated, you can check the name of the function involved in the function call, or the name (if any) or value (always) used as an argument.
+
+PRACTICE IDENTIFYING the parts of a line as either a function call, a name, or a constant.
+
+
+### Quote and quo
+
+You're used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are `substitute()`, `parse()`, `expression()`. To illustrate, consider the `quote()` function. This is not about character strings but the R-language itself:
+
+```{r}
+y <- quote(sin(f + g))
+```
+
+A standard way to think about `sin(f + g)` is "add the values of `f` and `g` and then take the sine of the result." But in terms of the language, you can see four names: `f`, `g`, `sin`, `` `+` `` and some punctuation.
+
+Think about what might be the value bound to the name `y` after the above line is evaluated. And while you're doing it, assume that no value has been yet bound to the names `f` and `g`. 
+
+We need still another kind of object: something that can hold expressions for later evaluation or for taking apart or other manipulations.
+
+We need still another kind of thing: something that represents an expression in the R language.
+
+### Assignment
+
+- Treating assignment
+
+
+
+## Checkr functions
+
+* transform code: for_checkr, expand_chain
+* locating lines
+    - line_binding: Looking for something exactly matching a template 
+    - line_calling, 
+    - line_where,
+    - line_chaining
+* pronoun tests
+    - passif, failif, insist
+    - line_where
+
 Trying this out ...
 
 ```{r}
@@ -206,6 +409,12 @@ check_exer_1_v3("x <- 1:4; rep(x, each = 3)")
 check_exer_1_v3("sort(rep(1:4, 3))")
 ```
 
+
+## Pre-evaluation checking
+
+WHAT TO DO WHEN THERE IS A PARSE ERROR.
+
+POSSIBILITIES WHEN THERE IS A RUN-TIME ERROR to anticipate particular situations.
 
 ## Why right is wrong.
 

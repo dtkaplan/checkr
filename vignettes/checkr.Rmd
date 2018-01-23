@@ -334,7 +334,7 @@ These are the input and output of many checkr functions. Your checkr statements 
 
 Most R users learn how to compute on dataframes, vectors, and so on. The `checkr` system involves something different: computing on the language itself. That is to say, the inputs to most `checkr` functions are language statements.
 
-It will help you to use `checkr` if you learn some basics about the structure of the R language. Your students won't have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.
+It will help you to use `checkr` if you learn something about the structure of the R language. Your students won't have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.
 
 ### Lines, functions, arguments, constants, names, values 
 
@@ -370,29 +370,176 @@ PRACTICE IDENTIFYING the parts of a line as either a function call, a name, or a
 
 ### Quote and quo
 
-You're used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are `substitute()`, `parse()`, `expression()`. To illustrate, consider the `quote()` function. This is not about character strings but the R-language itself:
+You're used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are `substitute()`, `parse()`, `expression()`. To illustrate, consider the `quote()` function. (Don't be deceived: quote is not about creating character strings.) 
 
 ```{r}
-y <- quote(sin(f + g))
+y <- quote(foo(f, g))
 ```
 
-A standard way to think about `sin(f + g)` is "add the values of `f` and `g` and then take the sine of the result." But in terms of the language, you can see four names: `f`, `g`, `sin`, `` `+` `` and some punctuation.
+A standard way to think about `foo(f, g)` is "perform the action of the function `foo()` on the two arguments: `f` and `g`. and then take the sine of the result." But in terms of the language, you can see four names: `f`, `g`, `foo`. There's also some punctuation: the parentheses that signal that `foo` is to be applied to its arguments and the comma that separates the two arguments.
 
-Think about what might be the value bound to the name `y` after the above line is evaluated. And while you're doing it, assume that no value has been yet bound to the names `f` and `g`. 
+Think about what might be the value bound to the name `y` after the above line is evaluated. And while you're doing it, assume that there is no defined function named `foo` and that no value has been yet bound to the names `f` and `g`. 
 
-We need still another kind of object: something that can hold expressions for later evaluation or for taking apart or other manipulations.
+Ordinarily, referring to a valueless name like `f` generates an error: `Error: object 'f' not found`. But `quote()` is special. It doesn't try to evaluate its argument and so it has no need for names to be bound to values. So the object `y` is not about the results of `foo(f, g)` but about its status as a command that can be evaluated later on. Instead, `quote()` figures out from the syntax of its argument that `foo(f, g)` is a call to a function. (A name followed immediately by an opening parenthesis is *always* a function call.)
 
-We need still another kind of thing: something that represents an expression in the R language.
+```{r}
+y        # display printed form
+class(y) # the object's class
+```
+
+The object `y` produced by `quote(foo(f, g))` is of class "call," reflecting that the expression given as an argument to `quote()` is a function call. The printed form of `y` looks just like the argument to `quote()`. But you can choose to look at `y` in another way, as a list:
+
+```{r}
+as.list(y)
+```
+
+The list starts with the function name, with the remaining parts being the two arguments. In this example, each of the three items in the list are names:
+```{r}
+lapply(y, class)
+```
+
+This list-like structure for a function call applies just as well to arithmetic and other *infix* functions. R allows you to create a call without using parentheses, for instance `2 + 3`. The internal storage of the expression is nonethess list-like. For instance:
+```{r}
+y <- quote(x ^ 2)
+class(y)
+as.list(y)
+```
+
+Do note the backticks around the name in the first element of the list: `` `^` ``. In general, when you are referring to functions used with infix notation, you need to construct the function name with backticks. Examples: `||`, `*`, `>`, and so on.
+
+Let's consider a slightly more complex case, where the arguments themselves involve function calls:
+
+```{r}
+y <- quote(foo(f + 3, paste("Hello,", g, "Nice to meet you.")))
+```
+
+Again, `y` is a "call" and there are three parts to it: the function name and the two arguments:
+```{r}
+y
+class(y)
+as.list(y)
+lapply(y, class)
+```
+
+Note that parts 2 and 3 of `y` are no longer `name`s. Instead, they are themselves function calls. To illustrate, let's look at the third part of the list.
+
+```{r}
+y[[3]]
+class(y[[3]])
+as.list(y[[3]])
+lapply(y[[3]], class)
+```
+
+
+The call `paste("Hello", g, "Nice to meet you.")` is a call to the function named `paste` with three arguments. Two of these arguments are constants; they happen to be character constants. The middle argument, `g` is a name.
+
+You can evaluate a name or a call by using the `eval()` function. Of course, evaluation needs values to be assigned to any names used, so evaluating `y` will throw an error:
+```{r error = TRUE}
+eval(y)
+```
+
+`Quote()` and `eval()` (and other similar language-handling functions like `substitute()` or even the modeler's tilde) are part of base R. They are part of how the language works. They are not part of an average user's R toolbox because average users are in the value business: applying functions to values, not taking apart the language. 
+
+Still, many users encounter situations where they are using language objects rather than values. Take the `select()` function as used to pull out a subset of rows from a dataframe. You can use it like this:
+```{r}
+select(mtcars, hp > 250)
+```
+
+We can take apart the command:
+```{r}
+y <- quote(select(mtcars, hp > 250))
+as.list(y)
+lapply(y, class)
+```
+
+The first two parts of `y` are easy: `select` is a name and `mtcars` is a name. The third part is a call. The thing that's interesting about `select()` from a programming point of view is that the third part cannot be evaluated as is:
+```{r error = TRUE}
+eval(quote(hp > 250))
+```
+The name `hp` doesn't have a value. It only has meaning with respect to the `mtcars` dataframe. It's `select()` that contains the logic to connect `hp` to `mtcars`.
+
+The `rlang` package provides facilities for taking apart calls and ensuring that the names used in a call are linked to the environment that gives them values. `Checkr` makes extensive use of `rlang`.
+
+### Multiple statements within `quote()`
+
+Often you will be working with submitted code with multiple statements. When using `quote()` to create examples with multiple statements, you need to enclose the statements with curly braces `{  }` and separate the statements with a semi-colon.  For instance:
+
+```{r}
+y <- quote({who <- "Alfred"; paste("Welcome,", who)})
+y
+```
 
 ### Assignment
 
-- Treating assignment
+Strictly speaking, an assignment statement is a function call involving two arguments. 
+```{r}
+y <- quote(x <- foo(f,g))
+class(y)
+as.list(y)
+```
+The function is called `` `<-` ``. The first argument is the name to to use for storing the value of the second argument. The second argument is the value (perhaps constructed by evaluating a call) to be stored under the name.
+
+When using `checkr` on an assignment statement, the checking logic is performed on the expression to the right of the assignment symbol. As you'll see later, if it's important to your checking logic to know if assignment is involved, or what is the name being assigned to, you can write tests using the pronoun `Z`. Except for `Z`, there is no vestige of the assignment being used in the `checkr` tests.
+
+## Preparing code for `checkr`
+
+In previous examples, we've used `quote()` to store examples of submitted code. Another way to store code, the one used in `learnr`, is as a text string. `Checkr` can work with both. 
+
+Before `checkr` tests can be applied to code, you need to pre-process the code. This is the task of the `for_checkr()` function.  For instance:
+```{r}
+s1 <- quote(Bees <- read.csv("bee_file.csv"))
+code <- for_checkr(s1)
+```
+
+The value created by `for_checkr()` is an object of class `"checkr_result"`. This has the code (and other information) in a standard format. Many of the `checkr` functions take such an object as input and return the same kind of object as output. In this way, you can cascade your logic: first testing for one thing, then another, and so on.
 
 
+## `Checkr` functions
 
-## Checkr functions
+This section introduces the most important functions for implementing a checking logic. You'll want to make sure you understand the following concepts:
 
-* transform code: for_checkr, expand_chain
+- quoted code, as produced by `quote()`
+- the distinction between an R expression and the *value* produced when evaluating that expression.
+- names
+- constants (numeric and character)
+- function calls
+- function arguments
+- a "line" of code 
+
+`Checkr` functions perform a variety of tasks:
+
+1. Transforming code from one form to another
+2. Associating tests with specific outcomes and messages
+3. Locating lines in the code.
+4. Locating arguments to a function call.
+5. Combining results from different tests.
+
+Let's examine these categories one by one.
+
+### 1. Transforming code
+
+* `for_checkr()` takes as input code quoted form or in the form of a character string. *Every* checking function will use `for_checkr()`. The output of `for_checkr()` is a `"checkr_result"` object, which contains one or more lines of code, as well as the test result and message.
+* `expand_all_chains()` takes a `checkr_result` object as input and returns another `checkr_result` object where all `magrittr` chains in the code of the input object are split into sequences of lines. `expand_chain()` is similar, but works only on one line of code. You won't need these functions unless you are checking statements written in chaining notation.
+
+## 2. Associating tests with specific outcomes and messages
+
+A "test" in `checkr` is an R expression that returns `TRUE` or `FALSE`. Some examples of tests are `nrow(df) > 10` or `Z == Bees`. Depending on the result of a test, you may "pass" or "fail" the submitted code, typically providing a message congratulating on the "pass" or providing a hint about what went wrong in the case o "fail."
+
+Three functions enable you to state what you want to have happen in the event of a pass or fail:
+
+* `passif()`. The first argument is a test, the second a character-string message. If the test produces `TRUE`, you are saying that the code is successful. If the test if `FALSE`, nothing happens.
+* `failif()`. Like `passif()`, but a `TRUE` test indicates that the code is rejected. If the test is `FALSE`, nothing happens.
+* `insist()`. Again like `passif()` but with important differences. If the test is `FALSE`, the code is rejected and the message is used to indicate the reason for the rejection. If the test is `TRUE`, nothing happens.
+
+You will use `passif()`, `failif()`, and `insist()` within other checking functions.
+
+## 3. Locating lines in submitted code.
+
+Submitted code consists of one or more lines of R code. (The submission can also be empty. See `if_empty_submission()`.)
+
+You might think that 
+
+* transform code: for_checkr, expand_all_chains, expand_chain
 * locating lines
     - line_binding: Looking for something exactly matching a template 
     - line_calling, 

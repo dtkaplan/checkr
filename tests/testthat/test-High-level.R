@@ -1,7 +1,6 @@
 context("High-level testing to expand coverage")
 
-source(file = system.file("learnr_examples/internal-examples.R",
-                          package = "checkr"),
+source(file = system.file("learnr_examples/internal-examples.R", package = "checkr"),
        local = TRUE)
 
 test_that("rep(1:4, each = 3) problem works", {

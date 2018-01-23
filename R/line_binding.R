@@ -154,7 +154,7 @@ line_binding <- function(ex, keys, ..., message = "No match found to specified p
   res
 }
 
-
+#' @rdname line_binding
 #' @export
 check_binding <- line_binding
 

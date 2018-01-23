@@ -167,34 +167,84 @@ sqrt(x)
 sqrt
 
 ## ------------------------------------------------------------------------
-y <- quote(sin(f + g))
+y <- quote(foo(f, g))
 
 ## ------------------------------------------------------------------------
-check_exer_1_v3("x <- 1:4; rep(x, each = 3)")
-check_exer_1_v3("sort(rep(1:4, 3))")
+y        # display printed form
+class(y) # the object's class
 
 ## ------------------------------------------------------------------------
-USER_CODE <- quote(y <- 15 * sin(53 * pi / 180))
+as.list(y)
 
 ## ------------------------------------------------------------------------
-CODE <- for_checkr(USER_CODE)
+lapply(y, class)
 
 ## ------------------------------------------------------------------------
-line_where(CODE, 
-           insist(is.numeric(V)), 
-           passif(abs(V - 11.98) < 0.01, "Good job!"), 
-           message = "Wrong numerical result.")
+y <- quote(x ^ 2)
+class(y)
+as.list(y)
 
 ## ------------------------------------------------------------------------
-CODE <- for_checkr(USER_CODE)
-# CODE <- for_checkr(quote(11.98))
-# CODE <- for_checkr(quote(sin(53)))
-# CODE <- for_checkr(quote(15 * cos(53)))
-t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
-t1 <- line_where(t1, insist(F == quote(`*`), "Remember to multiply by the length of the hypotenuse"))
-line_where(t1, insist(is.numeric(V)), 
-           passif(abs(V - 11.98) < 0.01, "Good!"), 
-           message = "{{V}} is a wrong numerical result. It should be about 11.98.")
+y <- quote(foo(f + 3, paste("Hello,", g, "Nice to meet you.")))
+
+## ------------------------------------------------------------------------
+y
+class(y)
+as.list(y)
+lapply(y, class)
+
+## ------------------------------------------------------------------------
+y[[3]]
+class(y[[3]])
+as.list(y[[3]])
+lapply(y[[3]], class)
+
+## ----error = TRUE--------------------------------------------------------
+eval(y)
+
+## ------------------------------------------------------------------------
+subset(mtcars, hp > 250)
+
+## ------------------------------------------------------------------------
+y <- quote(subset(mtcars, hp > 250))
+as.list(y)
+lapply(y, class)
+
+## ----error = TRUE--------------------------------------------------------
+eval(quote(hp > 250))
+
+## ------------------------------------------------------------------------
+y <- quote({who <- "Alfred"; paste("Welcome,", who)})
+y
+
+## ------------------------------------------------------------------------
+y <- quote(x <- foo(f,g))
+class(y)
+as.list(y)
+
+## ------------------------------------------------------------------------
+s1 <- quote(Bees <- read.csv("bee_file.csv"))
+code <- for_checkr(s1)
+
+## ----eval = FALSE--------------------------------------------------------
+#  USER_CODE <- quote({x <- sqrt(cos(pi)); Health <- data.frame(blood_pressure = c(120, 130, 115))})
+#  code <- for_checkr(USER_CODE)
+#  L1 <- line_where(code,
+#                   insist(is.data.frame(V), "Didn't find an appropriate statement producing a dataframe."),
+#                   insist("blood_pressure" %in% names(V),
+#                          "The dataframe didn't include the variable `blood_pressure`"))
+#  L1
+
+## ------------------------------------------------------------------------
+L2 <- line_calling(code, sin, cos, tan, message = "No trig function called.")
+L2
+
+## ------------------------------------------------------------------------
+USER_CODE <- quote(mod <- lm(mpg ~ hp + cyl, data = mtcars))
+code <- for_checkr(USER_CODE)
+L1 <- line_calling(code, lm)
+named_arg(L1, "data", insist(nrow(V) == 100, 
+                             "Please use exactly 100 cases for fitting. You used {{nrow(V)}} cases."))
 
 ## ------------------------------------------------------------------------
 CODE <- for_checkr(quote(15 * cos(53)))
@@ -212,7 +262,8 @@ chk_exer_9 <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   t1 <- line_chaining(code, message = "Remember, chains involve `%>%`.")
   check(t1, 
-        insist(identical(V, mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))), "Your chain doesn't produce the right value."),
+        insist(identical(V, mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))), 
+               "Your chain doesn't produce the right value."),
         passif(TRUE, "Great!"))
 }
 
@@ -220,57 +271,6 @@ chk_exer_9 <- function(USER_CODE) {
 chk_exer_9("mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))")
 chk_exer_9("mtcars %>% group_by(hp) %>% summarise(disp = mean(disp))")
 chk_exer_9("res <- group_by(mtcars, cyl); summarise(res, disp = mean(disp))")
-
-## ----echo = FALSE--------------------------------------------------------
-CHECK <- function(submission) 
-  if_matches(submission, .(fn)(..(ang)), 
-             insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
-             failif(ang == 53, "You need to convert the 53 degrees into radians."),
-             insist(ang == 53 * pi / 180, "Do you have the angle right?"),
-             failif(TRUE, "Remember to take the length of the hypothenuse into account."))
-
-## ----eval = FALSE--------------------------------------------------------
-#  if_matches(submission, .(fn)(..(ang)),
-#             insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
-#             failif(ang == 53, "You need to convert the 53 degrees into radians."),
-#             insist(ang == 53 * pi / 180, "Do you have the angle right?"),
-#             failif(TRUE, "Remember to take the length of the hypothenuse into account."))
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK(quote(15*sin(53 * pi/180)))
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK(quote(sin(53 * pi/180)))
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK(quote(cos(53 * pi / 180)))
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK(quote(sin(53)))
-
-## ----eval = FALSE--------------------------------------------------------
-#  if_matches(submission, .(fn)(..(arg)),
-#             failif(TRUE, "Remember to take the length of the hypothenuse into account."))
-#  if_matches(submission, 15 * .(fn)(..(arg)),
-#             insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
-#             failif(ang == 53, "You need to convert the 53 degrees into radians."),
-#             insist(ang == 53 * pi / 180, "Do you have the angle right?"),
-#             passif(TRUE, "Good job!"))
-
-## ----eval = FALSE--------------------------------------------------------
-#  if_matches(submission, .(fn)(..(arg)),
-#             failif(TRUE), "Remember to take the length of the hypothenuse into account.")
-#  if_matches(submission, .(hyp) * .(fn)(..(ang)),
-#             failif(hyp == 225, "Use the length, not the square length!"),
-#             insist(hyp == 15, "What length are you using?"),
-#             insist(fn == quote(sin), "{{fn}} is not the correct trig function."),
-#             failif(ang == 53, "You need to convert the 53 degrees into radians."),
-#             insist(ang == 53 * pi / 180, "Do you have the angle right?"),
-#             passif(TRUE, "Good job!"))
-
-## ------------------------------------------------------------------------
-submission_2 <- "theta <- 53 * pi/180; r <- 15; r*sin(theta)"
-submission_3 <- "ang <- pi * (53 / 180); sin(ang) * 15"
 
 ## ----echo = FALSE--------------------------------------------------------
 library(ggplot2)
@@ -323,20 +323,6 @@ CHECK2 <- function(submission) check_blanks(submission, C <- ........(A^2 + B^2)
 
 ## ----eval = FALSE, echo = FALSE------------------------------------------
 #  CHECK2("C <- sqrt(A + B)")
-
-## ----error = TRUE--------------------------------------------------------
-a
-
-## ----eval = FALSE--------------------------------------------------------
-#  submission <- "x <- 3; sin(x)"
-#  # This will work. `fn` will be a symbol, as will `quote(sin)`.
-#  if_matches(submission, .(fn)(.(arg)), passif(fn == quote(sin), "Function is {{fn}}, argument is {{arg}}"))
-#  # This won't work. `fn` will be a symbol, but `sin` is a function, not a symbol.
-#  if_matches(submission, .(fn)(.(arg)), passif(fn == sin, "Function is {{fn}}, argument is {{arg}}"))
-#  # Back to working again. With the double dots, `fn` will be the value that the name "sin" points to. In this case, that will be the function `sin()`.
-#  if_matches(submission, ..(fn)(.(arg)), passif(fn == sin, "Function is {{fn}}, argument is {{arg}}"))
-#  # The funny `.Primitive("sin")` reflects that the function `sin` is something called a "primitive," as opposed to the kind of thing like `function(x) x^2`. This will certainly be confusing as a message to students, so better to use comparison of the very first form, where the single-dot pattern is used and compared to `quote(sin)`.
-#  
 
 ## ----eval = FALSE--------------------------------------------------------
 #  if_matches(quote(x <- 3 + 2), `<-`(.(nm), ..(val)),

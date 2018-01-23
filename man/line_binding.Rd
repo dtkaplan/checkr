@@ -3,10 +3,14 @@
 \name{line_binding}
 \alias{line_binding}
 \alias{check_binding}
+\alias{check_binding}
 \title{Locates a line matching a redpen pattern and conducts tests on the resulting bindings.}
 \usage{
 line_binding(ex, keys, ..., message = "No match found to specified patterns.",
   qkeys = NULL)
+
+check_binding(ex, keys, ...,
+  message = "No match found to specified patterns.", qkeys = NULL)
 }
 \arguments{
 \item{ex}{a checkr_result object produced by some previous checkr function, e.g. \code{for_checkr()}}

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Daniel Kaplan" />
 
-<meta name="date" content="2018-01-22" />
+<meta name="date" content="2018-01-23" />
 
 <title>Using checkr</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Using <code>checkr</code></h1>
 <h4 class="author"><em>Daniel Kaplan</em></h4>
-<h4 class="date"><em>2018-01-22</em></h4>
+<h4 class="date"><em>2018-01-23</em></h4>
 
 
 
@@ -140,35 +140,35 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff342985040&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe100138870&gt;</span>
 <span class="kw">check_exer_1</span>(s1wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your data argument head(mtcars) was not `mtcars`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; head(mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff3456f3908&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe10243e940&gt;</span>
 <span class="kw">check_exer_1</span>(s2)
 <span class="co">#&gt; checkr result *pass* with message:</span>
 <span class="co">#&gt; Great job!</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mod &lt;- lm(mpg ~ hp, data = mtcars)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff3449610e8&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe102ead478&gt;</span>
 <span class="kw">check_exer_1</span>(s2wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; You need to have the miles-per-gallon variable on the left side of the model formula. You've got hp instead.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; hp ~ mpg</span>
-<span class="co">#&gt; &lt;environment: 0x7ff3456fc108&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe102443c00&gt;</span>
 <span class="kw">check_exer_1</span>(s3wrong)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your R-squared is 0. That's too small.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; lm(data = for_me, mpg ~ 1)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff343beea00&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe10287c1b8&gt;</span></code></pre></div>
 <p>The printed form of the result includes whether the submission passed or failed, a congratulatory or diagnostic message, and the component of the code being checked at the point where the test passed or failed. When integrated with a tutorial system such as <code>learnr</code>, the <code>checkr</code> result is formatted as appropriate for that user interface. (For instance the code component is mainly of interest to the author of checking functions, not the student.)</p>
 </div>
 </div>
@@ -191,7 +191,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff341185840&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe0fe8de8b0&gt;</span></code></pre></div>
 <p>Another approach is to have in mind a specific command and check for exactly that. This provides little or no flexibility. For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v1 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -205,7 +205,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; c(1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff344999aa8&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe102eca590&gt;</span></code></pre></div>
 <p>… and it will work with a command matching that specified, even allowing assignment or trivial white-space changes …</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- rep(1:4,each=3); x&quot;</span>)
 <span class="co">#&gt; checkr result *pass* with message:</span>
@@ -213,7 +213,7 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- rep(1:4, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff343e30260&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe10317c178&gt;</span></code></pre></div>
 <p>But here are reasonable student submissions that won’t pass the test:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v1</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
@@ -221,18 +221,18 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; x &lt;- 1:4</span>
-<span class="co">#&gt; &lt;environment: 0x7ff34597b708&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe10375e0d0&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff34597ca70&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe10375fc38&gt;</span>
 <span class="kw">check_exer_1_v1</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Sorry. Not exactly what I was looking for.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7ff3452c4438&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe103a18ce0&gt;</span></code></pre></div>
 <p>The challenge is to identify what aspects of the submission we require, but not to overspecify the details. For instance, the exercise statement specifies using <code>rep()</code> and that one argument will be <code>1:4</code>. To test this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v2 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -248,14 +248,14 @@ s3wrong &lt;-<span class="st"> &quot;for_me &lt;- mtcars; mosaic::rsquared(lm(da
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff34562a828&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe102365ff0&gt;</span>
 <span class="kw">check_exer_1_v2</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
 <span class="co">#&gt; checkr result: *ok*</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; sort(rep(1:4, 3))</span>
-<span class="co">#&gt; &lt;environment: 0x7ff344840e28&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe101617a30&gt;</span></code></pre></div>
 <p>If the point of the exercise is to have the student see that <code>rep()</code> has optional named arguments, perhaps you want to check if the line involving <code>rep()</code> also has an argument named <code>each</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">check_exer_1_v3 &lt;-<span class="st"> </span><span class="cf">function</span>(USER_CODE) {
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
@@ -354,7 +354,7 @@ check_bee_data &lt;-<span class="st"> </span><span class="cf">function</span>(US
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; read.csv(&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff344612a08&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe102fa7148&gt;</span>
 <span class="kw">check_bee_data</span>(s4)
 <span class="co">#&gt; Called from: check_bee_data(s4)</span>
 <span class="co">#&gt; debug at &lt;text&gt;#11: result &lt;- line_where(code, passif(Z == &quot;Circuits&quot;), failif(Z == </span>
@@ -365,7 +365,7 @@ check_bee_data &lt;-<span class="st"> </span><span class="cf">function</span>(US
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; bees &lt;- read.csv(&quot;http://www.lock5stat.com/datasets/HoneybeeCircuits.csv&quot;)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff343e18b78&gt;</span></code></pre></div>
+<span class="co">#&gt; &lt;environment: 0x7fe10327a390&gt;</span></code></pre></div>
 <p>Another checking statement is needed to make sure that the <code>read.csv()</code> function is being used. It could be as simple as this:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this will go in the `check_bee_data()` function</span>
 result &lt;-<span class="st"> </span><span class="kw">line_where</span>(result, <span class="kw">insist</span>(F <span class="op">==</span><span class="st"> </span>read.csv, m2))</code></pre></div>
@@ -391,7 +391,7 @@ result &lt;-<span class="st"> </span><span class="kw">line_where</span>(result, 
 <div id="some-r-background" class="section level2">
 <h2>Some R background</h2>
 <p>Most R users learn how to compute on dataframes, vectors, and so on. The <code>checkr</code> system involves something different: computing on the language itself. That is to say, the inputs to most <code>checkr</code> functions are language statements.</p>
-<p>It will help you to use <code>checkr</code> if you learn some basics about the structure of the R language. Your students won’t have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.</p>
+<p>It will help you to use <code>checkr</code> if you learn something about the structure of the R language. Your students won’t have to know this, but the checking code that you read and write will be easier to understand with this knowledge of language structure.</p>
 <div id="lines-functions-arguments-constants-names-values" class="section level3">
 <h3>Lines, functions, arguments, constants, names, values</h3>
 <p>Consider this sequence of R commands:</p>
@@ -415,198 +415,294 @@ result &lt;-<span class="st"> </span><span class="kw">line_where</span>(result, 
 </div>
 <div id="quote-and-quo" class="section level3">
 <h3>Quote and quo</h3>
-<p>You’re used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are <code>substitute()</code>, <code>parse()</code>, <code>expression()</code>. To illustrate, consider the <code>quote()</code> function. This is not about character strings but the R-language itself:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">sin</span>(f <span class="op">+</span><span class="st"> </span>g))</code></pre></div>
-<p>A standard way to think about <code>sin(f + g)</code> is “add the values of <code>f</code> and <code>g</code> and then take the sine of the result.” But in terms of the language, you can see four names: <code>f</code>, <code>g</code>, <code>sin</code>, <code>`+`</code> and some punctuation.</p>
-<p>Think about what might be the value bound to the name <code>y</code> after the above line is evaluated. And while you’re doing it, assume that no value has been yet bound to the names <code>f</code> and <code>g</code>.</p>
-<p>We need still another kind of object: something that can hold expressions for later evaluation or for taking apart or other manipulations.</p>
-<p>We need still another kind of thing: something that represents an expression in the R language.</p>
+<p>You’re used thinking of functions as creating dataframes or vectors and so on. You may not have directly encountered them, but there are special functions that create an R-language expression itself. Examples are <code>substitute()</code>, <code>parse()</code>, <code>expression()</code>. To illustrate, consider the <code>quote()</code> function. (Don’t be deceived: quote is not about creating character strings.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">foo</span>(f, g))</code></pre></div>
+<p>A standard way to think about <code>foo(f, g)</code> is “perform the action of the function <code>foo()</code> on the two arguments: <code>f</code> and <code>g</code>. and then take the sine of the result.” But in terms of the language, you can see four names: <code>f</code>, <code>g</code>, <code>foo</code>. There’s also some punctuation: the parentheses that signal that <code>foo</code> is to be applied to its arguments and the comma that separates the two arguments.</p>
+<p>Think about what might be the value bound to the name <code>y</code> after the above line is evaluated. And while you’re doing it, assume that there is no defined function named <code>foo</code> and that no value has been yet bound to the names <code>f</code> and <code>g</code>.</p>
+<p>Ordinarily, referring to a valueless name like <code>f</code> generates an error: <code>Error: object 'f' not found</code>. But <code>quote()</code> is special. It doesn’t try to evaluate its argument and so it has no need for names to be bound to values. So the object <code>y</code> is not about the results of <code>foo(f, g)</code> but about its status as a command that can be evaluated later on. Instead, <code>quote()</code> figures out from the syntax of its argument that <code>foo(f, g)</code> is a call to a function. (A name followed immediately by an opening parenthesis is <em>always</em> a function call.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y        <span class="co"># display printed form</span>
+<span class="co">#&gt; foo(f, g)</span>
+<span class="kw">class</span>(y) <span class="co"># the object's class</span>
+<span class="co">#&gt; [1] &quot;call&quot;</span></code></pre></div>
+<p>The object <code>y</code> produced by <code>quote(foo(f, g))</code> is of class “call,” reflecting that the expression given as an argument to <code>quote()</code> is a function call. The printed form of <code>y</code> looks just like the argument to <code>quote()</code>. But you can choose to look at <code>y</code> in another way, as a list:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.list</span>(y)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; foo</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; f</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; g</span></code></pre></div>
+<p>The list starts with the function name, with the remaining parts being the two arguments. In this example, each of the three items in the list are names:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">lapply</span>(y, class)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span></code></pre></div>
+<p>This list-like structure for a function call applies just as well to arithmetic and other <em>infix</em> functions. R allows you to create a call without using parentheses, for instance <code>2 + 3</code>. The internal storage of the expression is nonethess list-like. For instance:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(x <span class="op">^</span><span class="st"> </span><span class="dv">2</span>)
+<span class="kw">class</span>(y)
+<span class="co">#&gt; [1] &quot;call&quot;</span>
+<span class="kw">as.list</span>(y)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; `^`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; x</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] 2</span></code></pre></div>
+<p>Do note the backticks around the name in the first element of the list: <code>`^`</code>. In general, when you are referring to functions used with infix notation, you need to construct the function name with backticks. Examples: <code>||</code>, <code>*</code>, <code>&gt;</code>, and so on.</p>
+<p>Let’s consider a slightly more complex case, where the arguments themselves involve function calls:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">foo</span>(f <span class="op">+</span><span class="st"> </span><span class="dv">3</span>, <span class="kw">paste</span>(<span class="st">&quot;Hello,&quot;</span>, g, <span class="st">&quot;Nice to meet you.&quot;</span>)))</code></pre></div>
+<p>Again, <code>y</code> is a “call” and there are three parts to it: the function name and the two arguments:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y
+<span class="co">#&gt; foo(f + 3, paste(&quot;Hello,&quot;, g, &quot;Nice to meet you.&quot;))</span>
+<span class="kw">class</span>(y)
+<span class="co">#&gt; [1] &quot;call&quot;</span>
+<span class="kw">as.list</span>(y)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; foo</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; f + 3</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; paste(&quot;Hello,&quot;, g, &quot;Nice to meet you.&quot;)</span>
+<span class="kw">lapply</span>(y, class)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] &quot;call&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] &quot;call&quot;</span></code></pre></div>
+<p>Note that parts 2 and 3 of <code>y</code> are no longer <code>name</code>s. Instead, they are themselves function calls. To illustrate, let’s look at the third part of the list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y[[<span class="dv">3</span>]]
+<span class="co">#&gt; paste(&quot;Hello,&quot;, g, &quot;Nice to meet you.&quot;)</span>
+<span class="kw">class</span>(y[[<span class="dv">3</span>]])
+<span class="co">#&gt; [1] &quot;call&quot;</span>
+<span class="kw">as.list</span>(y[[<span class="dv">3</span>]])
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; paste</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] &quot;Hello,&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; g</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span>
+<span class="co">#&gt; [1] &quot;Nice to meet you.&quot;</span>
+<span class="kw">lapply</span>(y[[<span class="dv">3</span>]], class)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] &quot;character&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[4]]</span>
+<span class="co">#&gt; [1] &quot;character&quot;</span></code></pre></div>
+<p>The call <code>paste(&quot;Hello&quot;, g, &quot;Nice to meet you.&quot;)</code> is a call to the function named <code>paste</code> with three arguments. Two of these arguments are constants; they happen to be character constants. The middle argument, <code>g</code> is a name.</p>
+<p>You can evaluate a name or a call by using the <code>eval()</code> function. Of course, evaluation needs values to be assigned to any names used, so evaluating <code>y</code> will throw an error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">eval</span>(y)
+<span class="co">#&gt; Error in foo(f + 3, paste(&quot;Hello,&quot;, g, &quot;Nice to meet you.&quot;)): could not find function &quot;foo&quot;</span></code></pre></div>
+<p><code>Quote()</code> and <code>eval()</code> (and other similar language-handling functions like <code>substitute()</code> or even the modeler’s tilde) are part of base R. They are part of how the language works. They are not part of an average user’s R toolbox because average users are in the value business: applying functions to values, not taking apart the language.</p>
+<p>Still, many users encounter situations where they are using language objects rather than values. Take the <code>subset()</code> function as used to pull out a subset of rows from a dataframe. You can use it like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">subset</span>(mtcars, hp <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>)
+<span class="co">#&gt;                 mpg cyl disp  hp drat   wt qsec vs am gear carb</span>
+<span class="co">#&gt; Ford Pantera L 15.8   8  351 264 4.22 3.17 14.5  0  1    5    4</span>
+<span class="co">#&gt; Maserati Bora  15.0   8  301 335 3.54 3.57 14.6  0  1    5    8</span></code></pre></div>
+<p>We can take apart the command:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">subset</span>(mtcars, hp <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>))
+<span class="kw">as.list</span>(y)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; subset</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; mtcars</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; hp &gt; 250</span>
+<span class="kw">lapply</span>(y, class)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; [1] &quot;name&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; [1] &quot;call&quot;</span></code></pre></div>
+<p>The first two parts of <code>y</code> are easy: <code>subset</code> is a name and <code>mtcars</code> is a name. The third part is a call. The thing that’s interesting about <code>subset()</code> from a programming point of view is that the third part cannot be evaluated as is:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">eval</span>(<span class="kw">quote</span>(hp <span class="op">&gt;</span><span class="st"> </span><span class="dv">250</span>))
+<span class="co">#&gt; Error in eval(quote(hp &gt; 250)): object 'hp' not found</span></code></pre></div>
+<p>The name <code>hp</code> doesn’t have a value. It only has meaning with respect to the <code>mtcars</code> dataframe. It’s <code>subset()</code> that contains the logic to connect <code>hp</code> to <code>mtcars</code>.</p>
+<p>The <code>rlang</code> package provides facilities for taking apart calls and ensuring that the names used in a call are linked to the environment that gives them values. <code>Checkr</code> makes extensive use of <code>rlang</code>.</p>
+</div>
+<div id="multiple-statements-within-quote" class="section level3">
+<h3>Multiple statements within <code>quote()</code></h3>
+<p>Often you will be working with submitted code with multiple statements. When using <code>quote()</code> to create examples with multiple statements, you need to enclose the statements with curly braces <code>{  }</code> and separate the statements with a semi-colon. For instance:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>({who &lt;-<span class="st"> &quot;Alfred&quot;</span>; <span class="kw">paste</span>(<span class="st">&quot;Welcome,&quot;</span>, who)})
+y
+<span class="co">#&gt; {</span>
+<span class="co">#&gt;     who &lt;- &quot;Alfred&quot;</span>
+<span class="co">#&gt;     paste(&quot;Welcome,&quot;, who)</span>
+<span class="co">#&gt; }</span></code></pre></div>
 </div>
 <div id="assignment" class="section level3">
 <h3>Assignment</h3>
-<ul>
-<li>Treating assignment</li>
-</ul>
+<p>Strictly speaking, an assignment statement is a function call involving two arguments.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">quote</span>(x &lt;-<span class="st"> </span><span class="kw">foo</span>(f,g))
+<span class="kw">class</span>(y)
+<span class="co">#&gt; [1] &quot;&lt;-&quot;</span>
+<span class="kw">as.list</span>(y)
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; `&lt;-`</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[2]]</span>
+<span class="co">#&gt; x</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; [[3]]</span>
+<span class="co">#&gt; foo(f, g)</span></code></pre></div>
+<p>The function is called <code>`&lt;-`</code>. The first argument is the name to to use for storing the value of the second argument. The second argument is the value (perhaps constructed by evaluating a call) to be stored under the name.</p>
+<p>When using <code>checkr</code> on an assignment statement, the checking logic is performed on the expression to the right of the assignment symbol. As you’ll see later, if it’s important to your checking logic to know if assignment is involved, or what is the name being assigned to, you can write tests using the pronoun <code>Z</code>. Except for <code>Z</code>, there is no vestige of the assignment being used in the <code>checkr</code> tests.</p>
 </div>
+</div>
+<div id="preparing-code-for-checkr" class="section level2">
+<h2>Preparing code for <code>checkr</code></h2>
+<p>In previous examples, we’ve used <code>quote()</code> to store examples of submitted code. Another way to store code, the one used in <code>learnr</code>, is as a text string. <code>Checkr</code> can work with both.</p>
+<p>Before <code>checkr</code> tests can be applied to code, you need to pre-process the code. This is the task of the <code>for_checkr()</code> function. For instance:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s1 &lt;-<span class="st"> </span><span class="kw">quote</span>(Bees &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;bee_file.csv&quot;</span>))
+code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(s1)
+<span class="co">#&gt; Warning in file(file, &quot;rt&quot;): cannot open file 'bee_file.csv': No such file</span>
+<span class="co">#&gt; or directory</span></code></pre></div>
+<p>The value created by <code>for_checkr()</code> is an object of class <code>&quot;checkr_result&quot;</code>. This has the code (and other information) in a standard format. Many of the <code>checkr</code> functions take such an object as input and return the same kind of object as output. In this way, you can cascade your logic: first testing for one thing, then another, and so on.</p>
 </div>
 <div id="checkr-functions" class="section level2">
-<h2>Checkr functions</h2>
+<h2><code>Checkr</code> functions</h2>
+<p>This section introduces the most important functions for implementing a checking logic. You’ll want to make sure you understand the following concepts:</p>
 <ul>
-<li>transform code: for_checkr, expand_chain</li>
-<li>locating lines
-<ul>
-<li>line_binding: Looking for something exactly matching a template</li>
-<li>line_calling,</li>
-<li>line_where,</li>
-<li>line_chaining</li>
-</ul></li>
-<li>pronoun tests
-<ul>
-<li>passif, failif, insist</li>
-<li>line_where</li>
-</ul></li>
+<li>quoted code, as produced by <code>quote()</code></li>
+<li>the distinction between an R expression and the <em>value</em> produced when evaluating that expression.</li>
+<li>names</li>
+<li>constants (numeric and character)</li>
+<li>function calls</li>
+<li>function arguments</li>
+<li>a “line” of code</li>
 </ul>
-<p>Trying this out …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">check_exer_1_v3</span>(<span class="st">&quot;x &lt;- 1:4; rep(x, each = 3)&quot;</span>)
-<span class="co">#&gt; checkr result: *ok*</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; CODE:</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; rep(x, each = 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff344cb6ed0&gt;</span>
-<span class="kw">check_exer_1_v3</span>(<span class="st">&quot;sort(rep(1:4, 3))&quot;</span>)
+<p><code>Checkr</code> functions perform a variety of tasks:</p>
+<ol style="list-style-type: decimal">
+<li>Transforming code from one form to another</li>
+<li>Associating tests with specific outcomes and messages</li>
+<li>Locating lines in the code.</li>
+<li>Locating arguments to a function call.</li>
+<li>Combining results from different tests.</li>
+</ol>
+<p>Let’s examine these categories one by one.</p>
+<div id="transforming-code" class="section level3">
+<h3>1. Transforming code</h3>
+<ul>
+<li><code>for_checkr()</code> takes as input code quoted form or in the form of a character string. <em>Every</em> checking function will use <code>for_checkr()</code>. The output of <code>for_checkr()</code> is a <code>&quot;checkr_result&quot;</code> object, which contains one or more lines of code, as well as the test result and message.</li>
+<li><code>expand_all_chains()</code> takes a <code>checkr_result</code> object as input and returns another <code>checkr_result</code> object where all <code>magrittr</code> chains in the code of the input object are split into sequences of lines. <code>expand_chain()</code> is similar, but works only on one line of code. You won’t need these functions unless you are checking statements written in chaining notation.</li>
+</ul>
+</div>
+</div>
+<div id="associating-tests-with-specific-outcomes-and-messages" class="section level2">
+<h2>2. Associating tests with specific outcomes and messages</h2>
+<p>A “test” in <code>checkr</code> is an R expression that returns <code>TRUE</code> or <code>FALSE</code>. Some examples of tests are <code>nrow(df) &gt; 10</code> or <code>Z == Bees</code>. Depending on the result of a test, you may “pass” or “fail” the submitted code, typically providing a message congratulating on the “pass” or providing a hint about what went wrong in the case o “fail.”</p>
+<p>Three functions enable you to state what you want to have happen in the event of a pass or fail:</p>
+<ul>
+<li><code>passif()</code>. The first argument is a test, the second a character-string message. If the test produces <code>TRUE</code>, you are saying that the code is successful. If the test if <code>FALSE</code>, nothing happens.</li>
+<li><code>failif()</code>. Like <code>passif()</code>, but a <code>TRUE</code> test indicates that the code is rejected. If the test is <code>FALSE</code>, nothing happens.</li>
+<li><code>insist()</code>. Again like <code>passif()</code> but with important differences. If the test is <code>FALSE</code>, the code is rejected and the message is used to indicate the reason for the rejection. If the test is <code>TRUE</code>, nothing happens.</li>
+</ul>
+<p>You will use <code>passif()</code>, <code>failif()</code>, and <code>insist()</code> within other checking functions.</p>
+</div>
+<div id="locating-lines-in-submitted-code." class="section level2">
+<h2>3. Locating lines in submitted code.</h2>
+<p>Submitted code consists of one or more lines of R code. (The submission can also be empty. See <code>if_empty_submission()</code>.) Several functions help you locate an individual line based on criteria you specify. the two most common are <code>line_where()</code> and <code>line_calling()</code>.</p>
+<ul>
+<li><code>line_where()</code> examines each line in turn and enables you to examine several aspects of the line:
+<ul>
+<li>the function being called at the highest level. Remember, every line of code is either a name, a constant, or a function call. The pronoun <code>F</code> contains the function at the very top.</li>
+<li>the value produced by the line. This is stored in the pronoun <code>V</code>.</li>
+<li>the name being bound to the line’s value, that is, the name assigned to. This name is contained by the pronoun <code>Z</code>.</li>
+<li>you also have access to the expression itself in the pronoun <code>E</code>. This can be used in messages.</li>
+</ul>
+For example, here’s an invocation of line_where to look for a line that creates a dataframe with a variable called “blood_pressure”.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USER_CODE &lt;-<span class="st"> </span><span class="kw">quote</span>({x &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">cos</span>(pi)); Health &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">blood_pressure =</span> <span class="kw">c</span>(<span class="dv">120</span>, <span class="dv">130</span>, <span class="dv">115</span>))})
+code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+L1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(code, 
+                 <span class="kw">insist</span>(<span class="kw">is.data.frame</span>(V), <span class="st">&quot;Didn't find an appropriate statement producing a dataframe.&quot;</span>), 
+                 <span class="kw">insist</span>(<span class="st">&quot;blood_pressure&quot;</span> <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(V), 
+                        <span class="st">&quot;The dataframe didn't include the variable `blood_pressure`&quot;</span>))
+L1</code></pre></div>
+<p>The first test, <code>insist(is.data.frame(V))</code> means that only a line producing a dataframe can qualify. For those lines that meet this criterion, another criterion is applied: that there be a variable <code>blood_pressure</code> in the dataframe.</p>
+<ul>
+<li><code>line_calling()</code> examines each line in turn looking for a line that calls one of the listed functions either at the top level or within an argument. (In contrast, the <code>F</code> pronoun in <code>line_where()</code> is the function being called at the highest-level.) Unlike <code>line_where()</code>, no tests are needed since the existence of an appropriate call dictates pass or failure.</li>
+</ul>
+<p>For example, here’s a test for a line calling any of sine, cosine, or tangent.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">L2 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;No trig function called.&quot;</span>)
+L2
 <span class="co">#&gt; checkr result *fail* with message:</span>
-<span class="co">#&gt; See what use you can make of the `each` argument to rep().</span>
+<span class="co">#&gt; Bees &lt;- read.csv(&quot;bee_file.csv&quot;) is an invalid command because cannot open the connection</span></code></pre></div>
+<p>There are more specialized line-locating functions.</p>
+<ul>
+<li><code>line_binding()</code> checks whether the line complies with patterns that you specify and check individual components of those patterns. This is the most general of the line-locating functions, but also the most difficult to use. We discuss how to specify patterns in another section.</li>
+<li><code>line_chaining()</code> looks for a line that contains a <code>magrittr</code> pipe.</li>
+</ul>
+</div>
+<div id="locating-arguments-in-a-call" class="section level2">
+<h2>4. Locating arguments in a call</h2>
+<p>Once a multi-line submission is narrowed down to a single line, you can apply tests <em>within</em> that line. Remember that the expression in a line can be either of three things: a constant, a name, or a function call. For constants or names, any testing you need can be done in the <code>line_where()</code> function using either the <code>V</code> or <code>E</code> pronouns. Thus, taking apart a line necessarily applies only to function calls. The <code>F</code> pronoun in <code>line_where()</code> can handle any tests of which function is at the head of the call. That leaves only the task of locating arguments to that function. <code>Checkr</code> provides several functions to do this.</p>
+<ul>
+<li><code>arg_number()</code> pulls out the nth argument.</li>
+<li><code>named_arg()</code> searches for an argument with a specified name.</li>
+<li><code>character_arg()</code>, <code>formula_arg()</code>, <code>function_arg()</code>, <code>list_arg()</code>, <code>matrix_arg()</code>, <code>numeric_arg()</code>, <code>table_arg()</code>, <code>vector_arg()</code> find arguments whose value has a particular type.</li>
+</ul>
+<p>Any of these functions can apply <code>passif/failif/insist</code> tests to the argument that is found. Those tests can be written in terms of the <code>E</code> and <code>V</code> pronouns: the expression itself and the value of that expression.</p>
+<p>Each of the argument-locating functions returns a <code>&quot;checkr_result&quot;</code> containing the argument as a stand-alone expression. If that expression happens to be a function call, you can do further testing with these functions on that expression.</p>
+<p>To illustrate, consider the following submission, where we want to make sure that the data used in fitting the model has exactly 100 cases.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USER_CODE &lt;-<span class="st"> </span><span class="kw">quote</span>(mod &lt;-<span class="st"> </span><span class="kw">lm</span>(mpg <span class="op">~</span><span class="st"> </span>hp <span class="op">+</span><span class="st"> </span>cyl, <span class="dt">data =</span> mtcars))
+code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
+L1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(code, lm)
+<span class="kw">named_arg</span>(L1, <span class="st">&quot;data&quot;</span>, <span class="kw">insist</span>(<span class="kw">nrow</span>(V) <span class="op">==</span><span class="st"> </span><span class="dv">100</span>, 
+                             <span class="st">&quot;Please use exactly 100 cases for fitting. You used {{nrow(V)}} cases.&quot;</span>))
+<span class="co">#&gt; checkr result *fail* with message:</span>
+<span class="co">#&gt; Please use exactly 100 cases for fitting. You used 32 cases.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; rep(1:4, 3)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff342775cd8&gt;</span></code></pre></div>
+<span class="co">#&gt; mtcars</span>
+<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
 </div>
 <div id="pre-evaluation-checking" class="section level2">
 <h2>Pre-evaluation checking</h2>
 <p>WHAT TO DO WHEN THERE IS A PARSE ERROR.</p>
 <p>POSSIBILITIES WHEN THERE IS A RUN-TIME ERROR to anticipate particular situations.</p>
+<p>Sometimes students will submit code that throws an error, either at parse time or at run time. By default, learnr displays such errors in their native, somewhat cryptic format.</p>
+<p><code>checkr</code> has some simple error-catching logic that tries to translate the native R messages into a friendlier format. To turn this on, you need to add a <code>-code-check</code> chunk to each exercise.</p>
+<ul>
+<li>[ASIDE] I would rather that code checking be turned on or off at the document level, perhaps as a choice in <code>check_for_learnr()</code>.</li>
+<li>[ASIDE] I would also rather that the evaluation of the exercise take place entirely in the checking function, rather than being run first by learnr and then handed off to the checking function.</li>
+</ul>
+<p>For an exercise named <code>prob-1</code> the code check chunk will look like:</p>
+<pre><code>` ``{r prob-1-code-check, echo = FALSE}
+1 # there must be some content
+```</code></pre>
+<p>If, when trying out your exercises, you find a parsing or run-time error that isn’t captured by <code>checkr</code>, please submit an “issue” on the GitHub site so that we can add that into the system.</p>
 </div>
-<div id="why-right-is-wrong." class="section level2">
-<h2>Why right is wrong.</h2>
-<p>It’s not just the output. It’s the way they went about producing the output.</p>
-<p>HOW DIFFICULT IT IS TO GRADE ESSAYS</p>
-<p>One of the most powerful heuristics is Right-or-Wrong. The <code>checkr</code> package provides facilities to give some feedback on their work.</p>
-<p>“Summative feedback,” in the jargon of education, means telling whether the student was right or wrong; whether the submitted work satisfied the requirements. In computer programming, summative feedback can be based on whether a correct result was computed, whether a function works as required, and so on. <code>Checkr</code> provides simple mechanisms for comparing the quantities computed by the student submission to known values.</p>
-<p>“Formative feedback” attempts to help the student develop a better submission. This is a more subtle situation, since good feedback must involve understanding of how student’s think about the problem, typical patterns in student answers, and the variety of ways that the problem can be approached. <code>Checkr</code> provides facilities for looking within the student’s code for functions and their arguments, for checking intermediate results, and to look for specific mistake patterns.</p>
-<p>The <code>checkr</code> package provides such an evaluation system that provides both summative and formative feedback and, at the instructor’s discretion, logs student submissions for assigning credit and to support looking for common patterns of misconception in student answers.</p>
-<p><code>Checkr</code> can be used in a stand-alone mode or as embedded in a <code>learnr</code> tutorial.</p>
-</div>
-<div id="a-catalog-of-functions" class="section level2">
-<h2>A catalog of functions</h2>
-<p>Process the submitted code to prepare for testing:</p>
-<ul>
-<li><code>for_checkr(USER_CODE)</code> will take the code directly from <code>learnr</code>. Or, for development purposes, you can set <code>USER_CODE</code> yourself to be either a character string containing the code or a quoted line or set of lines. (The set of lines for <code>quote()</code> must be in curly braces.)</li>
-<li><code>expand_chain(CODE)</code> once you’ve identified a line of interest that happens to be a chain, you may want to do checks within that line. <code>expand_chain(CODE)</code> turns the sequence of statements in a chain into individual statements, and provides a binding in each statement for the value of <code>.</code> that will be the input to that statement.</li>
-<li><code>expend_all_chains(CODE)</code> takes a set of statements and expands all the chains in it, so that it can be treated as an ordinary sequence of statements.</li>
-</ul>
-<p>Locate a line …</p>
-<ul>
-<li><code>line_where()</code> - binds V, E, Z, F. Special case of line_binding. passif(), insist(), failif() tests written in terms of V, EX, Z, F</li>
-<li><code>line_calling()</code> - looks for a call to a function anywhere in the line. Compare: <code>line_where()</code> provides F, which is just the highest-level call.</li>
-<li><code>line_binding()</code> - custom bindings to patterns. Can use <code>failif()</code>, etc.</li>
-</ul>
-<p>Within a line or expression…</p>
-<ul>
-<li><code>call_to()</code> Pulls out the expression in a line that is a call to a specified function.</li>
-<li><code>test_binding()</code> Allows custom binding to an expression. (Just an alias for <code>line_binding()</code>)</li>
-</ul>
-<p>Arguments. Each returns the argument as an expression, applying any tests</p>
-<ul>
-<li><code>arg_calling()</code> return an argument that calls a specified function</li>
-<li><code>named_arg()</code> return an argument that has a specified name.</li>
-<li><code>formula_arg()</code> return an argument that is a formula. Similar for <code>data_arg()</code>, <code>matrix_arg()</code>, <code>vector_arg()</code>, <code>list_arg()</code>, <code>table_arg()</code>, <code>first_arg()</code></li>
-<li><code>arg_number()</code> return the argument in position n</li>
-</ul>
-<p>Tests that trigger a desired outcome</p>
-<ul>
-<li><code>passif()</code>, <code>failif()</code>, <code>okif()</code></li>
-</ul>
-<p>Within tests …</p>
-<ul>
-<li><code>%same_as%</code></li>
-<li><code>%not_same_as%</code></li>
-</ul>
-</div>
-<div id="a-first-example" class="section level2">
-<h2>A first example</h2>
-<p>Consider this problem from trigonometry:</p>
-<blockquote>
-<p><img src="data:image/png;base64,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" /><br />
-Write an R statement to compute the numerical value of x.</p>
-</blockquote>
-<p>A mathematically correct answer is <span class="math inline">\(15 \sin(53^\circ)\)</span>. The corresponding R command is <code>15 * sin(53 * pi / 180)</code>, where the conversion to radians of 53<span class="math inline">\(^\circ\)</span> is accomplished by multiplying by <span class="math inline">\(\pi/180\)</span>.</p>
-<p>In evaluating a student’s submission for this problem, there are a number of things that the instructor might look for:</p>
-<ol style="list-style-type: decimal">
-<li>Is the numerical value of the result correct? Here, that would be about 11.98.</li>
-</ol>
-<p>Of course, if the value computed by the student’s submission is not correct, then we know the submission itself is not right. But we don’t know <em>why</em> it’s not right. Knowing why it’s not right is important if we want to provide formative feedback to the student. In providing such formative feedback it would also be good to know:</p>
-<ol start="2" style="list-style-type: decimal">
-<li>Is the <span class="math inline">\(\sin\)</span> function being used?</li>
-<li>Is 53 the argument to <span class="math inline">\(\sin\)</span>? If not, we can remind the student to convert the angle to radians.</li>
-<li>Is multiplication by a conversion factor being used, and is the conversion factor correct?</li>
-</ol>
-<p>Answering questions (2) through (4) requires that the student’s submission be taken apart: what’s the function and what’s the argument to the function. <code>Checkr</code> provides a handful of functions that do this in different ways.</p>
-<div id="submitting-what" class="section level3">
-<h3>Submitting what?</h3>
-<p>In a tutorial system like <code>learnr</code>, the system itself does the work of collecting the student’s submission and handing it off to the checking statements. <code>Checkr</code> is written so that it can be used both within a system like <code>learnr</code> and also in a stand-alone way. One advantage of this is that you can develop and test your checking statements systematically before deploying them in a tutorial.</p>
-<p>The document you are reading is a vignette, not a tutorial. To play the role of the tutorial system, in this tutorial we’ll write student submissions as “quoted” commands. (We’ll say more about <code>quote()</code> later on. It’s an ordinary base R command, albeit one that few R users encounter.)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">USER_CODE &lt;-<span class="st"> </span><span class="kw">quote</span>(y &lt;-<span class="st"> </span><span class="dv">15</span> <span class="op">*</span><span class="st"> </span><span class="kw">sin</span>(<span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>))</code></pre></div>
-<p>The first task for <code>checkr</code> is to parse the submission. The <code>for_checkr()</code> function does this along with some additional processing for when there are multiple commands in the submission.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)</code></pre></div>
-<p>From now on, the character-string submission itself is not needed; all the necessary information is in <code>CODE</code>.</p>
-</div>
-<div id="looking-for-a-valid-line" class="section level3">
-<h3>Looking for a valid line</h3>
-<p>The student’s submission might include blank lines, or some scratch work, or some setup that calculates some component of the answer. A good way to handle such diverse possibilities is to use the <code>at()</code> function to probe the submission for a line that contains the desired result.</p>
-<p>To start very simply, let’s look for a line that generates the expected numerical result:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">line_where</span>(CODE, 
-           <span class="kw">insist</span>(<span class="kw">is.numeric</span>(V)), 
-           <span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;Good job!&quot;</span>), 
-           <span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)
-<span class="co">#&gt; checkr result *pass* with message:</span>
-<span class="co">#&gt; Good job!</span>
-<span class="co">#&gt; CODE:</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
-<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
-<p>The <code>line_where</code> function scans through all the lines in <code>CODE</code>. (There’s just one line in this example.) For each line, <code>line_where()</code> creates some pronouns:</p>
-<ul>
-<li><code>V</code> - the value of the line</li>
-<li><code>F</code> - the top-level function used in the line</li>
-<li><code>E</code> - the expression itself, as code.</li>
-<li><code>Z</code> - the name to which the result was assigned, if any.</li>
-</ul>
-<p>If the line contains an assignment, <code>F</code> and <code>E</code> both refer to the right-hand side of the assignment.</p>
-<p>For each line in <code>CODE</code>, <code>line_where()</code> runs tests written in terms of the pronouns. These tests are written using the functions <code>passif()</code>, <code>failif()</code>, <code>insist()</code>. The first argument to these functions is an ordinary R statement written in terms of the pronouns and which returns a logical. The second argument (optional) is a message. There can be multiple test statements (each as its own argument to <code>line_where()</code>, and so separated by commas as usual in R).</p>
-<ul>
-<li><code>passif()</code> - denotes a sufficient condition. This is a good place to put a success message.</li>
-<li><code>failif()</code> - denotes a sufficient condition, but one that leads to a failure. The message should indicate the reason for the failure.</li>
-<li><code>insist()</code> - denotes a necessary condition to pass, but not a sufficient one. If the test passes, go on to any following tests without note. The message here should indicate the reason for the failure, that is, what necessary condition was not satisfied.</li>
-<li><code>noteif()</code> - neither necessary nor sufficient. This is merely a way of appending a note to the message that will eventually be returned by the other functions. The message will be that note.</li>
-</ul>
-<p>If there is any line for which <em>none</em> of the tests fail, <code>line_where()</code> returns that line in a format that can be used for further testing, if desired. If there is no such line in <code>CODE</code>, <code>line_where()</code> will return a failure result.</p>
-<p>The <code>type = is.numeric</code> argument to <code>at()</code> is a way of saying, “I’m only going to run the tests if <code>V</code> is numerical.” This provides some armor against the possibility that the submission produces something other than a number.</p>
-</div>
-<div id="connecting-with-learnr" class="section level3">
-<h3>Connecting with <code>learnr</code></h3>
-<p>It might be that all you want is to check that <em>some</em> line produces the result you’re looking for. For this simple situation, you might implement the tutorial code checking in <code>learnr</code> by adding a <code>-check</code> block for the exercise with these contents:</p>
-<p>NEED TO CHECK THIS IN LEARNR</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
-<span class="kw">line_where</span>(CODE, 
-<span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;{{V}} is indeed the right answer.&quot;</span>), 
-<span class="dt">message =</span> <span class="st">&quot;Wrong numerical result.&quot;</span>)</code></pre></div>
-<p>This is a very simplistic sort of feedback: right or wrong.</p>
-</div>
-<div id="providing-constructive-feedback" class="section level3">
-<h3>Providing constructive feedback</h3>
-<p>Depending on your purpose, you may want to examine the submitted code for the kinds of errors you expect to be common and provide messages to guide the student around such errors. The following statements, for instance, check whether the user calls a trig function, uses multiplication, and gets the right value, all in the same line.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
-<span class="co"># CODE &lt;- for_checkr(quote(11.98))</span>
-<span class="co"># CODE &lt;- for_checkr(quote(sin(53)))</span>
-<span class="co"># CODE &lt;- for_checkr(quote(15 * cos(53)))</span>
-t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
-t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1, <span class="kw">insist</span>(F <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(<span class="st">`</span><span class="dt">*</span><span class="st">`</span>), <span class="st">&quot;Remember to multiply by the length of the hypotenuse&quot;</span>))
-<span class="kw">line_where</span>(t1, <span class="kw">insist</span>(<span class="kw">is.numeric</span>(V)), 
-           <span class="kw">passif</span>(<span class="kw">abs</span>(V <span class="op">-</span><span class="st"> </span><span class="fl">11.98</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.01</span>, <span class="st">&quot;Good!&quot;</span>), 
-           <span class="dt">message =</span> <span class="st">&quot;{{V}} is a wrong numerical result. It should be about 11.98.&quot;</span>)
-<span class="co">#&gt; checkr result *pass* with message:</span>
-<span class="co">#&gt; Good!</span>
-<span class="co">#&gt; CODE:</span>
-<span class="co">#&gt; [[1]]</span>
-<span class="co">#&gt; y &lt;- 15 * sin(53 * pi/180)</span>
-<span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
-<p>Note that the input to each <code>line_</code> function is the output of a previous function. The checking will stop on the first failure, so each line is run conditional on the previous lines passing. The commented out <code>CODE</code> fragments would trigger failures with different messages.</p>
-<p>Later, we’ll see how to have multiple chains exploring different possibilities.</p>
-<p>You could do further checking, if desired. For instance, before checking the final value, perhaps make sure that the sine function specifically is being called, or if the value produced by the sine function is consistent with 53 degrees. How much checking to do is a matter of the desired pedagogical style.</p>
-</div>
-<div id="anticipating-student-errors" class="section level3">
-<h3>Anticipating student errors</h3>
+<div id="anticipating-student-errors" class="section level2">
+<h2>Anticipating student errors</h2>
 <p>When developing checking code, you likely have in mind some typical mistakes that a student might make. For instance, in trigonometry, it’s common to confuse the cosine with the sine. You might want to include checking statements that look specifically for a particular mistake and give a tailored feedback message.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">CODE &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(<span class="kw">quote</span>(<span class="dv">15</span> <span class="op">*</span><span class="st"> </span><span class="kw">cos</span>(<span class="dv">53</span>)))
 t1 &lt;-<span class="st"> </span><span class="kw">line_calling</span>(CODE, sin, cos, tan, <span class="dt">message =</span> <span class="st">&quot;You should be using a trigonometric function.&quot;</span>)
@@ -624,15 +720,11 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1,
 <span class="co">#&gt; 15 * cos(53)</span>
 <span class="co">#&gt; &lt;environment: R_GlobalEnv&gt;</span></code></pre></div>
 </div>
-<div id="testing-chains" class="section level3">
-<h3>Testing chains</h3>
-<ul>
-<li>If you insist that a particular statement be a chain, you can extract that statement with <code>line_chaining()</code>. Then use <code>expand_chain()</code> to turn that into a sequence of ordinary statements that can be checked in the ordinary way.</li>
-<li>By default, use <code>expand_all_chains()</code> to turn the code into a single sequence that expands all the chains.</li>
-</ul>
-<p>So, if you’re anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using <code>expand_all_chains()</code> directly on the <code>CODE</code>.</p>
-<p>A POSSIBLE EXAMPLE:</p>
-<p>Sometimes the exercise is itself about constructing a chain. For instance:</p>
+<div id="testing-chains" class="section level2">
+<h2>Testing chains</h2>
+<p>NOTE: In draft.</p>
+<p><code>Magrittr</code> statements chain together a sequence of function calls, with the output of one function call becoming the input to the next function call.</p>
+<p>If you are teaching about <code>magrittr</code> itself (perhaps as used in <code>dplyr</code> or <code>ggformula</code>) you may have exercises that are about constructing a chain. For instance:</p>
 <blockquote>
 <p><strong>Exercise 9</strong>: Consider the following wrangling statement:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">res &lt;-<span class="st"> </span><span class="kw">group_by</span>(mtcars, cyl)
@@ -644,7 +736,8 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1,
   code &lt;-<span class="st"> </span><span class="kw">for_checkr</span>(USER_CODE)
   t1 &lt;-<span class="st"> </span><span class="kw">line_chaining</span>(code, <span class="dt">message =</span> <span class="st">&quot;Remember, chains involve `%&gt;%`.&quot;</span>)
   <span class="kw">check</span>(t1, 
-        <span class="kw">insist</span>(<span class="kw">identical</span>(V, mtcars <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(cyl) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">disp =</span> <span class="kw">mean</span>(disp))), <span class="st">&quot;Your chain doesn't produce the right value.&quot;</span>),
+        <span class="kw">insist</span>(<span class="kw">identical</span>(V, mtcars <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(cyl) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">summarise</span>(<span class="dt">disp =</span> <span class="kw">mean</span>(disp))), 
+               <span class="st">&quot;Your chain doesn't produce the right value.&quot;</span>),
         <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Great!&quot;</span>))
 }</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))&quot;</span>)
@@ -653,77 +746,32 @@ t1 &lt;-<span class="st"> </span><span class="kw">line_where</span>(t1,
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(cyl) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7ff344885e98&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe1022f13c8&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Your chain doesn't produce the right value.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; mtcars %&gt;% group_by(hp) %&gt;% summarise(disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7ff33eb646b0&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe10154c270&gt;</span>
 <span class="kw">chk_exer_9</span>(<span class="st">&quot;res &lt;- group_by(mtcars, cyl); summarise(res, disp = mean(disp))&quot;</span>)
 <span class="co">#&gt; checkr result *fail* with message:</span>
 <span class="co">#&gt; Remember, chains involve `%&gt;%`.</span>
 <span class="co">#&gt; CODE:</span>
 <span class="co">#&gt; [[1]]</span>
 <span class="co">#&gt; res &lt;- group_by(mtcars, cyl)</span>
-<span class="co">#&gt; &lt;environment: 0x7ff3459952a8&gt;</span>
+<span class="co">#&gt; &lt;environment: 0x7fe0ffe07e98&gt;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; [[2]]</span>
 <span class="co">#&gt; summarise(res, disp = mean(disp))</span>
-<span class="co">#&gt; &lt;environment: 0x7ff345997b88&gt;</span></code></pre></div>
-</div>
-<div id="writing-functions-for-checking" class="section level3">
-<h3>Writing functions for checking</h3>
-<p>The functions provided by <code>checkr</code> can be composed into higher-level functions in the ordinary way. We’ll call these <em><code>checkr</code> functions</em>. Keep in mind: that both the input to and output from a <code>checkr</code> function should be an object of type <code>checkr_result</code>. (There can be other inputs as well, for instance, a specified value.)</p>
-<p>To illustrate, consider <code>trig_radian_check()</code>, a function to check whether the argument to trigonometric functions is in radians. It takes as arguments a <code>checkr_result</code> that (presumably) contains a call to a trigonometric function and the value, in radians, that is expected.</p>
-<p>Consider this checking statement:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(ang)), 
-           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
-           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
-           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
-           <span class="kw">failif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>))</code></pre></div>
-<p>The result, of course, depends on the submission.</p>
+<span class="co">#&gt; &lt;environment: 0x7fe0f9777800&gt;</span></code></pre></div>
+<p>But often, you may not be directly concerned about the use of chains, but want to be able to check code where the student might have chosen to use a chain. <code>Checkr</code> adopts a simple strategy for enabling you to check code whether it be written in chain form or in a traditional line-by-line form. That strategy is to expand chains into the line-by-line form. As a result, you can write tests assuming a line-by-line form. Before applying those tests, expand any chains into their line-by-line form.</p>
+<p>An expression containing a <code>magrittr</code> chain is a function call. The top-level function is <code>`%&gt;%`</code>. Insofar as you are concerned with the end value of the chain, or with whether the chain calls a specified function, you can use the regular line-locating functions like <code>line_where()</code> or <code>line_calling()</code>. You can also use the argument-locating functions on the whole chain.</p>
 <ul>
-<li>If the submission is <code>15 * sin(53 * pi / 180)</code>, we don’t want the submission to fail. For that submission, the result of the above <code>if_matches()</code> will be</li>
+<li>If your problem statement insists that a particular statement be a chain, you can extract that statement with <code>line_chaining()</code>. Then use <code>expand_chain()</code> to turn that into a sequence of ordinary statements that can be checked in the ordinary way.</li>
+<li>By default, use <code>expand_all_chains()</code> to turn the code into a single sequence that expands all the chains.</li>
 </ul>
-<p>The submission fails to match the pattern <code>.(fn)(..(ang))</code> because that pattern doesn’t incorporate the “multiply by 15” in the submission.</p>
-<ul>
-<li><p>If the submission is <code>sin(53 * pi / 180)</code>, we do want the submission to fail. But it’s helpful if the failure message points out what the problem is, namely the failure to multiply by 15. For this submission, the result of the check statement will be</p></li>
-<li><p>If the submission is <code>cos(53 * pi / 180)</code>, the failure should indicate that cosine is the wrong trig function.</p></li>
-<li><p>If the submission is <code>sin(53)</code>, the failure should be about using degrees as the argument:</p></li>
-</ul>
-<p>A more complete answer would look for multiplication by 15. This involves a pattern something like: <code>15 * .(fn)(..(arg))</code>. But, since we think a common student error will be to leave out the <code>15 *</code>, we’ll want to check as well for a match to plain <code>.(fn)(..(arg))</code>. When there are multiple, structurally different patterns, use multiple <code>if_matches()</code> statements, like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(arg)), 
-           <span class="kw">failif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>))
-<span class="kw">if_matches</span>(submission, <span class="dv">15</span> <span class="op">*</span><span class="st"> </span>.(fn)(<span class="kw">..</span>(arg)), 
-           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
-           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
-           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
-           <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Good job!&quot;</span>))</code></pre></div>
-<p>Remember, it’s up to the problem author to anticipate the kinds of wrong answers students will give and how to respond to them. Suppose, for instance, that after some experience with the problem, the instructor notes that many students are writing <code>225 * sin(53 * pi / 180)</code>, that is, multiplying by the square length of the hypothenuse. It would be nice to give specific feedback about this mistake. For instance,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">if_matches</span>(submission, .(fn)(<span class="kw">..</span>(arg)), 
-           <span class="kw">failif</span>(<span class="ot">TRUE</span>), <span class="st">&quot;Remember to take the length of the hypothenuse into account.&quot;</span>)
-<span class="kw">if_matches</span>(submission, .(hyp) <span class="op">*</span><span class="st"> </span>.(fn)(<span class="kw">..</span>(ang)), 
-           <span class="kw">failif</span>(hyp <span class="op">==</span><span class="st"> </span><span class="dv">225</span>, <span class="st">&quot;Use the length, not the square length!&quot;</span>),
-           <span class="kw">insist</span>(hyp <span class="op">==</span><span class="st"> </span><span class="dv">15</span>, <span class="st">&quot;What length are you using?&quot;</span>),
-           <span class="kw">insist</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;{{fn}} is not the correct trig function.&quot;</span>),
-           <span class="kw">failif</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span>, <span class="st">&quot;You need to convert the 53 degrees into radians.&quot;</span>),
-           <span class="kw">insist</span>(ang <span class="op">==</span><span class="st"> </span><span class="dv">53</span> <span class="op">*</span><span class="st"> </span>pi <span class="op">/</span><span class="st"> </span><span class="dv">180</span>, <span class="st">&quot;Do you have the angle right?&quot;</span>),
-           <span class="kw">passif</span>(<span class="ot">TRUE</span>, <span class="st">&quot;Good job!&quot;</span>))</code></pre></div>
-<p>The checking can be made more elaborate. For instance, suppose we want to warn about using <code>+</code> instead of <code>*</code> in the statement. This pattern will capture the function used in the place where we want multiplication: <code>.(mult_fn)(.(hyp), .(fn)(..(ang)))</code>. With this pattern, we might include a test like <code>failif(mult_fn != quote(`*`), &quot;{{mult_fn}} is the wrong function.&quot;)</code></p>
-</div>
-<div id="taken-out" class="section level3">
-<h3>Taken out</h3>
-<p>One possibility would be “regular expressions” of the sort supported by <code>grep()</code>, <code>gsub()</code>, and so on. However, regular expressions do not know about the required syntax of R statements. For instance, “function arguments are enclosed in parentheses and multiple arguments are separated by commas.”</p>
-<p>The <code>redpen</code> package provides a pattern language that knows about R syntax. This allows us to specify patterns in a way that resembles R commands themselves. In particular, every pattern statement in <code>redpen</code> must be a syntactically correct R expression. As a trivial example, the pattern <code>15 * sin(53 * pi / 180)</code> describes an exact match to a specific correct answer.</p>
-<p>But there are other possible correct answers, e.g.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission_<span class="dv">2</span> &lt;-<span class="st"> &quot;theta &lt;- 53 * pi/180; r &lt;- 15; r*sin(theta)&quot;</span>
-submission_<span class="dv">3</span> &lt;-<span class="st"> &quot;ang &lt;- pi * (53 / 180); sin(ang) * 15&quot;</span></code></pre></div>
-<p>Since it will be difficult to list every possible statement that produces a correct answer, it’s important that the pattern language automatically handle trivial permutations of the correct command, unnecessary grouping parentheses, unconventional whitespace, etc.</p>
-<p>To start, here’s a pattern that stands for “the sine of something”: <code>sin(.)</code>. The <code>.</code> inside the parentheses means “any single argument.”</p>
-<p>To elaborate a bit, the pattern <code>sin(..(ang))</code> means “the sine of something, where the value of that something will be stored under the name <code>ang</code>.” And going further, the pattern <code>.(fn)(..(ang))</code> means, “a function applied to a single argument, where the function name will be stored under <code>fn</code> and the value of the argument stored under <code>ang</code>.” Note that <code>.(fn)(..(ang))</code> will <em>not</em> match <code>15 * sin(53 * pi / 180)</code>, because the pattern doesn’t say anything about multiplication by 15.</p>
-</div>
+<p>So, if you’re anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using <code>expand_all_chains()</code> directly on the <code>CODE</code>.</p>
 </div>
 <div id="fill-in-the-blanks" class="section level2">
 <h2>Fill in the blanks</h2>
@@ -772,46 +820,12 @@ C &lt;- .....(A^2 + B^2)
 </ul>
 <p>In the above we used names <code>x</code>, <code>y</code>, <code>c</code>, and <code>geom</code> to distinguish the blanks one from the other.</p>
 </div>
-<div id="checking-submissions-that-throw-an-error" class="section level2">
-<h2>Checking submissions that throw an error</h2>
-<p>Sometimes students will submit code that throws an error, either at parse time or at run time. By default, learnr displays such errors in their native, somewhat cryptic format.</p>
-<p><code>checkr</code> has some simple error-catching logic that tries to translate the native R messages into a friendlier format. To turn this on, you need to add a <code>-code-check</code> chunk to each exercise.</p>
-<ul>
-<li>[ASIDE] I would rather that code checking be turned on or off at the document level, perhaps as a choice in <code>check_for_learnr()</code>.</li>
-<li>[ASIDE] I would also rather that the evaluation of the exercise take place entirely in the checking function, rather than being run first by learnr and then handed off to the checking function.</li>
-</ul>
-<p>For an exercise named <code>prob-1</code> the code check chunk will look like:</p>
-<pre><code>` ``{r prob-1-code-check, echo = FALSE}
-1 # there must be some content
-```</code></pre>
-<p>If, when trying out your exercises, you find a parsing or run-time error that isn’t captured by <code>checkr</code>, please submit an “issue” on the GitHub site so that we can add that into the system.</p>
-</div>
-<div id="outliney-from-here-on" class="section level2">
-<h2>OUTLINEY from here on</h2>
-</div>
-<div id="values-vs-expressions" class="section level2">
-<h2>Values vs expressions</h2>
-<p><code>.(a)</code> versus <code>..(a)</code></p>
-</div>
-<div id="chains" class="section level2">
-<h2>Chains</h2>
-</div>
 <div id="patterns" class="section level2">
 <h2>Patterns</h2>
+<p>NOTE: This is currently an outline</p>
+<p>This section will deal with the <code>line_binding()</code> and <code>check_binding()</code> functions. These involve the use of patterns, so we need to explain what a pattern is and how to conduct tests with them. The pattern facility comes from the <code>redpen</code> package (which may be folded into <code>rlang</code> at some point. )</p>
 <ul>
 <li>Name of an argument: <code>rep(.(a), `..(nm)` = .(b))</code>. Note that the wild-card for the argument name needs to be placed in back-quotes. This is because <code>..(nm)</code> is not a valid argument name, but <code>`..(nm)`</code> is.</li>
-</ul>
-</div>
-<div id="use-in-tutorials" class="section level2">
-<h2>Use in tutorials</h2>
-<p>The check function for debugging, but don’t use it in tutorial check chunks.</p>
-</div>
-<div id="details" class="section level2">
-<h2>Details</h2>
-<ul>
-<li>using <code>quote(sin)</code> when comparing to a name</li>
-<li>at least one of the statements should match all of the patterns</li>
-<li>using <code>if_matches()</code> recursively to study a sub-pattern</li>
 </ul>
 <p>What’s the meaning of <code>.(fn)(...)</code>? NEED TO SAY it’s a legal R expression, even if it isn’t one that many experienced R users would recognize. <code>...</code> is a legal statement in R, although typically used only <em>within</em> functions. And <code>.(fn)</code> is a legal statement, which would usually be read as “the function named <code>.</code> being applied to the value of <code>fn</code>.” The point here is that patterns must be legal R expressions, and <code>.(fn)(...)</code> satisfies this. But the components <code>...</code> and <code>.(fn)</code> in a pattern do not have their usual meaning. Instead, they follow the conventions of the <code>redpen</code> package.</p>
 <p>As part of a pattern, <code>...</code> means any set of arguments: it’s a wildcard which matches anything that might legally be used as arguments to a function.</p>
@@ -828,29 +842,8 @@ C &lt;- .....(A^2 + B^2)
 <li><code>.(fn)(., ., ., ...)</code> a function applied to three or more arguments.</li>
 </ul>
 <p>The facilities for implementing and applying these sorts of patterns are provided by the remarkable <code>redpen</code> package in conjunction with <code>rlang</code>.</p>
-</div>
-<div id="multiple_if_matches" class="section level2">
-<h2>Multiple <code>if_matches</code></h2>
-<p>Introduce <code>check()</code> and multiple patterns.</p>
-</div>
-<div id="expressions-and-quote-vs-values" class="section level2">
-<h2>Expressions and <code>quote()</code> vs values</h2>
-<p>Consider this R command (which generates an error):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">a
-<span class="co">#&gt; Error in eval(expr, envir, enclos): object 'a' not found</span></code></pre></div>
-<p>Why the error? Because <code>a</code> does not have a value associated with it. But there’s nothing wrong with <code>a</code> in itself; the statement would have worked if <code>a</code> had been bound to some value.</p>
-<p>WHERE IS THIS GOING? - What <code>quote()</code> is doing in the examples. (Setting up the submission as an expression rather than the value of an expression.) - Why you would need to use <code>quote()</code> in testing the expression itself. E.g. looking at the <em>name</em> of a function. - The quoting goes on automatically when a string is passed as the submission.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">submission &lt;-<span class="st"> &quot;x &lt;- 3; sin(x)&quot;</span>
-<span class="co"># This will work. `fn` will be a symbol, as will `quote(sin)`.</span>
-<span class="kw">if_matches</span>(submission, .(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(sin), <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
-<span class="co"># This won't work. `fn` will be a symbol, but `sin` is a function, not a symbol.</span>
-<span class="kw">if_matches</span>(submission, .(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span>sin, <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
-<span class="co"># Back to working again. With the double dots, `fn` will be the value that the name &quot;sin&quot; points to. In this case, that will be the function `sin()`. </span>
-<span class="kw">if_matches</span>(submission, <span class="kw">..</span>(fn)(.(arg)), <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span>sin, <span class="st">&quot;Function is {{fn}}, argument is {{arg}}&quot;</span>))
-<span class="co"># The funny `.Primitive(&quot;sin&quot;)` reflects that the function `sin` is something called a &quot;primitive,&quot; as opposed to the kind of thing like `function(x) x^2`. This will certainly be confusing as a message to students, so better to use comparison of the very first form, where the single-dot pattern is used and compared to `quote(sin)`.</span></code></pre></div>
-</div>
-<div id="tips-on-patterns-and-tests" class="section level2">
-<h2>Tips on patterns and tests</h2>
+<div id="tips-on-patterns-and-tests" class="section level3">
+<h3>Tips on patterns and tests</h3>
 <ul>
 <li>Patterns are raw R statements, for instance</li>
 <li>Assignment-to has a pattern <code>`&lt;-`(x, ...)</code>
@@ -870,13 +863,12 @@ pattern &lt;-<span class="st"> </span><span class="kw">quote</span>(.(fn)(.(var)
 <span class="kw">if_matches</span>(submission, .(fn)(.(var)),
            <span class="kw">passif</span>(fn <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(cos) <span class="op">&amp;&amp;</span><span class="st"> </span>var <span class="op">==</span><span class="st"> </span><span class="kw">quote</span>(x), <span class="st">&quot;Right. The function is {{fn}} on variable {{var}}.&quot;</span>))</code></pre></div>
 </div>
+</div>
 <div id="some-kinds-of-questions" class="section level2">
 <h2>Some kinds of questions</h2>
+<p>NOTE: Just a draft</p>
+<p>This will be about different kinds of questions. Probably it should be a separate vignette.</p>
 <p><a href="http://third-bit.com/2017/10/16/exercise-types.html" class="uri">http://third-bit.com/2017/10/16/exercise-types.html</a></p>
-</div>
-<div id="taken-out-1" class="section level2">
-<h2>Taken out</h2>
-<p>To help meet the demand for R-related training, various <em>interactive tutorial systems</em> have been developed. These include <a href="http://swirlstats.com/">Swirl</a>, <a href="http://DataCamp.com">DataComp.com</a>, and the Shiny-based system introduced by RStudio: <a href="http://github.com/rstudio/learnr"><code>learnr</code></a>. In each of these systems, a problem is posed to the student, who has an opportunity to construct R commands as a solution. The R commands are then passed to an evaluation system.</p>
 <p>Readers may also want to check out the system for <em><a href="https://www.datacamp.com/community/blog/submission-correctness-testing-in-datacamp-datacamp-part-i#gs.vuTG8Xw">submission correctness tests</a></em> provided by DataCamp.</p>
 </div>
 

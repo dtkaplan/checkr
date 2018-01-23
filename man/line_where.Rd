@@ -5,19 +5,18 @@
 \alias{lines_after}
 \title{Identify an individual line in a sequence of commands}
 \usage{
-line_where(ex, ..., message = "")
+line_where(ex, ..., message = "No such line found.")
 }
 \arguments{
-\item{ex}{expressions as made by for_checkr()}
+\item{ex}{a \code{"checkr_test"} object for instance as made by for_checkr()}
 
-\item{...}{tests specifying the kind of line we want}
+\item{...}{passif/failif/insist tests specifying the kind of line we want. The messages associated with
+each test can have moustaches written in terms of F, Z, V, or E.}
 
-\item{message}{A character string to be included as the message in the result. This
-can have moustaches written in terms of F, Z, V, or E}
+\item{message}{A character string message to give if no acceptable line is found.}
 }
 \value{
-A checkr test result. By default, if the line is found, the result
-is an "OK", setting the stage for further testing. If no matching line is found, the result is a fail.
+A \code{"checkr_test"} result which is either a pass, fail, or OK.
 }
 \description{
 The tests are written in terms of pronouns
@@ -27,6 +26,19 @@ The tests are written in terms of pronouns
 \item V the value produced by the line.
 \item E the expression itself (but with assignment removed)
 }
+}
+\details{
+Testing starts with the first test in \code{...}. Each test, in turn, can produce a definitive pass or fail result, at which point
+testing is complete. But tests can also produce indefinite results, in which case testing moves on to the next test (if any).
+If there is not a definitive result from the tests, the return
+
+If \code{passif()} or \code{failif()} are used and the test is \code{TRUE}, no further testing is performed. Similarly,
+if \code{insist()} is used and the test is \code{FALSE}, no further testing is performed. If none of these conditions
+applies, \code{line_where()} progresses to the next of the tests in \code{...}. If none of the tests produce a definitive
+result, \code{line_where()} will return an OK result.
+
+The \code{ex} argument is a \code{"checkr_test"} object. If that input object is a fail, \code{line_where()} immediately returns
+that input: none of the tests are performed. This allows test results to be cascaded.
 }
 \examples{
 ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))

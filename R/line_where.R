@@ -6,23 +6,34 @@
 #' - V the value produced by the line.
 #' - E the expression itself (but with assignment removed)
 #'
+#'
 #' @aliases line_where lines_after
 #'
-#' @param ex expressions as made by for_checkr()
-#' @param ... tests specifying the kind of line we want
-#' @param message A character string to be included as the message in the result. This
-#' can have moustaches written in terms of F, Z, V, or E
+#' @param ex a `"checkr_test"` object for instance as made by for_checkr()
+#' @param ... passif/failif/insist tests specifying the kind of line we want. The messages associated with
+#' each test can have moustaches written in terms of F, Z, V, or E.
+#' @param message A character string message to give if no acceptable line is found.
 #'
+#' @details Testing starts with the first test in `...`. Each test, in turn, can produce a definitive pass or fail result, at which point
+#' testing is complete. But tests can also produce indefinite results, in which case testing moves on to the next test (if any).
+#' If there is not a definitive result from the tests, the return
 #'
-#' @return A checkr test result. By default, if the line is found, the result
-#' is an "OK", setting the stage for further testing. If no matching line is found, the result is a fail.
+#' If `passif()` or `failif()` are used and the test is `TRUE`, no further testing is performed. Similarly,
+#' if `insist()` is used and the test is `FALSE`, no further testing is performed. If none of these conditions
+#' applies, `line_where()` progresses to the next of the tests in `...`. If none of the tests produce a definitive
+#' result, `line_where()` will return an OK result.
+#'
+#' The `ex` argument is a `"checkr_test"` object. If that input object is a fail, `line_where()` immediately returns
+#' that input: none of the tests are performed. This allows test results to be cascaded.
+#'
+#' @return A `"checkr_test"` result which is either a pass, fail, or OK.
 #'
 #' @examples
 #' ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))
 #' line_where(ex, insist(F == "^", "Didn't find exponentiation"))
 #'
 #' @export
-line_where <- function(ex, ..., message = "") {
+line_where <- function(ex, ..., message = "No such line found.") {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex) # short circuit on failure
   tests <- rlang::quos(...)
@@ -62,8 +73,12 @@ matching_line <- function(ex, tests, message = "", type = NULL, type_text="") {
   }
 
 
-  if (failed(res)) res$code <- ex$code
-  else stop("You should never get here. If we got here, the test must have failed!")
+  if (failed(res)) {
+    res$code <- ex$code
+    if(res$message == "") res$message <- message
+  } else {
+    stop("You should never get here. If we got here, the test must have failed!")
+  }
 
   res
 }

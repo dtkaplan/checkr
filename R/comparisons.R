@@ -9,7 +9,8 @@
 #' @export
 `%same_as%` <- function(e1, e2) {
   # Handle numbers specially so we don't have to worry about integers and floating points.
-  if (is.numeric(e1) && is.numeric(e2)) e1 == e2
+  if (is.character(e1) || is.character(e2)) as.character(e1) == as.character(e2)
+  else if (is.numeric(e1) && is.numeric(e2)) e1 == e2
   # handle names specially
   else if (is.name(e1) && !is.name(e2)) identical(eval_tidy(e1), e2)
   else if (is.name(e2) && !is.name(e1)) identical(e1, eval_tidy(e2))

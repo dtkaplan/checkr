@@ -12,7 +12,7 @@ tutorial_options(exercise.checker = checkr::check_for_learnr)
 # tutorial_options(exercise.checker = function(...) cat("Bogus checker\n"))
 ```
 
-
+NEED TO UPDATE THIS TO READ IN THE SYSTEM FILE WITH THE checking functions.
 
 
 

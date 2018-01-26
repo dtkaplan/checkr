@@ -610,7 +610,7 @@ Sometimes students will submit code that throws an error, either at parse time o
 For an exercise named `prob-1` the code check chunk will look like:
 
     ` ``{r prob-1-code-check, echo = FALSE}
-    1 # there must be some content
+    1 # there must be some executable content, even if trivial
     ```
 
 If, when trying out your exercises, you find a parsing or run-time error that isn't captured by `checkr`, please submit an "issue" on the GitHub site so that we can add that into the system.
@@ -619,10 +619,13 @@ If, when trying out your exercises, you find a parsing or run-time error that is
 
 When developing checking code, you likely have in mind some typical mistakes that a student might make. For instance, in trigonometry, it's common to confuse the cosine with the sine. You might want to include checking statements that look specifically for a particular mistake and give a tailored feedback message.
 
+The `misconception()` function can be useful here. The idea `misconception()` is that you design a test that checks whether the misconceived pattern is present. The test is written in ordinary `checkr` statements, for example as `miss1` in the following example. A failed result from that test means that the misconception is not in evidence in the student's submission. The `misconception()` function turns a passing test (that is, the misconception is present) into a failed test. Somewhat awkwardly, `misconception()` takes as a first argument the `"checkr_result"` being tested for the misconception. This is so because in the absence of positive test, the output of `misconception()` is the statement being tested, rather than the result of the test itself.
+
 ```{r}
 CODE <- for_checkr(quote(15 * cos(53)))
 t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
-t1 <- misconception(t1, line_calling(t1, cos), message = "Are you sure cosine is the right choice?")
+miss1 <- line_calling(t1, cos)
+t1 <- misconception(t1, miss1, message = "Are you sure cosine is the right choice?")
 t1 <- line_where(t1, 
                  insist(F == quote(`*`), 
                         "Remember to multiply by the length of the hypotenuse"))
@@ -683,83 +686,59 @@ So, if you're anticipating that a chain might be used and that you want to analy
 
 A good pedagogical technique when introducing a subject is to start an exercise with part of the answer and ask students to fill in one or more blanks. This approach let's the instructor focus on one part of a command. As an example, consider this problem:
 
-> Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
+> **Exercise 14**: Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
     ```{r echo = FALSE}
 library(ggplot2)
 ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
   geom_point()
 ```
 >
-> There are four named blanks, for instance `..x..`. You'll have to replace all of them with the correct contents to generate the plot.
+> There are four. You'll have to replace all of them with the correct contents to generate the plot.
+
+The exercise chunk might have this scaffold:
 ```{r eval = FALSE}
 library(ggplot2)
-ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) +
-  ..geom..()
+ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
+  ____()
 ```
 
-Let's suppose the student's submission, after filling in the blanks is
-```{r}
+Let's suppose the student's submission, after filling in the blanks is as follows. (Note that the student has made a slight mistake!)
+```r
+library(ggplot2); 
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point()
+```
+
+```{r echo = FALSE}
 submission <- "library(ggplot2); 
 ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
   geom_point()"
 ```
 
-To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. Good news: We can use the prompt itself as a pattern.
-```{r eval = FALSE}
-check_blanks(submission,
-             ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
-             passif(x == quote(mpg) && y == quote(hp) && 
-                      c == quote(cyl) && geom == quote(geom_point),
-                    "Good job! {{x}}, {{y}}, {{c}}, and {{geom}}"),
-             noteif(x != quote(mpg), "{{x}} is not the variable on the horizontal axis."),
-             noteif(y != quote(hp), "{{y}} is not the right variable for the vertical axis"),
-             noteif(c != quote(cyl), "{{c}} is not the right variable to map to color."),
-             noteif(geom != quote(geom_point), "{{geom}} is not the correct geom to make a scatter plot."),
-             failif(TRUE, "Try again."))
+To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. The `check_blanks()` function takes, as its second argument, an expression with the blanks. Since there are multiple blanks, each has been given a name for later reference. 
+```{r echo = FALSE}
+print_function_contents(
+  check_exer_14,
+  from_file = system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"), 
+  just_the_body = FALSE)
 ```
 
-It may seem a bit odd to use `..x..` as a blank. But R names are allowed to begin with `.` and cannot begin with `_`.
-
-Sometimes you will want just one or two blanks and don't want to clutter up the template with named blanks. It's legal to use just dots for the blanks. Each blank must have a unique number of dots, and there must be eight or more dots. To refer to a blank in the tests, take away four dots to get the name of that blank. For example:
+Trying out the test ...
+```{r}
+check_exer_14(submission)
+```
+In lines 4/5 of the `check_exer_14()` checking function,  note that the second argument to `check_blanks()` is a command template very similar to that used for the scaffolding in the exercise chunk. But the template handed to `check_blanks()` must have the blanks written in a special format: two dots followed by a unique name followed by another two dots, e.g. `..geom..`.
 
 > Calculate the hypothenuse length C of a right triangle whose other edges are A and B.    
-    ```{r eval = FALSE}
-C <- .....(A^2 + B^2)
+
+In the corresponding exercise chunk, you could put in a scaffold like this:
+
+```r
+C <- ........(A^2 + B^2)
 ```
 
-```{r echo = FALSE}
-CHECK2 <- function(submission) check_blanks(submission, C <- ........(A^2 + B^2),
-             passif(.... == quote(sqrt), "Right!"),
-             insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
-```
 
-The pattern in the checking statement can be the same as the prompt:
-```{r eval = FALSE}
-check_blanks(submission, C <- ........(A^2 + B^2),
-             passif(.... == quote(sqrt), "Right!"),
-             insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
-```
-
-Let's try some different submissions:
-
-- `C <- sqrt(A^2 + B^2)`
-    ```{r eval = FALSE, echo = FALSE}
-CHECK2("C <- sqrt(A^2 + B^2)")
-```
-- `C <- log(A^2 + B^2)`
-    ```{r eval = FALSE, echo = FALSE}
-CHECK2("C <- log(A^2 + B^2)")
-```
-- `C <- ........(A^2 + B^2)` that is, the dots were not replaced
-    ```{r eval = FALSE, echo = FALSE}
-CHECK2("C <- ........(A^2 + B^2)")
-```
-- `C <- sqrt(A + B)`
-    ```{r eval = FALSE, echo = FALSE}
-CHECK2("C <- sqrt(A + B)")
-```
-
-In the above we used names `x`, `y`, `c`, and `geom` to distinguish the blanks one from the other. 
 
 ## Patterns
 

@@ -1,0 +1,62 @@
+---
+title: "Fill in the blanks in `checkr`"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(checkr)
+knitr::opts_chunk$set(echo = FALSE)
+tutorial_options(exercise.checker = checkr::check_for_learnr)
+source(system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"))
+```
+
+## Problem 1
+
+> Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
+    ```{r echo = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
+  geom_point()
+```
+>
+> There are four blanks. You'll have to replace all of them with the correct contents to generate the plot.
+
+```{r problem1, exercise = TRUE}
+library(ggplot2)
+ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
+  ____()
+```
+
+
+
+To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. The `check_blanks()` function takes, as its second argument, an expression with the blanks. Since there are multiple blanks, each has been given a name for later reference. 
+```{r problem1-check}
+check_exer_14(USER_CODE)
+```
+
+## Problem 2
+
+> Calculate the hypothenuse length C of a right triangle whose other edges are A and B.    
+
+```{r pythag, exercise = TRUE}
+A <- 3
+B <- 4
+C <- ........(A^2 + B^2)
+```
+
+
+```{r pythag-check}
+check_pythag(USER_CODE)
+```
+
+Try some different submissions. 
+
+- `C <- sqrt(A^2 + B^2)`
+- `C <- log(A^2 + B^2)`
+- `C <- ........(A^2 + B^2)` that is, the dots were not replaced
+- `C <- sqrt(A + B)`
+
+

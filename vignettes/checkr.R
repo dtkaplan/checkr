@@ -249,7 +249,8 @@ named_arg(L1, "data", insist(nrow(V) == 100,
 ## ------------------------------------------------------------------------
 CODE <- for_checkr(quote(15 * cos(53)))
 t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
-t1 <- misconception(t1, line_calling(t1, cos), message = "Are you sure cosine is the right choice?")
+miss1 <- line_calling(t1, cos)
+t1 <- misconception(t1, miss1, message = "Are you sure cosine is the right choice?")
 t1 <- line_where(t1, 
                  insist(F == quote(`*`), 
                         "Remember to multiply by the length of the hypotenuse"))
@@ -279,50 +280,23 @@ ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
 
 ## ----eval = FALSE--------------------------------------------------------
 #  library(ggplot2)
-#  ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) +
-#    ..geom..()
+#  ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
+#    ____()
 
-## ------------------------------------------------------------------------
+## ----echo = FALSE--------------------------------------------------------
 submission <- "library(ggplot2); 
 ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
   geom_point()"
 
-## ----eval = FALSE--------------------------------------------------------
-#  check_blanks(submission,
-#               ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
-#               passif(x == quote(mpg) && y == quote(hp) &&
-#                        c == quote(cyl) && geom == quote(geom_point),
-#                      "Good job! {{x}}, {{y}}, {{c}}, and {{geom}}"),
-#               noteif(x != quote(mpg), "{{x}} is not the variable on the horizontal axis."),
-#               noteif(y != quote(hp), "{{y}} is not the right variable for the vertical axis"),
-#               noteif(c != quote(cyl), "{{c}} is not the right variable to map to color."),
-#               noteif(geom != quote(geom_point), "{{geom}} is not the correct geom to make a scatter plot."),
-#               failif(TRUE, "Try again."))
-
-## ----eval = FALSE--------------------------------------------------------
-#  C <- .....(A^2 + B^2)
-
 ## ----echo = FALSE--------------------------------------------------------
-CHECK2 <- function(submission) check_blanks(submission, C <- ........(A^2 + B^2),
-             passif(.... == quote(sqrt), "Right!"),
-             insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
+print_function_contents(
+  check_exer_14,
+  from_file = system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"), 
+  just_the_body = FALSE)
 
-## ----eval = FALSE--------------------------------------------------------
-#  check_blanks(submission, C <- ........(A^2 + B^2),
-#               passif(.... == quote(sqrt), "Right!"),
-#               insist(.... == quote(sqrt), "Think again. {{....}} is not the right function to use."))
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK2("C <- sqrt(A^2 + B^2)")
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK2("C <- log(A^2 + B^2)")
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK2("C <- ........(A^2 + B^2)")
-
-## ----eval = FALSE, echo = FALSE------------------------------------------
-#  CHECK2("C <- sqrt(A + B)")
+## ------------------------------------------------------------------------
+check_exer_14(submission)
 
 ## ----eval = FALSE--------------------------------------------------------
 #  if_matches(quote(x <- 3 + 2), `<-`(.(nm), ..(val)),

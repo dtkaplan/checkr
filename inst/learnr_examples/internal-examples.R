@@ -86,3 +86,26 @@ df_abcd_1234_x_y <- function(USER_CODE) {
                 list(Id, x, y, df))
 }
 
+check_exer_14 <- function(submission) {
+  code <- for_checkr(submission)
+  if (failed(code)) return(code)
+  check_blanks(code,
+               ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
+               insist(x == "mpg", "{{x}} is not the variable on the horizontal axis."),
+               insist(y == "hp", "{{y}} is not the right variable for the vertical axis"),
+               insist(c == "cyl", "{{c}} is not the right variable to map to color."),
+               insist(geom == "geom_point", "{{geom}} is not the correct geom to make a scatter plot."),
+               passif(TRUE, "Good job!"))
+}
+
+check_pythag <- function(submission) {
+  code <- for_checkr(submission)
+  if (failed(code)) return(code)
+  check_blanks(code,
+               C <- ..fun..(A^2 + B^2),
+               passif(fun == quote(sqrt), "Right!"),
+               insist(fun == quote(sqrt),
+                      "Think again. {{fun}} is not the right function to use."))
+}
+
+

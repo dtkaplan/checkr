@@ -91,10 +91,10 @@ check_exer_14 <- function(submission) {
   if (failed(code)) return(code)
   check_blanks(code,
                ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
-               insist(x == "mpg", "{{x}} is not the variable on the horizontal axis."),
-               insist(y == "hp", "{{y}} is not the right variable for the vertical axis"),
-               insist(c == "cyl", "{{c}} is not the right variable to map to color."),
-               insist(geom == "geom_point", "{{geom}} is not the correct geom to make a scatter plot."),
+               insist(same_name(x, "mpg"), "{{x}} is not the variable on the horizontal axis."),
+               insist(same_name(y, "hp"), "{{y}} is not the right variable for the vertical axis"),
+               insist(same_name(c, "cyl"), "{{c}} is not the right variable to map to color."),
+               insist(same_name(geom, "geom_point"), "{{geom}} is not the correct geom to make a scatter plot."),
                passif(TRUE, "Good job!"))
 }
 

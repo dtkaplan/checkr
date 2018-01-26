@@ -3,12 +3,51 @@
 \name{\%same_as\%}
 \alias{\%same_as\%}
 \alias{\%not_same_as\%}
+\alias{same_val}
+\alias{same_name}
+\alias{`same_val`}
+\alias{checks}
+\alias{whether}
+\alias{its}
+\alias{two}
+\alias{arguments}
+\alias{have}
+\alias{the}
+\alias{same}
+\alias{value.}
+\alias{One}
+\alias{or}
+\alias{both}
+\alias{of}
+\alias{can}
+\alias{be}
+\alias{a}
+\alias{name,}
+\alias{in}
+\alias{which}
+\alias{case}
+\alias{name}
+\alias{is}
+\alias{evaluated}
+\alias{to}
+\alias{produce}
+\alias{`same_name`}
+\alias{correspond}
+\alias{name.}
+\alias{Either}
+\alias{character}
+\alias{string}
+\alias{corresponding}
+\alias{`\%same_as\%`}
 \alias{\%not_same_as\%}
+\alias{same_name}
 \title{Comparison operators for bindings}
 \usage{
 e1 \%same_as\% e2
 
 e1 \%not_same_as\% e2
+
+same_name(e1, e2)
 }
 \arguments{
 \item{e1}{an expression,}

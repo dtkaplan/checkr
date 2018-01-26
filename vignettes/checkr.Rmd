@@ -730,13 +730,6 @@ check_exer_14(submission)
 ```
 In lines 4/5 of the `check_exer_14()` checking function,  note that the second argument to `check_blanks()` is a command template very similar to that used for the scaffolding in the exercise chunk. But the template handed to `check_blanks()` must have the blanks written in a special format: two dots followed by a unique name followed by another two dots, e.g. `..geom..`.
 
-> Calculate the hypothenuse length C of a right triangle whose other edges are A and B.    
-
-In the corresponding exercise chunk, you could put in a scaffold like this:
-
-```r
-C <- ........(A^2 + B^2)
-```
 
 
 

@@ -82,6 +82,10 @@ hello_check(quote(cat("Hello, world!")))
 hello_check(USER_CODE)
 ```
 
+```{r hello-world-code-check}
+3
+```
+
 ```{r hello-world, exercise = TRUE}
 "Hello, World!"
 ```

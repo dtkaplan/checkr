@@ -48,6 +48,7 @@ matching_line <- function(ex, tests, message = "", type = NULL, type_text="") {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex) # short circuit on failure
   type_failure <- "" # a flag
+  res <- new_checkr_result(action = "fail", message = "No content to submission.")
   for (k in seq_along(ex$code)) {
     # Create the bindings
     V <- if ("values" %in% names(ex)) {

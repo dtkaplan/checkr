@@ -113,7 +113,7 @@ s3 <- quote(read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
 s4 <- quote(bees <- read.csv("http://www.lock5stat.com/datasets/HoneybeeCircuits.csv"))
 
 ## ------------------------------------------------------------------------
-# also in the file check_bee_data.R
+# we are still in the file check_bee_data.R
 check_bee_data <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   # The messages 
@@ -246,6 +246,31 @@ L1 <- line_calling(code, lm)
 named_arg(L1, "data", insist(nrow(V) == 100, 
                              "Please use exactly 100 cases for fitting. You used {{nrow(V)}} cases."))
 
+## ----echo = FALSE--------------------------------------------------------
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
+  geom_point()
+
+## ----eval = FALSE--------------------------------------------------------
+#  library(ggplot2)
+#  ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
+#    ____()
+
+## ----echo = FALSE--------------------------------------------------------
+submission <- "library(ggplot2); 
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point()"
+
+## ----echo = FALSE--------------------------------------------------------
+print_function_contents(
+  check_exer_14,
+  from_file = system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"), 
+  just_the_body = FALSE)
+
+## ------------------------------------------------------------------------
+check_exer_14(submission)
+
 ## ------------------------------------------------------------------------
 CODE <- for_checkr(quote(15 * cos(53)))
 t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigonometric function.")
@@ -272,31 +297,6 @@ chk_exer_9 <- function(USER_CODE) {
 chk_exer_9("mtcars %>% group_by(cyl) %>% summarise(disp = mean(disp))")
 chk_exer_9("mtcars %>% group_by(hp) %>% summarise(disp = mean(disp))")
 chk_exer_9("res <- group_by(mtcars, cyl); summarise(res, disp = mean(disp))")
-
-## ----echo = FALSE--------------------------------------------------------
-library(ggplot2)
-ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
-  geom_point()
-
-## ----eval = FALSE--------------------------------------------------------
-#  library(ggplot2)
-#  ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
-#    ____()
-
-## ----echo = FALSE--------------------------------------------------------
-submission <- "library(ggplot2); 
-ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
-  geom_point()"
-
-## ----echo = FALSE--------------------------------------------------------
-print_function_contents(
-  check_exer_14,
-  from_file = system.file("learnr_examples/internal-examples.R", 
-                          package = "checkr"), 
-  just_the_body = FALSE)
-
-## ------------------------------------------------------------------------
-check_exer_14(submission)
 
 ## ----eval = FALSE--------------------------------------------------------
 #  if_matches(quote(x <- 3 + 2), `<-`(.(nm), ..(val)),

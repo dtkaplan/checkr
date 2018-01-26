@@ -48,7 +48,7 @@ check_for_learnr <-
     # Only this part will be run for pre-evaluation. So a conclusive result must be returned.
     if (is.null(envir_result)) {
       res <- pre_check(user_code, solution_code)
-      if ( ! res$correct) { # return a list in the right form for learnr
+      if ( failed(res)) { # return a list in the right form for learnr
         return(list(correct = FALSE, type = "error", location = "prepend",
                     message = res$message))
       } else {

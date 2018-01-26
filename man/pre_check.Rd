@@ -14,8 +14,7 @@ that the code be evaluated, while this function is for pre-evaluation checking.}
 \item{soln_code}{Code, if any, containing a correct solution.}
 }
 \value{
-A list containing fields \code{correct} and \code{message}. If \code{correct}
-is \code{TRUE}
+A \code{checkr_result} object.
 }
 \description{
 Checks first whether the code parses. If so, funs the code looking for errors.

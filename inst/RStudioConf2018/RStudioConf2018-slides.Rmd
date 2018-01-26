@@ -107,7 +107,15 @@ The angle should be in radians.
 
 ```
 
+```{r trig-2-code-check}
+3
+```
+
+
 ```{r trig-2-check}
+res <- pre_check(USER_CODE)
+if (failed(res)) return(res)
+
 # USER_CODE <- quote("15 * sin(53*pi/180) + 2")
 # USER_CODE <- quote("sin(53*pi/180)")
 trig_2_check <- function(USER_CODE) {
@@ -139,11 +147,10 @@ trig_2_check(USER_CODE)
 
 ```{r hi-world-check}
 #USER_CODE <- "\"Hi world\""
+
 code <- for_checkr(USER_CODE)
 line_where(code, passif(TRUE, "Nice!"))
 ```
-
-
 
 ## Once more, with ~~feeling~~ feedback.
 
@@ -159,7 +166,14 @@ hello_check(quote(cat("Hello, world!")))
 ```
 
 ```{r hello-world-check}
+res <- pre_check(USER_CODE)
+if (failed(res)) return(res)
+
 hello_check(USER_CODE)
+```
+
+```{r hello-world-code-check}
+3
 ```
 
 ```{r hello-world, exercise = TRUE}
@@ -179,7 +193,7 @@ print_function_contents(
 
 Breaking this down, line by line:
 
-- [1] accepts the user submission from `learnr`. This is always called `USER_CODE`. The function `for_check()` does some pre-processing of the user submission to turn it into evaluated code and format it for use in later `checkr` functions.
+- [1] accepts the user submission from `learnr`. This is always called `USER_CODE`. The function `for_checkr()` does some pre-processing of the user submission to turn it into evaluated code and format it for use in later `checkr` functions.
 - [2] tests for a particular kind of mistaken answer. The `misconception()` function will generate a `checkr` fail message, if the pattern identified in the second argument passes. That pattern, `line_where(code, is.null(F))`, means, "scan the code looking for a line where no function is being used." This will captures a line that contains only a character string.
 - [5] tests for another specific misconception, that the user invokes `print()` on the string. 
 - [9] looks whether the function invoked by the user is `cat()`. If not, the check fails. (Note that [5] already ruled out that `print()` was being invoked.)
@@ -201,30 +215,26 @@ print_function_contents(
 ```
 
 ```{r hello-world-strict-check}
+res <- pre_check(USER_CODE) # putting this here anticipating integrating for_check with pre_check
+if (failed(res)) return(res)
+
 hello_fun_strict(USER_CODE)
 ```
 
-## R Markdown
-
-This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
-
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
+```{r hello-world-strict-code-check}
+3
 ```
 
-## Slide with Plot
+## Pre-evaluation checking
 
-```{r pressure}
-plot(pressure)
-```
+Just for parsing
+
+## Para-evaluation checking
+
+We can only know if a name is valid by evaluating it in the context of earlier computations
+
+## Feedback on feedback
+
+- using `submittr` to collect submissions.
+- can look through these to identify common misconceptions, then test for these.
 

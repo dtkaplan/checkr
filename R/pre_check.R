@@ -8,8 +8,7 @@
 #' that the code be evaluated, while this function is for pre-evaluation checking.
 #' @param soln_code Code, if any, containing a correct solution.
 #'
-#' @return A list containing fields `correct` and `message`. If `correct`
-#' is `TRUE`
+#' @return A `checkr_result` object.
 #'
 #' @examples
 #' code <- "lm(mpg ~ hp, data <- mtcars); plot(1:10); x <- 1\n y <- x^2\n\n z = cos(yy * xx^2)"
@@ -18,6 +17,7 @@
 #'
 #' @export
 pre_check <- function(user_code, soln_code = "hello") {
+  user_code <- code_as_string(user_code)
   # first, see if the user_code can be parsed
   parse_result <- parse_check(user_code)
   if ( ! parse_result$correct) return(parse_result)
@@ -51,7 +51,7 @@ pre_check <- function(user_code, soln_code = "hello") {
   parsed <- eliminate_output_lines(parsed)
   problem_line_no <- which(unlist(lapply(parsed, is_error)))
   if (length(problem_line_no) == 0) # we're done
-    return(list(correct = TRUE, message = "Pre-check passed!"))
+    return(new_checkr_result(action = "pass", message = "Pre-check passed!"))
 
   # What source line did the problem come up in?
   source_line <- lapply(parsed, is_source)
@@ -72,11 +72,13 @@ pre_check <- function(user_code, soln_code = "hello") {
     kind_of_object <- "variable"
     if (grepl("data", as.character(error_call))) {
         kind_of_object <- "data frame"
-    } else {
-      # "eval" -- variable
-      kind_of_object <- paste("unknown with call", as.character(error_call))
     }
-    return(list(correct = FALSE,
+    # I'm not sure what I was looking for in the following
+    # else if {
+    #   # "eval" -- variable
+    #   # kind_of_object <- paste("unknown with call", as.character(error_call))
+    # }
+    return(new_checkr_result(action = "fail",
                 message =
                   paste0("On line ", line_no - 1, " or ", line_no, ": '", match,
                          "' is not the name of an existing ", kind_of_object, ".")))
@@ -85,12 +87,12 @@ pre_check <- function(user_code, soln_code = "hello") {
   match <- find_error_name('could not find function {{var}}', error_string)
   if ( ! is.na(match)) {
     # it was an undefined function.
-    return(list(correct = FALSE,
+    return(new_checkr_result(action = "fail",
                 message =
                   paste0("On line ", line_no, ": '", match, "' is not the name of any function.")))
   }
 
-  list(correct = TRUE,
+  new_checkr_result(action = "pass",
        message = paste("Failure not yet included in pre_check(). Code was",
                        as.character(error_call), "with error: ", error_string))
 }
@@ -105,3 +107,8 @@ find_error_name <- function(str, message) {
   stringr::str_match(message, str)[1,2]
 }
 
+# Convert a language object to a string.
+code_as_string <- function(code) {
+  if (! is.character(code)) expr_text(code)
+  else code
+}

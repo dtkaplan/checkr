@@ -255,7 +255,7 @@ The `quote()` function will be unfamiliar to many R users. It provides a way to 
 A checking function takes a submission, for example `s1` or `s2`, and returns a value indicating whether the submission passes or fails along with an appropriate congratulatory or explanatory message. The function has a straightforward skeleton.
 
 ```{r}
-# also in the file check_bee_data.R
+# we are still in the file check_bee_data.R
 check_bee_data <- function(USER_CODE) {
   code <- for_checkr(USER_CODE)
   # The messages 
@@ -592,9 +592,80 @@ named_arg(L1, "data", insist(nrow(V) == 100,
                              "Please use exactly 100 cases for fitting. You used {{nrow(V)}} cases."))
 ```
 
+## Fill in the blanks
+
+A good pedagogical technique when introducing a subject is to start an exercise with part of the answer and ask students to fill in one or more blanks. This scaffolding approach let's the instructor focus on one part of a command. As an example, consider this problem:
+
+> **Exercise 14**: Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
+    ```{r echo = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
+  geom_point()
+```
+>
+> There are four blanks. You'll have to replace all of them with the correct contents to generate the plot.
+
+The exercise chunk might have this scaffold:
+```{r eval = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
+  ____()
+```
+
+Let's suppose the student's submission, after filling in the blanks is as follows. (Note that the student has made a slight mistake!)
+```r
+library(ggplot2); 
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point()
+```
+
+```{r echo = FALSE}
+submission <- "library(ggplot2); 
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point()"
+```
+
+To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. The `check_blanks()` function takes, as its second argument, an expression with the blanks. Since there are multiple blanks, each has been given a name for later reference. 
+```{r echo = FALSE}
+print_function_contents(
+  check_exer_14,
+  from_file = system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"), 
+  just_the_body = FALSE)
+```
+
+Trying out the test ...
+```{r}
+check_exer_14(submission)
+```
+In lines 4/5 of the `check_exer_14()` checking function,  note that the second argument to `check_blanks()` is a command template very similar to that used for the scaffolding in the exercise chunk. But the template handed to `check_blanks()` must have the blanks written in a special format: two dots followed by a unique name followed by another two dots, e.g. `..geom..`.
+
+## Interaction with `learnr`
+
+The interface from the `learnr` system to a code-checking system is described [in the `learnr` documentation]( <https://rstudio.github.io/learnr/exercises.html#exercise_checking>). To summarise briefly:
+
+1. All exercise boxes have a "Run Code" button which passes the code in the box for evaluation by `learnr`, displaying the results in the `learnr` document below the exercise box. (Let's imagine the chunk containing the exercise block has label `exercise1`.)
+2. A "Submit" button will be included in the code box if the author adds a `-check` chunk to the document whose label refers to the corresponding exercise chunk. (For `exercise``, the full chunk label will be `exercise1-check`.) 
+3. When "Submit" is pressed, `learnr` will call its `exercise.checker` function, passing that function a list containing the student's submission (as text), the contents of the `-check` block (as text), as well as other information produced when the submission is evaluated. The document author specifies which checker function is to be used with a statement in the `setup` chunk like this: 
+```r
+tutorial_options(exercise.checker = checkr::check_for_learnr)
+```
+4. Adding a `-check-code` block (full label for our example: `exercise1-check-code`) will cause `learnr` to call the `exercise.checker` function *before* the code has been evaluated. There is a flag enabling the `exercise.checker` to detect whether it is being called before evaluation or after evaluation.
+
+An important consequence of evaluating the student submission before the `exercise.checker` is called is that the whole student submission must be evaluatable. If the `exercise.checker` is to play any role at all, the student submission can have no syntax errors, all objects used in the code must exist, and the functions called cannot throw an error. This seems too severe a restriction, since many student errors stem from mis-spellings and such. In principle, `checkr` functions could be set up look for mis-spellings of variable names and point them out. 
+
+The `-check-code` system offers a way around this, since the checking functions can look at the code before it is evaluated. But the `-check-code` system is active only when the "Submit" button is pressed. "Run" does not activate pre-evaluation checking. The result is that students will see a different error message when "Run" is pressed than when "Submit" is pressed. Confusing!
+
+QUESTION for `learnr` developers: Why not *always* to pre-checking evaluation?
+
+But pre-evaluation checking can never be complete, since identifying run-time errors (as might happen if a user specifies a wrong function or uses an undefined name) can only be done by evaluating the code. 
+
+QUESTION for `learnr` developers: Why not let the checking code do the evaluation, and pass back to `learnr` any objects to be displayed? 
+
+QUESTION for `learnr` developers: Why not have the "run" button trigger the pre-code checking? As it is, any sophisticated form of pre-evaluation checking will only be applied when "submit" is pressed. So the student sees different messages when pressing run
 
 
-## Pre-evaluation checking
+
 
 WHAT TO DO WHEN THERE IS A PARSE ERROR.
 
@@ -678,61 +749,6 @@ An expression containing a `magrittr` chain is a function call. The top-level fu
 So, if you're anticipating that a chain might be used and that you want to analyze the individual elements of that chain, thinking about using `expand_all_chains()` directly on the `CODE`. 
 
 
-
-
-
-
-## Fill in the blanks
-
-A good pedagogical technique when introducing a subject is to start an exercise with part of the answer and ask students to fill in one or more blanks. This approach let's the instructor focus on one part of a command. As an example, consider this problem:
-
-> **Exercise 14**: Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
-    ```{r echo = FALSE}
-library(ggplot2)
-ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
-  geom_point()
-```
->
-> There are four. You'll have to replace all of them with the correct contents to generate the plot.
-
-The exercise chunk might have this scaffold:
-```{r eval = FALSE}
-library(ggplot2)
-ggplot(mtcars, aes(x = ____, y = ____, color = ____)) +
-  ____()
-```
-
-Let's suppose the student's submission, after filling in the blanks is as follows. (Note that the student has made a slight mistake!)
-```r
-library(ggplot2); 
-ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
-  geom_point()
-```
-
-```{r echo = FALSE}
-submission <- "library(ggplot2); 
-ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
-  geom_point()"
-```
-
-To check the submission, we need to create a pattern that will let us look up the student's values for each of the blanks, then compare these to the correct answer. The `check_blanks()` function takes, as its second argument, an expression with the blanks. Since there are multiple blanks, each has been given a name for later reference. 
-```{r echo = FALSE}
-print_function_contents(
-  check_exer_14,
-  from_file = system.file("learnr_examples/internal-examples.R", 
-                          package = "checkr"), 
-  just_the_body = FALSE)
-```
-
-Trying out the test ...
-```{r}
-check_exer_14(submission)
-```
-In lines 4/5 of the `check_exer_14()` checking function,  note that the second argument to `check_blanks()` is a command template very similar to that used for the scaffolding in the exercise chunk. But the template handed to `check_blanks()` must have the blanks written in a special format: two dots followed by a unique name followed by another two dots, e.g. `..geom..`.
-
-
-
-
 ## Patterns
 
 NOTE: This is currently an outline
@@ -792,6 +808,12 @@ if_matches(submission, .(fn)(.(var)),
 NOTE: Just a draft
 
 This will be about different kinds of questions. Probably it should be a separate vignette.
+
+Style ideas:
+
+- Whenever feasible, in the expository component of the document have results to be displayed generated by an exercise chunk. The scaffold can be the complete command, so that the student need merely press "Run" to generate the display. This style seems to increase student engagement with the document, especially for beginners.
+- Putting scaffolding content in an exercise is a good way to direct students in a desired direction and avoid the paralysis caused by facing a "blank canvas."
+- An alternative to scaffolding is to leave the box empty of code, but put in an `if_empty_submission()` test in the checking code. This can be used to display a suggestion for how to get started. Note that a submission with just a comment (`# like this`) counts as an empty submission. So you can remind the student that they can get a hint by pressing "Submit"
 
 <http://third-bit.com/2017/10/16/exercise-types.html>
 

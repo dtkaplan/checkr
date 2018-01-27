@@ -70,26 +70,38 @@ pre_check <- function(user_code, soln_code = "hello") {
   if ( ! is.na(match)) {
     # it was an undefined object. What kind?
     kind_of_object <- "variable"
-    if (grepl("data", as.character(error_call))) {
+    if ( ! is.null(error_call)) {
+      if (grepl("data", as.character(error_call))) {
         kind_of_object <- "data frame"
+      }
+      # I'm not sure what I was looking for in the following
+      # else if {
+      #   # "eval" -- variable
+      #   # kind_of_object <- paste("unknown with call", as.character(error_call))
+      # }
     }
-    # I'm not sure what I was looking for in the following
-    # else if {
-    #   # "eval" -- variable
-    #   # kind_of_object <- paste("unknown with call", as.character(error_call))
-    # }
+    is_blank <- grepl("^\\.+$", match)
+    details <-
+      if (is_blank) ", there is an unfilled blank."
+      else paste0(": '", match,
+                  "' is not the name of an existing ", kind_of_object, ".")
     return(new_checkr_result(action = "fail",
                 message =
-                  paste0("On line ", line_no - 1, " or ", line_no, ": '", match,
-                         "' is not the name of an existing ", kind_of_object, ".")))
+                  paste0("On line ", line_no - 1, " or ", line_no, details)))
   }
+  # since it wasn't an undefined variable ...
   # Look for undefined functions
   match <- find_error_name('could not find function {{var}}', error_string)
   if ( ! is.na(match)) {
     # it was an undefined function.
+    is_blank <- grepl("^\\.+$", match)
+    details <-
+      if (is_blank) ", there is an unfilled blank."
+    else paste0(": '", match,
+                "' is not the name of any function.")
     return(new_checkr_result(action = "fail",
-                message =
-                  paste0("On line ", line_no, ": '", match, "' is not the name of any function.")))
+                             message =
+                               paste0("On line ", line_no, details)))
   }
 
   new_checkr_result(action = "pass",

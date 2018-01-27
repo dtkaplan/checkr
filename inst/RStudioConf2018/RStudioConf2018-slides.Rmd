@@ -154,9 +154,9 @@ Breaking this down, line by line:
 
 Depending on the submission, any of the checksmight fail. If a check fails, later checks that use the previous result will short circuit to a failed check. This allows checks to be chained, with the earliest failure determining the outcome. 
 
-## Different checks for different pedagogies
+## Different pedagogies, different checks 
 
-### The cruel instructor
+### Example: the cruel instructor
 
 An instructor with a different pedagogical approach might prefer to structure the checking in an entirely different way. For instance, here are `checkr` statements that simply tell the user whether or not the submission did what was requested.
 
@@ -224,18 +224,114 @@ redpen::node_match(submission,
 
 Checking logic needs to be careful about names versus values when referring to variables.
 
+## Writing checking functions
+
+### A process
+
+A good way to start when developing a checking function:
+
+a. Write down examples of the correct and incorrect submissions you anticipate.
+    - Present an exercise in class to gain experience.
+    - Deploy a development problem with minimal feedback and harvest the submissions.
+b. Create the feedback message for each of these submissions.
+c. *... the magic happens here ...*  Figure out the checking logic to associate (a) and (b).
+    - Did they use a distinctively wrong function? `line_calling() %>% misconception()`
+
+### Debugging
+
+`Checkr` can be run independent of `learnr`, so regular test-case and debugging tools can be used.
+
+### Fill in the blanks
+
+These problems have a predictable structure, making them easier to check.
+
+> **Exercise 14**: Fill in the blanks in the following code to create a `ggplot2` command that will produce the following scatter plot with the `mtcars` data.    
+    ```{r echo = FALSE}
+library(ggplot2)
+ggplot(mtcars, aes(x = mpg, y = hp, color = cyl)) +
+  geom_point()
+```
+>
+> There are four blanks. You'll have to replace all of them with the correct contents to generate the plot.
+
+```{r ggplot-blanks, exercise = TRUE}
+library(ggplot2)
+ggplot(mtcars, aes(x = ____ , y = ____, color = ____)) +
+  ____()
+```
+
+```{r ggplot-blanks-check}
+check_exer_14(USER_CODE)
+```
+
+The checking code:
+```{r echo = FALSE}
+print_function_contents(
+  check_exer_14,
+  from_file = system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"), 
+  just_the_body = FALSE)
+```
 
 
 ## Pre-evaluation checking
 
-Just for parsing
+In the `ggplot` example, pressing "Submit" on the scaffold produced a native R run-time error as the message.
+
+* The `learnr` system evaluates the submission *before* handing it to the checker.
+* Use a `-code-check` chunk to hand the submission to the checker before evaluating it.
+
+```{r ggplot-blanks2, exercise = TRUE}
+library(ggplot2)
+ggplot(mtcars, aes(x = .... , y = .... , color = .... )) +
+  ....()
+```
+
+```{r ggplot-blanks2-code-check}
+3 # chunk must have executable content
+```
+
+```{r ggplot-blanks2-check}
+res <- pre_check(USER_CODE)
+if (failed(res)) return(res)
+check_exer_14(USER_CODE)
+```
+
+```{r echo = FALSE, eval = FALSE}
+s1 <- "library(ggplot2); ggplot(mtcars, aes(x = ...., y = ...., color = ....)) + ....()"
+pre_check(s1)
+check_exer_14(s1)
+```
 
 ## Para-evaluation checking
 
-We can only know if a name is valid by evaluating it in the context of earlier computations
+We can only know if a name is valid by evaluating it in the context of earlier computations.
+
+- The evaluate-then-check process doesn't support this.
+- Error messages from pressing "Run" are native, but from "Submit" can be tailored.
+
+Suggestions:
+
+* Make pre-check the default for submissions.
+* Add a `-run-check` option to let "Run" call a checking function, too.
+* Let the checking program do all the evaluation. 
+
 
 ## Feedback on feedback
 
-- using `submittr` to collect submissions.
-- can look through these to identify common misconceptions, then test for these.
+Providing student feedback is largely an empirical problem, not a logical one. We need to know what student misconceptions are in order to know how to give formative feedback.
 
+- Use the `learnr` `tutorial-event-recorder` function: collect submissions.
+    * The `submittr` package (that's another talk!) can handle this with user authentication, etc. 
+- Can look through these to identify common misconceptions, then test for these.
+
+## Present status
+
+* Available via `install_github("dtkaplan/checkr")`
+* Vignette with many examples.
+* This document at XXXX SAY WHERE
+
+Among other things:
+
+- needs better parse-time diagnostics
+- experience programming with `checkr` may lead to better high-level functions for simplifying checking, like `check_blanks`. 

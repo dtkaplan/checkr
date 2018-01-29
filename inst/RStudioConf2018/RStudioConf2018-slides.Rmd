@@ -235,8 +235,12 @@ a. Write down examples of the correct and incorrect submissions you anticipate.
     - Deploy a development problem with minimal feedback and harvest the submissions.
 b. Create the feedback message for each of these submissions.
 c. *... the magic happens here ...*  Figure out the checking logic to associate (a) and (b).
-    - Did they use a distinctively wrong function? `line_calling() %>% misconception()`
-
+    Some easy cases:
+        - Did they use a distinctively wrong function? `line_calling() %>% misconception()`
+        - Cast as a fill-in-the-blanks
+        - Are there named arguments? `named_arg()`       
+        
+        
 ### Debugging
 
 `Checkr` can be run independent of `learnr`, so regular test-case and debugging tools can be used.
@@ -333,5 +337,6 @@ Providing student feedback is largely an empirical problem, not a logical one. W
 
 Among other things:
 
-- needs better parse-time diagnostics
+- needs better parse-time diagnostics (e.g. <https://github.com/stephdesilva/helpPlease>, <https://github.com/noamross/zero-dependency-problems>)
+- better spell-check (e.g. <https://github.com/wrathematics/Rdym>)
 - experience programming with `checkr` may lead to better high-level functions for simplifying checking, like `check_blanks`. 

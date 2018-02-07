@@ -6,9 +6,12 @@ An R-tutorial system provides facilities for posing R-related questions to stude
 
 The `checkr` package supports a framework for the authors of tutorials to specify what is a correct answer, and to give formative feedback when answers fail to meet that specification. Functions are provided to enable `checkr` to be connected to `learnr` documents. 
 
-You can install the latest version of this package from GitHub
+You can install the latest version of this package from GitHub.
+
+You will first need to install the `redpen` package, which contains functions that will likely be integrated into `rlang` eventually.
 
 ```r
+devtools::install_github("lionel-/redpen")
 devtools::install_github("dtkaplan/checkr")
 ```
 

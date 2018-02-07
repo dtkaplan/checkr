@@ -95,11 +95,11 @@ You can produce a "Submit" button by adding a `-check` chunk.
 
     ```{r trig-prob, exercise = TRUE}
     ..trig_function..( ..angle.. )
-    ...
+    ```
 
     ```{r trig-prob-check}
     for_checkr(USER_CODE)
-    ```
+    ```
 
 
 ```{r trig-1b-check}
@@ -172,6 +172,35 @@ cruel_trig(USER_CODE)
 print_function_contents(cruel_trig)
 ```
 
+```{r cruel-hint-1}
+Really?
+```
+
+```{r cruel-hint-2}
+Think about it!
+```
+
+```{r cruel-hint-3}
+Maybe you shouldn't major in this field.
+```
+
+```{r cruel-hint-4}
+Perhaps you should review the textbook.
+```
+
+```{r cruel-hint-5}
+Look carefully at what you did.
+```
+
+```{r cruel-hint-6}
+No!
+```
+
+```{r cruel-hint-7}
+{{V}} is not right.
+```
+
+
 ### Hints?
 
 * I used feedback messages that are cruel. 
@@ -234,11 +263,11 @@ a. Write down examples of the correct and incorrect submissions you anticipate.
     - Present an exercise in class to gain experience.
     - Deploy a development problem with minimal feedback and harvest the submissions.
 b. Create the feedback message for each of these submissions.
-c. *... the magic happens here ...*  Figure out the checking logic to associate (a) and (b).
+c. *... the magic happens here ...*  Figure out the checking logic to associate (a) and (b).    
     Some easy cases:
         - Did they use a distinctively wrong function? `line_calling() %>% misconception()`
         - Cast as a fill-in-the-blanks
-        - Are there named arguments? `named_arg()`       
+        - Are there named arguments? `named_arg()` 
         
         
 ### Debugging
@@ -333,10 +362,10 @@ Providing student feedback is largely an empirical problem, not a logical one. W
 
 * Available via `install_github("dtkaplan/checkr")`
 * Vignette with many examples.
-* This document at XXXX SAY WHERE
+* This document at <https://dtkaplan.shinyapps.io/RStudioConf2018-slides>
 
 Among other things:
 
 - needs better parse-time diagnostics (e.g. <https://github.com/stephdesilva/helpPlease>, <https://github.com/noamross/zero-dependency-problems>)
 - better spell-check (e.g. <https://github.com/wrathematics/Rdym>)
-- experience programming with `checkr` may lead to better high-level functions for simplifying checking, like `check_blanks`. 
+- experience programming with `checkr` may lead to better high-level functions for simplifying checking, like `check_blanks`. We need to dig the *Pit of Success* 

@@ -5,7 +5,8 @@
 \alias{grab_binding_anywhere}
 \title{Grab any bindings from a pattern match}
 \usage{
-grab_bindings(ex, ..., all_for_one = TRUE, one_for_all = FALSE)
+grab_bindings(ex, ..., key_list = NULL, all_for_one = TRUE,
+  one_for_all = FALSE)
 
 grab_binding_anywhere(ex, key)
 }
@@ -14,13 +15,16 @@ grab_binding_anywhere(ex, key)
 
 \item{...}{the set of patterns. Each pattern must be be enclosed in \code{quote()}. See details.}
 
+\item{key_list}{specify a set of patterns as a list of quoted expressions, rather than putting them
+individually in \code{...}}
+
 \item{all_for_one}{Logical. If \code{TRUE}, then there must be an expression
 that matches all patterns.}
 
 \item{one_for_all}{Logical. If \code{TRUE}, then all patterns must match at least one
 expression in ex.}
 
-\item{key}{a single pattern enclosed in \code{quote()}.}
+\item{key}{for \code{grab_bindings_anywhere()}, a single pattern as a quoted expression}
 }
 \description{
 UNLIKE the \code{check_} functions which return \code{checkr_result} objects,

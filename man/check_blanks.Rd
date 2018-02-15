@@ -9,24 +9,38 @@ check_blanks(ex, pat, ...)
 \arguments{
 \item{ex}{the expression to check, e.g. USER_CODE}
 
-\item{pat}{the anticipated correct form. Use elements such as \code{..one..} to
-define a blank.}
+\item{pat}{a quoted expression containing the anticipated correct form. Use elements such as \code{..one..} to
+define a blank. If there are multiple expressions (say, to be matched against multiple
+lines of a submission) \code{pat} should be a list of quoted expressions.}
 
 \item{...}{tests to apply to expressions in \code{ex}. These are typically made
 with \code{passif()}, \code{failif()}, and so on.}
 }
 \description{
-Checking fill-in-the-blanks problems
+Specify a binding pattern in terms of an expression where elements like \code{..one..} or \code{..x..}, etc
+set the names to be bound to the corresponding part of the code.
+}
+\details{
+For formulas, the \code{~} should be encompassed by the named element. For instance, if the user is
+shown a statement like \code{mean( ~ hp, data = mtcars)}, the blanks statement should be something like
+\code{mean(..v.., data = mtcars)} and NOT \code{mean( ~ ..v.., data = mtcars).}
 }
 \examples{
 submission <- for_checkr(quote({a <- 3; b <- 4; res <- sqrt(a^2 + b^2)}))
 submission2 <- for_checkr(quote({a <- 3; b <- 4; res <- sin(a^2 + b^2)}))
 # a template with a blank ..fn..
 as_posted <- quote(res <- ..fn..(a^2 + b^2))
-check_blanks(submission, !!as_posted,
-   insist(fn == quote(sqrt), "{{fn}} is not the right function."))
-check_blanks(submission2, !!as_posted,
-   insist(fn == quote(sqrt), "{{fn}} is not the right function."))
+check_blanks(submission, as_posted,
+   insist(fn == quote(sqrt), "{{fn}} is not the right function."),
+   passif(TRUE, "Right! You're using the square-root function."))
+check_blanks(submission2, as_posted,
+   insist(fn == quote(sqrt), "{{fn}} is not the right function."),
+   passif(TRUE, "Right! You're using the square-root function."))
+as_posted2 <- quote(b <- ..bval..)
+check_blanks(submission, list(as_posted, as_posted2),
+   insist(fn == quote(sqrt), "Wrong function."),
+   insist(bval == 5, "`b` is not supposed to be {{bval}}."))
+
 # Multiple blanks
 as_posted <- for_checkr(quote({res <- ..fn..(`+`(`^`(a, ..exp1..), `^`(b, ..exp2..)))}))
 }

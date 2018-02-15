@@ -45,6 +45,9 @@ cruel_trig <- function(USER_CODE) {
 }
 
 cruel_trig("11.98")
+
+source(system.file("learnr_examples/internal-examples.R", 
+                          package = "checkr"))
 ```
 
 ## Scaffolding, hints, and solutions 

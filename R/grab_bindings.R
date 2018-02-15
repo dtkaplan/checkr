@@ -5,11 +5,13 @@
 #'
 #' @param ex the expression to be searched for the patterns
 #' @param ... the set of patterns. Each pattern must be be enclosed in `quote()`. See details.
-#' @param key a single pattern enclosed in `quote()`.
+#' @param key_list specify a set of patterns as a list of quoted expressions, rather than putting them
+#' individually in `...`
 #' @param one_for_all Logical. If `TRUE`, then all patterns must match at least one
 #' expression in ex.
 #' @param all_for_one Logical. If `TRUE`, then there must be an expression
 #' that matches all patterns.
+#' @param key for `grab_bindings_anywhere()`, a single pattern as a quoted expression
 #'
 #' @details The patterns in `...` will often have internal commas. To distinquish these
 #' from separate arguments to `grab_bindings()`, each pattern must be quoted, e.g. `quote(plot(.(one), .(two)))`.
@@ -27,15 +29,20 @@
 #' grab_binding_anywhere(for_checkr(quote({4 - 7;sin(3 + 2)})), quote(.(fn)(3 + 2)))
 #' grab_binding_anywhere(for_checkr(quote({4 - 7;sin(3 + 2)})), quote(`-`(.(a), .(b))))
 #' @export
-grab_bindings <- function(ex, ...,
+grab_bindings <- function(ex, ..., key_list = NULL,
                           all_for_one = TRUE,
                           one_for_all = FALSE) {
   stopifnot(inherits(ex, "checkr_result"))
-  keys <- list(...)
+  keys <-
+    if (!is.null(key_list)) {
+      if (is.list(key_list)) key_list
+      else list(key_list)
+    } else list(...)
   bindings <- list()
 
   if (length(keys) == 0) stop("No expressions given for argument 'keys'.")
   expressions_matched <- rep(FALSE, length(ex$code))
+
   for (m in seq_along(ex$code)) {
     patterns_matched <- rep(FALSE, length(keys))
 

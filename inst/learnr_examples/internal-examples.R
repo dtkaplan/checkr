@@ -90,7 +90,7 @@ check_exer_14 <- function(submission) {
   code <- for_checkr(submission)
   if (failed(code)) return(code)
   check_blanks(code,
-               ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..(),
+               quote(ggplot(mtcars, aes(x = ..x.., y = ..y.., color = ..c..)) + ..geom..()),
                insist(same_name(x, "mpg"), "{{x}} is not the variable on the horizontal axis."),
                insist(same_name(y, "hp"), "{{y}} is not the right variable for the vertical axis"),
                insist(same_name(c, "cyl"), "{{c}} is not the right variable to map to color."),
@@ -102,7 +102,7 @@ check_pythag <- function(submission) {
   code <- for_checkr(submission)
   if (failed(code)) return(code)
   check_blanks(code,
-               C <- ..fun..(A^2 + B^2),
+               quote(C <- ..fun..(A^2 + B^2)),
                passif(fun == quote(sqrt), "Right!"),
                insist(fun == quote(sqrt),
                       "Think again. {{fun}} is not the right function to use."))

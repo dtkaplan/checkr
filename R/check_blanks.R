@@ -14,6 +14,8 @@
 #' @param ... tests to apply to expressions in `ex`. These are typically made
 #' with `passif()`, `failif()`, and so on.
 #'
+#' @details USE OF . or ... to stand for aspects of the command that you don't care about.
+THIS NEEDS TO BE COMPLETED ABOVE.
 #' @examples
 #' submission <- for_checkr(quote({a <- 3; b <- 4; res <- sqrt(a^2 + b^2)}))
 #' submission2 <- for_checkr(quote({a <- 3; b <- 4; res <- sin(a^2 + b^2)}))

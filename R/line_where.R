@@ -26,6 +26,19 @@
 #' The `ex` argument is a `"checkr_test"` object. If that input object is a fail, `line_where()` immediately returns
 #' that input: none of the tests are performed. This allows test results to be cascaded.
 #'
+#' Some important details about what types of objects F, Z, V, and E will be. V and E are straightforward: V will
+#' always be the kinds of thing computed by the line, e.g. a vector, dataframe, and so on. E will always be
+#' a language expression (minus the assignment, if any). But F and Z are names and character strings respectively.
+#'
+#' 1. `x <- sin(y^2)`, F will be a *name*, in this case, `as.name("sin")`. Z will be a character string, that is `"x"`. Keep in mind that
+#' the R expression `sin` does not produce a name, it produces a value which happens to be the function that calculates sines.
+#' 2. `y <- 1:4; y[3] <- y[2]`, F will again be a *name*, because indexing is a function call in R.
+#' (In this example, the name is `as.name("[")`.) Z will again be a character string, in this case `"y[3]"`. You might
+#' think it should be a call, because `quote(y[3])` is a call. But whatever is to the left of `<-` gets turned into a character
+#' string.
+#'
+#'
+#'
 #' @return A `"checkr_test"` result which is either a pass, fail, or OK.
 #'
 #' @examples

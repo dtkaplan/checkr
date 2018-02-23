@@ -24,6 +24,13 @@
 #' Use `insist()` to denote necessary but not sufficient conditions
 #' Use `failif()` and `passif()` for sufficient conditions.
 #'
+#' Functions like `line_where()` produce pronouns (e.g. V, F, Z, E) which can be used in tests. You need to
+#' be careful to write your tests in terms of the types of objects that these pronouns are bound to. Some examples:
+#'
+#' 1. line_where( for_checkr(quote(a ~ b)),
+#'       insist(same_name(F, "~"), "You needed to type a formula with tilde."))
+#' 2. line_where( for_checkr(quote({x <- 1:3; x[2] <- x[3]})), insist(Z == "x[2]", "You were supposed to assign to `x[2]`."))
+#'
 #' @examples
 #' code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
 #' my_line <- line_where(code, insist(F == `+`, "Where did you use +?"))

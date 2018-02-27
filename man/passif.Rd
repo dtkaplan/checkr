@@ -42,6 +42,14 @@ You can refer to the expression being tested with \code{{{expression_string}}} a
 
 Use \code{insist()} to denote necessary but not sufficient conditions
 Use \code{failif()} and \code{passif()} for sufficient conditions.
+
+Functions like \code{line_where()} produce pronouns (e.g. V, F, Z, E) which can be used in tests. You need to
+be careful to write your tests in terms of the types of objects that these pronouns are bound to. Some examples:
+\enumerate{
+\item line_where( for_checkr(quote(a ~ b)),
+insist(same_name(F, "~"), "You needed to type a formula with tilde."))
+\item line_where( for_checkr(quote({x <- 1:3; x\link{2} <- x\link{3}})), insist(Z == "x\link{2}", "You were supposed to assign to \code{x[2]}."))
+}
 }
 \examples{
 code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))

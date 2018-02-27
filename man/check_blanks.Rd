@@ -24,6 +24,8 @@ set the names to be bound to the corresponding part of the code.
 For formulas, the \code{~} should be encompassed by the named element. For instance, if the user is
 shown a statement like \code{mean( ~ hp, data = mtcars)}, the blanks statement should be something like
 \code{mean(..v.., data = mtcars)} and NOT \code{mean( ~ ..v.., data = mtcars).}
+
+In \code{pat}, you can use \code{.} (for a name or call) and \code{...} (for remaining arguments) to stand for components of the pattern you don't care about.
 }
 \examples{
 submission <- for_checkr(quote({a <- 3; b <- 4; res <- sqrt(a^2 + b^2)}))

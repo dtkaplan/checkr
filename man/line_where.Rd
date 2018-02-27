@@ -39,6 +39,21 @@ result, \code{line_where()} will return an OK result.
 
 The \code{ex} argument is a \code{"checkr_test"} object. If that input object is a fail, \code{line_where()} immediately returns
 that input: none of the tests are performed. This allows test results to be cascaded.
+
+Some important details about what types of objects F, Z, V, and E will be. V and E are straightforward: V will
+always be the kinds of thing computed by the line, e.g. a vector, dataframe, and so on. E will always be
+a language expression (minus the assignment, if any). But F and Z are names and character strings respectively.
+\enumerate{
+\item \code{x <- sin(y^2)}, F will be a \emph{name}, in this case, \code{as.name("sin")}. Z will be a character string, that is \code{"x"}. Keep in mind that
+the R expression \code{sin} does not produce a name, it produces a value which happens to be the function that calculates sines.
+\item \code{y <- 1:4; y[3] <- y[2]}, F will again be a \emph{name}, because indexing is a function call in R.
+(In this example, the name is \code{as.name("[")}.) Z will again be a character string, in this case \code{"y[3]"}. You might
+think it should be a call, because \code{quote(y[3])} is a call. But whatever is to the left of \code{<-} gets turned into a character
+string.
+}
+
+[")\code{.) Z will again be a character string, in this case}"y\link{3}: R:%22)%60.)%20Z%20will%20again%20be%20a%20character%20string,%20in%20this%20case%20%60%22y[3
+\link{3}: R:3
 }
 \examples{
 ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))

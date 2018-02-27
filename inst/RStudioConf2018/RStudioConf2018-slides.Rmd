@@ -26,7 +26,7 @@ trig_2_check <- function(USER_CODE) {
   if (failed(t1)) return(t1)
   a1 <- trig_radian_check(t1, 53*pi/180)
   if (failed(a1)) return(a1)
-  t2 <- line_where(code, insist(F == `*`, "Remember to multiply by the length of the hypotenuse."))
+  t2 <- line_where(code, insist(F == "*"", "Remember to multiply by the length of the hypotenuse."))
   t3 <- arg_calling(t2, `*`)
 
   a1 <- arg_number(t3, 1, insist(V == 15, "How long is the hypothenuse? It says right on the diagram."))

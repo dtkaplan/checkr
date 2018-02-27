@@ -49,7 +49,7 @@ argument_calls <- function(ex, funs) {
     if (c(f1) %in% c(funs)) { # there's a match
       return(TRUE)
     } else { # check each of the arguments to f1
-      the_args <- lang_args(ex)
+      the_args <- call_args(ex)
       for (k in seq_along(the_args)) {
         res <- argument_calls(the_args[[k]], funs)
         if (res) return(TRUE)

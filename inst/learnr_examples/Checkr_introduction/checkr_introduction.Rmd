@@ -35,7 +35,7 @@ two_plus_two_check <- function(USER_CODE) {
   res <- for_checkr(USER_CODE)
   res <- line_where(res, insist(V == 4, "The result should be 4, not {{V}}."))
   res <- line_where(res, 
-                    insist(F == `+`, paste(
+                    insist(F == "+", paste(
                       "Think about what function corresponds to 'addition'.", 
                       "It isn't {{F}}.")))
   arg_number(res, 1, failif(V != 2, "The first argument should be 2, not {{E}}."),

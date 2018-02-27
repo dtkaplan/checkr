@@ -101,7 +101,7 @@ generic_arg <- function(ex, type_description, type_test,
 
   # But usually will be a quo
   this_env <- environment(code)
-  the_args <- lang_args(code)
+  the_args <- call_args(code)
   found_target <- FALSE
   target <- NULL
   found_count <- 0
@@ -133,7 +133,7 @@ arg_number <- function(ex, n = 1L, ..., message = "") {
   stopifnot(inherits(ex, "checkr_result"))
   if (failed(ex)) return(ex)
   code <- simplify_ex(ex$code[[1]])
-  argv <- lang_args(code)
+  argv <- call_args(code)
   res <-
     if (length(argv) < n) {
       new_checkr_result(action = "fail",
@@ -162,8 +162,8 @@ named_arg <- function(ex, nm, ..., message = "") {
   if (failed(ex)) return(ex)
   code <- simplify_ex(ex$code[[1]])
 
-  arg_names <- lang_args_names(code)
-  argv <- lang_args(code)
+  arg_names <- call_args_names(code)
+  argv <- call_args(code)
   the_arg <- grep(nm[1], arg_names)
   res <-
     if (length(the_arg) == 0) {

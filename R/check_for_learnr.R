@@ -18,7 +18,7 @@
 #' # as it would be called from the learnr system ...
 #' check_for_learnr(envir_result = 3, label = "first", user_code = "sin(pi)",
 #'   check_code = 'ex <- for_checkr(USER_CODE)
-#'                 t1 <- line_where(ex, insist(F == "Please use the sin function."))
+#'                 t1 <- line_where(ex, insist(F == "sin", "Please use the sin function."))
 #'                 a1 <- arg_number(t1, 1); check(a1, passif(V == pi, "Right-oh!"))'
 #' )
 #'

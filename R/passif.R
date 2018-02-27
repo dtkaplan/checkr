@@ -33,7 +33,7 @@
 #'
 #' @examples
 #' code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
-#' my_line <- line_where(code, insist(F == `+`, "Where did you use +?"))
+#' my_line <- line_where(code, insist(F == "+", "Where did you use +?"))
 #' check_binding(my_line, `+`(..(x), ..(y)), insist(y == 4, "use 4 for the second argument to +"))
 #' check_binding(my_line, `+`(..(x), ..(y)), insist(y == 5, "use 5 for the second argument to +"))
 #' # or equivalently with a double negative ... fail and y != 4

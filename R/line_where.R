@@ -28,9 +28,9 @@
 #'
 #' Some important details about what types of objects F, Z, V, and E will be. V and E are straightforward: V will
 #' always be the kinds of thing computed by the line, e.g. a vector, dataframe, and so on. E will always be
-#' a language expression (minus the assignment, if any). But F and Z are names and character strings respectively.
+#' a language expression (minus the assignment, if any), and F will always be a character string. But Z is a name and character strings respectively.
 #'
-#' 1. `x <- sin(y^2)`, F will be a *name*, in this case, `as.name("sin")`. Z will be a character string, that is `"x"`. Keep in mind that
+#' 1. `x <- sin(y^2)`, F will be a character string, in this case, `"sin"`. Z will also be a character string, that is `"x"`. Keep in mind that
 #' the R expression `sin` does not produce a name, it produces a value which happens to be the function that calculates sines.
 #' 2. `y <- 1:4; y[3] <- y[2]`, F will again be a *name*, because indexing is a function call in R.
 #' (In this example, the name is `as.name("[")`.) Z will again be a character string, in this case `"y[3]"`. You might
@@ -43,7 +43,7 @@
 #'
 #' @examples
 #' ex <- for_checkr(quote({x <- 2; y <- x^3; z <- y + x}))
-#' line_where(ex, insist(F == "^", "Didn't find exponentiation"))
+#' line_where(ex, insist(F == "^"), message = "Didn't find exponentiation")
 #'
 #' @export
 line_where <- function(ex, ..., message = "No such line found.") {

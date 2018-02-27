@@ -307,7 +307,7 @@ Another checking statement is needed to make sure that the `read.csv()` function
 
 ```{r eval = FALSE}
 # this will go in the `check_bee_data()` function
-result <- line_where(result, insist(F == read.csv, m2))
+result <- line_where(result, insist(F == "read.csv", m2))
 ```
 
 Unfortunately, things are not so simple. We intend message `m2` to be given in response to submission `s2`. But there's something special about `s2` as compared to the other submissions: `s2` generates a run-time error; `load()` is not set up to accept a character string URL as an argument. Such errors need to be trapped before the code is evaluated. We discuss the matter below in the section on re-evaluation checking.
@@ -698,7 +698,7 @@ t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigono
 miss1 <- line_calling(t1, cos)
 t1 <- misconception(t1, miss1, message = "Are you sure cosine is the right choice?")
 t1 <- line_where(t1, 
-                 insist(F == quote(`*`), 
+                 insist(F == "*", 
                         "Remember to multiply by the length of the hypotenuse"))
 line_where(t1, insist(is.numeric(V)), 
            insist(abs(V - 11.98) < 0.01, 

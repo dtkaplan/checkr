@@ -33,23 +33,25 @@
 #' @export
 expand_chain <- function(ex) {
   stopifnot(inherits(ex, "checkr_result"))
-  if ( ! is_chain(simplify_ex(ex$code[[1]]))) return(ex) # already expanded
+  tmp <- simplify_ex(ex$code[[1]])
+  if ( ! is_chain(tmp)) return(ex) # already expanded
   if (failed(ex)) return(ex) # short circuit on failure
   # originally, the logic was based on magrittr:::split_chain
   # which gave expressions for the single LHS and the possibly many RHS.
   # To avoid using an unexported function (i.e. :::), I re-wrote this
   # using lang_tail()
-  CP <- lang_tail(quo_expr(skip_assign(ex$code[[1]])))
-  if (is_lang(CP[[1]]) && lang_head(CP[[1]]) == as.name("%>%")) {
+  CP <- call_args(quo_expr(skip_assign(ex$code[[1]])))
+  if (is_call(CP[[1]]) && call_name(CP[[1]]) == "%>%") {
     # A chain longer than one link needs to have the first part
     # broken up
     first <- CP[[1]]
     CP[[1]] <- NULL
-    CP <- c(lang_tail(first), CP)
+    CP <- c(call_args(first), CP)
   }
   for (k in seq_along(CP)) { # make sure there's a dot argument
-    if (is_lang(CP[[k]]) && is.null(lang_tail(CP[[k]])))
-      CP[[k]] <- lang(lang_head(CP[[k]]), quote(.))
+                            # inserted in calls like 3 %>% sin()
+    if (is_call(CP[[k]], n = 0))
+      CP[[k]] <- call2(call_name(CP[[k]]), quote(.))
   }
   new_code <- list() # holds the sequence of quo's representing the chain
   this_env <- environment(ex$code[[1]])
@@ -80,41 +82,12 @@ expand_all_chains <- function(ex) {
 
 #' @rdname chains
 #' @export
-# convert a chain into a list of expressions
-chain_elements <- function(ex) {
-  if (is_chain(ex)) {
-    c(chain_elements(rlang::node_cadr(ex)),
-      chain_elements(rlang::node_cddr(ex)))
-  } else {
-    ex
-  }
-}
-
-# Given a list of chain elements, turn them back into
-# a chain
-
-elements_to_chain <- function(elements) {
-  if (length(elements) == 1) return(elements[[1]])
-  chain_start <-
-    lang(quote(`%>%`),
-                elements[[1]],
-                elements[[2]])
-  for (el in elements[-(1:2)]) {
-    chain_start <- lang(quote(`%>%`),
-                               chain_start,
-                               el)
-  }
-  chain_start
-}
-
-#' @rdname chains
-#' @export
 is_chain <- function(ex) {
   ex <- simplify_ex(ex)
   if (! (is.call(ex) && is.call(quo_expr(ex)) )) {
     FALSE
   } else {
-    identical(as.name(lang_head(ex)), as.name("%>%"))
+    identical(call_name(ex), "%>%")
   }
 }
 

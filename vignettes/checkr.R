@@ -152,7 +152,7 @@ check_bee_data(s4)
 
 ## ----eval = FALSE--------------------------------------------------------
 #  # this will go in the `check_bee_data()` function
-#  result <- line_where(result, insist(F == read.csv, m2))
+#  result <- line_where(result, insist(F == "read.csv", m2))
 
 ## ----results = "hide"----------------------------------------------------
 x <- 3 / 5
@@ -277,7 +277,7 @@ t1 <- line_calling(CODE, sin, cos, tan, message = "You should be using a trigono
 miss1 <- line_calling(t1, cos)
 t1 <- misconception(t1, miss1, message = "Are you sure cosine is the right choice?")
 t1 <- line_where(t1, 
-                 insist(F == quote(`*`), 
+                 insist(F == "*", 
                         "Remember to multiply by the length of the hypotenuse"))
 line_where(t1, insist(is.numeric(V)), 
            insist(abs(V - 11.98) < 0.01, 

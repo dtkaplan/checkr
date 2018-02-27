@@ -77,8 +77,10 @@ generic_test <- function(pass = c("pass", "fail", "ok"),
 
 # Get the lead function (ignoring any assignment)
 get_function <- function(tidy_expr) {
-  ex <- rlang::quo_expr(skip_assign(tidy_expr))
-  if (rlang::is_lang(ex)) rlang::lang_head(ex)
+  tidy_expr <- quo_expr(tidy_expr)
+  # SPECIAL CASE: Formulas
+  if (as.character(tidy_expr[[1]]) == "~") return("~")
+  if (rlang::is_call(tidy_expr)) rlang::call_name(tidy_expr)
   else NULL
 }
 # Get the name being assigned to. "" if no assignment.
@@ -98,7 +100,7 @@ skip_assign <- function(ex) {
     top <- rlang::lang_head(ex)
     if (as.name("<-") == top) {
       skip_assign(
-        rlang::new_quosure(rlang::quo_expr(rlang::lang_tail(ex)[[2]]),
+        rlang::new_quosure(rlang::quo_expr(rlang::call_args(ex)[[2]]),
                            environment(ex)))
     } else {
       rlang::new_quosure(rlang::quo_expr(ex), env = environment(ex))

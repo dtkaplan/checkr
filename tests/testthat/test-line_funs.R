@@ -10,7 +10,7 @@ test_that("line_where() identifies assignment", {
 })
 
 test_that("line_where() identifies a function", {
-  res1 <- line_where(CODE, insist(F == `^`))
+  res1 <- line_where(CODE, insist(F == "^"))
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
@@ -24,15 +24,32 @@ test_that("line_where() identifies an expression", {
   expect_equal(res1$code[[1]], quo(y <- x^3))
 })
 
+test_that("line_where() returns F and Z as character strings.", {
+  ex <- for_checkr("y <- 1:4; y[3] <- y[2]")
+  res1 <- line_where(ex, insist(F == "[", "{{F}} and {{Z}}"))
+  expect_true(ok(res1))
+  res2 <- line_where(ex, insist(is.character(Z) && Z == "y[3]"),
+                     insist(is.character(F) && F == "["))
+  expect_true(ok(res2))
+})
+
 test_that("line_calling() works", {
   code <- for_checkr("x <- 1; y <- x^2; z <- (y^2 + 7) / 2")
   r1 <- line_calling(code, `^`, message="Didn't find any line using exponentiation.")
   expect_equal(r1$code[[1]], quo(y <- x^2))
   r2 <- line_calling(code, `^`, n = 2L, message = "Didn't find a second line using exponentiation.")
-  expect_equal(r2$code[[1]], quo(z <- (y^2 + 7) / 2))
+  expect_equal(r2$code[[3]], quo(z <- (y^2 + 7) / 2))
   r3 <- line_calling(code, `-`, message = "No subtraction line called.")
   expect_true(failed(r3))
   expect_equal(r3$message, "No subtraction line called.")
+  res1 <- line_calling(CODE, `^`)
+  expect_equal(res1$code[[1]], quo(y <- x^3))
+  res2 <- line_calling(CODE, I)
+  expect_equal(res2$code[[1]], quo(z <- y + I(x)))
+  res3 <- line_calling(CODE, sin, I, tan)
+  expect_equal(res3$code[[1]], quo(z <- y + I(x)))
+  res4 <- line_calling(CODE, sin, tan)
+  expect_true(failed(res4))
 })
 
 test_that("line_where() and line_binding() return code in the form of a list of quosures.", {
@@ -86,17 +103,6 @@ test_that("line_binding() returns a checkr_result with code", {
   res1 <- line_binding(CODE, `^`(...), passif(TRUE, "Assignment to {{Z}}."))
   expect_true(inherits(res1, "checkr_result"))
   expect_equal(res1$code[[1]], quo(y <- x^3))
-})
-
-test_that("line_calling() works", {
-  res1 <- line_calling(CODE, `^`)
-  expect_equal(res1$code[[1]], quo(y <- x^3))
-  res2 <- line_calling(CODE, I)
-  expect_equal(res2$code[[1]], quo(z <- y + I(x)))
-  res3 <- line_calling(CODE, sin, I, tan)
-  expect_equal(res2$code[[1]], quo(z <- y + I(x)))
-  res4 <- line_calling(CODE, sin, tan)
-  expect_true(failed(res4))
 })
 
 test_that("On failure, the returned code is that of the original input.", {

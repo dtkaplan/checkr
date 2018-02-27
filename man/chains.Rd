@@ -3,15 +3,12 @@
 \name{expand_chain}
 \alias{expand_chain}
 \alias{expand_all_chains}
-\alias{chain_elements}
 \alias{is_chain}
 \title{Expand a chain into a series of lines, each with \code{.} as the input.}
 \usage{
 expand_chain(ex)
 
 expand_all_chains(ex)
-
-chain_elements(ex)
 
 is_chain(ex)
 }

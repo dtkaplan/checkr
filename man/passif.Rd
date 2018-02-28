@@ -45,11 +45,6 @@ Use \code{failif()} and \code{passif()} for sufficient conditions.
 
 Functions like \code{line_where()} produce pronouns (e.g. V, F, Z, E) which can be used in tests. You need to
 be careful to write your tests in terms of the types of objects that these pronouns are bound to. Some examples:
-\enumerate{
-\item line_where( for_checkr(quote(a ~ b)),
-insist(same_name(F, "~"), "You needed to type a formula with tilde."))
-\item line_where( for_checkr(quote({x <- 1:3; x\link{2} <- x\link{3}})), insist(Z == "x\link{2}", "You were supposed to assign to \code{x[2]}."))
-}
 }
 \examples{
 code <- for_checkr(quote({x <- 2; y <- x^2; z <- x + y}))
@@ -58,5 +53,9 @@ check_binding(my_line, `+`(..(x), ..(y)), insist(y == 4, "use 4 for the second a
 check_binding(my_line, `+`(..(x), ..(y)), insist(y == 5, "use 5 for the second argument to +"))
 # or equivalently with a double negative ... fail and y != 4
 check_binding(my_line, `+`(..(x), ..(y)), failif(y != 4, "use 4 for the second argument to +"))
+line_where( for_checkr(quote(a ~ b)),
+      insist(F == "~", "You needed to type a formula with tilde."))
+line_where( for_checkr(quote({x <- 1:3; x[2] <- x[3]})),
+      insist(Z == "x[2]", "You were supposed to assign to `x[2]`."))
 
 }

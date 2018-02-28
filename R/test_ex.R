@@ -8,10 +8,10 @@
 #' @rdname test_ex
 #' @export
 n_args <- function(ex) {
-  length(rlang::lang_args_names(ex))
+  length(rlang::call_args_names(ex))
 }
 #' @rdname test_ex
 #' @export
 func_of <- function(ex) {
-  rlang::lang_head(ex)
+  rlang::call_fn(ex)
 }

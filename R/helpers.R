@@ -97,8 +97,7 @@ skip_assign <- function(ex) {
   if ( ! rlang::is_lang(rlang::quo_expr(ex))) {
     ex
   } else {
-    top <- rlang::lang_head(ex)
-    if (as.name("<-") == top) {
+    if ("<-" == call_name(ex)) {
       skip_assign(
         rlang::new_quosure(rlang::quo_expr(rlang::call_args(ex)[[2]]),
                            environment(ex)))

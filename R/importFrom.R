@@ -1,6 +1,7 @@
 #' @importFrom rlang eval_tidy quo_expr expr child_env quos new_quosure
 #' @importFrom rlang enexpr is_formula expr_text quo enquo is_quosure
-#' @importFrom rlang lang is_lang call_args call_args_names lang lang_head
+#' @importFrom rlang lang is_lang call_args call_args_names lang
+#' @importFrom rlang is_call call_name call2
 #' @importFrom rlang is_function caller_env eval_bare f_rhs f_lhs get_expr
 #'
 #' @importFrom magrittr %>%

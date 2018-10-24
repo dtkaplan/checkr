@@ -645,7 +645,7 @@ In lines 4/5 of the `check_exer_14()` checking function,  note that the second a
 The interface from the `learnr` system to a code-checking system is described [in the `learnr` documentation]( <https://rstudio.github.io/learnr/exercises.html#exercise_checking>). To summarise briefly:
 
 1. All exercise boxes have a "Run Code" button which passes the code in the box for evaluation by `learnr`, displaying the results in the `learnr` document below the exercise box. (Let's imagine the chunk containing the exercise block has label `exercise1`.)
-2. A "Submit" button will be included in the code box if the author adds a `-check` chunk to the document whose label refers to the corresponding exercise chunk. (For `exercise``, the full chunk label will be `exercise1-check`.) 
+2. A "Submit" button will be included in the code box if the author adds a `-check` chunk to the document whose label refers to the corresponding exercise chunk. (For `exercise`, the full chunk label will be `exercise1-check`.)
 3. When "Submit" is pressed, `learnr` will call its `exercise.checker` function, passing that function a list containing the student's submission (as text), the contents of the `-check` block (as text), as well as other information produced when the submission is evaluated. The document author specifies which checker function is to be used with a statement in the `setup` chunk like this: 
 ```r
 tutorial_options(exercise.checker = checkr::check_for_learnr)
